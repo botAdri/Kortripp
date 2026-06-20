@@ -1,0 +1,27 @@
+{
+  "name": "Guide de Voyage — Corée du Sud",
+  "short_name": "한국 Voyage",
+  "description": "Guide interactif de voyage en Corée du Sud : 8 étapes, activités, budget et carte.",
+  "start_url": "/Kortripp/index.html",
+  "scope": "/Kortripp/",
+  "display": "standalone",
+  "orientation": "portrait-primary",
+  "background_color": "#FDFAF6",
+  "theme_color": "#B84A22",
+  "lang": "fr",
+  "categories": ["travel", "lifestyle"],
+  "icons": [
+    {
+      "src": "/Kortripp/icons/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/Kortripp/icons/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}

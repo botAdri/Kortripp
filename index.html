@@ -1,0 +1,1187 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>한국 · Guide de Voyage — Automne</title>
+
+<!-- PWA -->
+<link rel="manifest" href="./manifest.json">
+<meta name="theme-color" content="#B84A22">
+<link rel="apple-touch-icon" href="./icons/icon-192.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="한국 Voyage">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Noto+Serif+KR:wght@400;600&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
+<style>
+:root {
+  --cream:        #F6F2EC;
+  --warm:         #FDFAF6;
+  --ink:          #1A130E;
+  --ink-light:    #4A3728;
+  --terra:        #C4562A;
+  --terra-soft:   #E8845A;
+  --gold:         #C9913A;
+  --gold-light:   #E8C57A;
+  --sage:         #5C7A5E;
+  --sage-light:   #9DB89F;
+  --border:       rgba(196,86,42,0.13);
+  --shadow-sm:    0 2px 12px rgba(26,19,14,0.07);
+  --shadow-md:    0 4px 28px rgba(26,19,14,0.11);
+  --shadow-lg:    0 8px 48px rgba(26,19,14,0.15);
+
+  /* couleur par étape */
+  --c1: #1E3A5F;
+  --c2: #B84A22;
+  --c3: #2D6B3A;
+  --c4: #7A4F2A;
+  --c5: #8B3A6A;
+  --c6: #4A7FA5;
+  --c7: #3D6B8A;
+  --c8: #1F5C7A;
+}
+
+*, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
+
+html, body {
+  height: 100%;
+  font-family: 'DM Sans', sans-serif;
+  background: var(--cream);
+  color: var(--ink);
+  overflow: hidden;
+}
+
+/* ═══ LAYOUT ═══ */
+.app {
+  display: grid;
+  grid-template-rows: auto 1fr;
+  height: 100vh;
+  overflow: hidden;
+}
+
+.header {
+  background: var(--warm);
+  border-bottom: 2px solid var(--border);
+  padding: 14px 20px;
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  flex-wrap: wrap;
+  position: relative;
+  z-index: 100;
+}
+.header::before {
+  content:'';
+  position:absolute;
+  top:0; left:0; right:0;
+  height:3px;
+  background: linear-gradient(90deg, var(--terra), var(--gold), var(--sage));
+}
+.header-korean {
+  font-family:'Noto Serif KR',serif;
+  font-size:10px;
+  letter-spacing:.25em;
+  color:var(--gold);
+  display:block;
+  margin-bottom:2px;
+}
+.header-title {
+  font-family:'Playfair Display',serif;
+  font-size: clamp(16px,2.5vw,22px);
+  font-weight:700;
+  color:var(--ink);
+  line-height:1.2;
+}
+.header-title span { color:var(--terra); }
+.header-sub {
+  font-size:11px;
+  color:#888;
+  white-space:nowrap;
+}
+.header-right {
+  margin-left:auto;
+  display:flex;
+  align-items:center;
+  gap:8px;
+  flex-wrap:wrap;
+}
+.back-btn {
+  display:inline-flex;
+  align-items:center;
+  gap:5px;
+  padding:6px 14px;
+  border-radius:999px;
+  border:1.5px solid var(--border);
+  background:transparent;
+  font-family:'DM Sans',sans-serif;
+  font-size:12px;
+  color:var(--ink-light);
+  cursor:pointer;
+  text-decoration:none;
+  transition:all .18s;
+}
+.back-btn:hover { background:var(--terra); border-color:var(--terra); color:white; }
+.stat-pill {
+  display:inline-flex;
+  align-items:center;
+  gap:4px;
+  padding:5px 11px;
+  border-radius:999px;
+  background:var(--cream);
+  border:1px solid var(--border);
+  font-size:11px;
+  color:var(--ink-light);
+  font-weight:500;
+}
+
+/* ═══ BODY SPLIT ═══ */
+.body {
+  display: grid;
+  grid-template-columns: 340px 1fr;
+  overflow: hidden;
+  height: 100%;
+}
+
+/* ═══ SIDEBAR ═══ */
+.sidebar {
+  display: flex;
+  flex-direction: column;
+  background: var(--warm);
+  border-right: 1.5px solid var(--border);
+  overflow: hidden;
+}
+
+/* City tabs */
+.city-tabs {
+  display: flex;
+  overflow-x: auto;
+  border-bottom: 1.5px solid var(--border);
+  background: var(--cream);
+  scrollbar-width: none;
+  flex-shrink: 0;
+}
+.city-tabs::-webkit-scrollbar { display:none; }
+.city-tab {
+  flex-shrink: 0;
+  padding: 8px 14px;
+  font-size: 11px;
+  font-weight: 600;
+  font-family: 'DM Sans', sans-serif;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  border-bottom: 3px solid transparent;
+  color: #999;
+  transition: all .18s;
+  white-space: nowrap;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+.city-tab:hover { color: var(--ink); }
+.city-tab.active {
+  color: var(--ink);
+  border-bottom-color: currentColor;
+}
+.city-tab .tab-num {
+  width: 18px; height: 18px;
+  border-radius: 50%;
+  background: currentColor;
+  color: white;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 9px;
+  font-weight: 700;
+  flex-shrink: 0;
+}
+.city-tab .tab-num span { color: white; }
+
+/* Activities panel */
+.activities-panel {
+  flex: 1;
+  overflow-y: auto;
+  padding: 0;
+  scrollbar-width: thin;
+  scrollbar-color: var(--border) transparent;
+}
+
+.city-panel { display: none; }
+.city-panel.active { display: block; }
+
+.city-header {
+  padding: 16px 18px 12px;
+  color: white;
+  position: relative;
+  overflow: hidden;
+}
+.city-header::after {
+  content: attr(data-korean);
+  position: absolute;
+  right: -8px; top: -8px;
+  font-family: 'Noto Serif KR', serif;
+  font-size: 56px;
+  font-weight: 600;
+  opacity: .1;
+  line-height: 1;
+  pointer-events: none;
+}
+.city-badge {
+  display: inline-block;
+  font-size: 9px;
+  letter-spacing: .15em;
+  text-transform: uppercase;
+  background: rgba(255,255,255,.22);
+  border-radius: 999px;
+  padding: 2px 8px;
+  margin-bottom: 5px;
+}
+.city-name {
+  font-family: 'Playfair Display', serif;
+  font-size: 24px;
+  font-weight: 700;
+  line-height: 1.1;
+}
+.city-dates {
+  font-size: 11px;
+  opacity: .8;
+  margin-top: 4px;
+}
+.city-desc {
+  padding: 12px 18px;
+  font-size: 12px;
+  color: var(--ink-light);
+  line-height: 1.65;
+  border-bottom: 1px solid var(--border);
+  background: var(--cream);
+}
+
+/* Activity items */
+.activities-list {
+  padding: 10px 14px 20px;
+}
+.activity-card {
+  display: flex;
+  gap: 12px;
+  padding: 12px 0;
+  border-bottom: 1px solid rgba(0,0,0,.05);
+  cursor: default;
+  transition: background .15s;
+  border-radius: 8px;
+}
+.activity-card:last-child { border-bottom: none; }
+.activity-card:hover { background: var(--cream); padding-left:6px; padding-right:6px; margin:0 -6px; }
+.activity-icon {
+  width: 38px; height: 38px;
+  border-radius: 10px;
+  background: var(--cream);
+  border: 1px solid var(--border);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 18px;
+  flex-shrink: 0;
+}
+.activity-body { flex: 1; min-width: 0; }
+.activity-name {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--ink);
+  line-height: 1.3;
+  margin-bottom: 3px;
+}
+.activity-sub {
+  font-size: 11px;
+  color: #888;
+  line-height: 1.45;
+}
+.activity-tag {
+  display: inline-block;
+  padding: 1px 7px;
+  border-radius: 999px;
+  font-size: 9px;
+  font-weight: 600;
+  margin-top: 4px;
+  letter-spacing: .04em;
+}
+.tag-free { background: #EEF7EE; color: #3D6B3A; border: 1px solid #C4E0C4; }
+.tag-paid { background: #FDF4EE; color: #8B4A1E; border: 1px solid #E8C4AA; }
+.tag-must { background: #FEF9EE; color: #8B6A1E; border: 1px solid #E8D8AA; }
+
+/* Budget bar */
+.budget-bar {
+  margin: 0 14px 14px;
+  background: var(--cream);
+  border: 1.5px solid var(--border);
+  border-radius: 10px;
+  padding: 10px 14px;
+}
+.budget-bar-title {
+  font-size: 9px;
+  letter-spacing: .1em;
+  text-transform: uppercase;
+  color: var(--terra);
+  font-weight: 700;
+  margin-bottom: 8px;
+}
+.budget-items {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+.budget-item {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+}
+.budget-item-label {
+  font-size: 9px;
+  color: #aaa;
+  text-transform: uppercase;
+  letter-spacing: .05em;
+}
+.budget-item-value {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--ink);
+}
+.budget-total {
+  font-size: 14px;
+  color: var(--terra);
+}
+
+/* ═══ BUDGET GLOBAL ═══ */
+.budget-global-header {
+  padding: 16px 18px 12px;
+  color: white;
+  position: relative;
+  overflow: hidden;
+  background: linear-gradient(120deg, var(--terra), var(--gold));
+}
+.budget-global-header::after {
+  content: '✈️';
+  position: absolute;
+  right: 4px; top: -10px;
+  font-size: 56px;
+  opacity: .18;
+  line-height: 1;
+  pointer-events: none;
+}
+.budget-global-desc {
+  padding: 12px 18px;
+  font-size: 12px;
+  color: var(--ink-light);
+  line-height: 1.65;
+  border-bottom: 1px solid var(--border);
+  background: var(--cream);
+}
+.budget-global-section {
+  padding: 14px 18px 4px;
+}
+.budget-section-title {
+  font-size: 10px;
+  letter-spacing: .12em;
+  text-transform: uppercase;
+  color: var(--terra);
+  font-weight: 700;
+  margin-bottom: 10px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.budget-card {
+  background: var(--warm);
+  border: 1.5px solid var(--border);
+  border-radius: 10px;
+  padding: 12px 14px;
+  margin-bottom: 12px;
+}
+.budget-card-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 10px;
+  padding: 4px 0;
+}
+.budget-card-row + .budget-card-row {
+  border-top: 1px dashed var(--border);
+  margin-top: 4px;
+  padding-top: 8px;
+}
+.budget-card-label {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--ink);
+}
+.budget-card-sub {
+  font-size: 10.5px;
+  color: #999;
+  line-height: 1.5;
+  margin-top: 2px;
+}
+.budget-card-amount {
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--terra);
+  white-space: nowrap;
+}
+.budget-grand-total {
+  margin: 6px 18px 22px;
+  background: var(--ink);
+  border-radius: 12px;
+  padding: 14px 16px;
+  color: var(--warm);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  box-shadow: var(--shadow-md);
+}
+.budget-grand-total-label {
+  font-size: 11px;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+  opacity: .75;
+}
+.budget-grand-total-sub {
+  font-size: 10.5px;
+  opacity: .55;
+  margin-top: 2px;
+}
+.budget-grand-total-amount {
+  font-family: 'Playfair Display', serif;
+  font-size: 26px;
+  font-weight: 700;
+  color: var(--gold-light);
+  white-space: nowrap;
+}
+.budget-note {
+  font-size: 10.5px;
+  color: #aaa;
+  line-height: 1.6;
+  padding: 0 18px 18px;
+  font-style: italic;
+}
+.budget-links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 10px;
+}
+.budget-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 6px 13px;
+  border-radius: 999px;
+  border: 1.5px solid var(--border);
+  background: white;
+  color: var(--ink);
+  font-size: 11px;
+  font-weight: 600;
+  text-decoration: none;
+  transition: all .15s;
+}
+.budget-link:hover {
+  border-color: var(--terra);
+  color: var(--terra);
+  background: var(--cream);
+}
+
+/* ═══ ENCART BUDGET (bouton flottant + modale) ═══ */
+.budget-fab {
+  position: absolute;
+  top: 14px;
+  right: 14px;
+  z-index: 800;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 9px 16px;
+  border: none;
+  border-radius: 999px;
+  background: linear-gradient(120deg, var(--terra), var(--gold));
+  color: white;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: .02em;
+  cursor: pointer;
+  box-shadow: var(--shadow-md);
+  transition: transform .18s, box-shadow .18s;
+}
+.budget-fab:hover { transform: translateY(-2px); box-shadow: var(--shadow-lg); }
+
+.budget-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(26,19,14,.55);
+  z-index: 2000;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+}
+.budget-overlay.active { display: flex; }
+
+.budget-modal {
+  background: var(--warm);
+  width: 100%;
+  max-width: 440px;
+  max-height: 86vh;
+  overflow-y: auto;
+  border-radius: 16px;
+  box-shadow: var(--shadow-lg);
+  position: relative;
+  scrollbar-width: thin;
+  scrollbar-color: var(--border) transparent;
+}
+.budget-modal-close {
+  position: absolute;
+  top: 10px; right: 10px;
+  width: 30px; height: 30px;
+  border-radius: 50%;
+  border: none;
+  background: rgba(255,255,255,.25);
+  color: white;
+  font-size: 18px;
+  line-height: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  z-index: 1;
+  transition: background .15s;
+}
+.budget-modal-close:hover { background: rgba(255,255,255,.4); }
+
+@media (max-width: 720px) {
+  .budget-fab { top: 10px; right: 10px; padding: 7px 12px; font-size: 11px; }
+}
+
+/* ═══ MAP ═══ */
+.map-wrap {
+  position: relative;
+  width: 100%;
+  height: 100%;
+}
+#map { width:100%; height:100%; }
+
+/* Map legend */
+.map-legend {
+  position: absolute;
+  bottom: 14px; left: 14px;
+  background: rgba(253,250,246,.95);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 10px 13px;
+  font-size: 11px;
+  z-index: 500;
+  box-shadow: var(--shadow-sm);
+  backdrop-filter: blur(8px);
+}
+.map-legend-title {
+  font-size: 9px;
+  letter-spacing: .1em;
+  text-transform: uppercase;
+  color: var(--terra);
+  font-weight: 700;
+  margin-bottom: 6px;
+}
+.legend-row {
+  display: flex; align-items: center; gap: 7px;
+  padding: 2px 0;
+  color: var(--ink-light);
+  font-size: 11px;
+}
+.legend-dot {
+  width: 11px; height: 11px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+/* ═══ PINS ═══ */
+.map-pin {
+  position: relative;
+  width: 36px; height: 44px;
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  filter: drop-shadow(0 3px 6px rgba(0,0,0,.28));
+  cursor: pointer;
+  transition: transform .15s ease, filter .15s ease;
+}
+.map-pin:hover, .map-pin.active {
+  transform: translateY(-3px) scale(1.12);
+  filter: drop-shadow(0 6px 12px rgba(0,0,0,.38));
+}
+.map-pin-body {
+  width: 36px; height: 36px;
+  border-radius: 50% 50% 50% 0;
+  transform: rotate(-45deg);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 2.5px solid rgba(255,255,255,.88);
+  position: relative;
+}
+.map-pin-body::after {
+  content:'';
+  position:absolute;
+  inset:4px;
+  border-radius:50%;
+  background:rgba(255,255,255,.18);
+}
+.map-pin-number {
+  transform: rotate(45deg);
+  font-family: 'DM Sans', sans-serif;
+  font-size: 13px;
+  font-weight: 700;
+  color: white;
+  position: relative;
+  z-index: 1;
+  text-shadow: 0 1px 2px rgba(0,0,0,.25);
+}
+
+/* ═══ MOBILE ═══ */
+@media (max-width: 720px) {
+  html, body { overflow: auto; }
+  .app { grid-template-rows: auto auto auto; height: auto; overflow: visible; }
+  .body { grid-template-columns: 1fr; grid-template-rows: 50vh auto; }
+  .sidebar { border-right: none; border-top: 1.5px solid var(--border); max-height: 70vh; overflow: auto; }
+  .map-wrap { height: 50vh; }
+  .body { overflow: visible; height: auto; }
+  .header { gap:10px; }
+  .header-right { display:none; }
+}
+</style>
+</head>
+<body>
+<div class="app">
+
+  <!-- ═══ HEADER ═══ -->
+  <header class="header">
+    <div>
+      <span class="header-korean">한국 로드트립 · 활동 가이드</span>
+      <h1 class="header-title">Guide de <span>Voyage</span></h1>
+    </div>
+    <span class="header-sub">🍂 9 – 23 novembre · Route de l'Ouest · 8 étapes</span>
+    <div class="header-right">
+      <span class="stat-pill">🗺️ 8 villes</span>
+      <span class="stat-pill">🎯 28 activités</span>
+      <span class="stat-pill">📅 14 jours</span>
+    </div>
+  </header>
+
+  <!-- ═══ BODY ═══ -->
+  <div class="body">
+
+    <!-- SIDEBAR -->
+    <aside class="sidebar">
+
+      <!-- City tabs -->
+      <div class="city-tabs" id="cityTabs"></div>
+
+      <!-- Panels -->
+      <div class="activities-panel" id="activitiesPanel"></div>
+
+    </aside>
+
+    <!-- MAP -->
+    <div class="map-wrap">
+      <div id="map"></div>
+      <button class="budget-fab" id="budgetFab">💰 Budget du voyage</button>
+      <div class="map-legend">
+        <div class="map-legend-title">🍂 Étapes automne</div>
+        <div class="legend-row"><div class="legend-dot" style="background:var(--c1)"></div> Séoul</div>
+        <div class="legend-row"><div class="legend-dot" style="background:var(--c2)"></div> Suwon</div>
+        <div class="legend-row"><div class="legend-dot" style="background:var(--c3)"></div> Daejeon</div>
+        <div class="legend-row"><div class="legend-dot" style="background:var(--c4)"></div> Jeonju</div>
+        <div class="legend-row"><div class="legend-dot" style="background:var(--c5)"></div> Gwangju</div>
+        <div class="legend-row"><div class="legend-dot" style="background:var(--c6)"></div> Mokpo</div>
+        <div class="legend-row"><div class="legend-dot" style="background:var(--c7)"></div> Yeosu</div>
+        <div class="legend-row"><div class="legend-dot" style="background:var(--c8)"></div> Busan</div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ═══ ENCART BUDGET ═══ -->
+<div class="budget-overlay" id="budgetOverlay">
+  <div class="budget-modal" id="budgetModal">
+    <button class="budget-modal-close" id="budgetClose">✕</button>
+    <div id="budgetModalBody"></div>
+  </div>
+</div>
+
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script>
+// ═══ DONNÉES ═══
+const stops = [
+  {
+    id: 1, name: "Séoul", korean: "서울", color: "#1E3A5F",
+    dates: "9 – 12 novembre · 3 nuits",
+    lat: 37.5665, lng: 126.9780,
+    desc: "Capitale vibrante où tradition et modernité s'entremêlent. En novembre, le feuillage doré des parcs Bukhansan et Namsan offre un spectacle inoubliable.",
+    budget: { heberg: "~135 €", repas: "~75 €", activites: "~40 €", total: "~250 €" },
+    activites: [
+      { icon:"🏯", name:"Palais Gyeongbokgung", desc:"Principale résidence royale de la Corée de Joseon. La cérémonie de relève de la garde en costume traditionnel se tient à 10h et 14h. Feuillage exceptionnel dans les jardins en novembre.", tag:"paid", price:"~3 €" },
+      { icon:"🌿", name:"Parc Namsan & Tour N Seoul", desc:"Le poumon vert de Séoul surplombe la ville à 262 m. Le téléphérique monte jusqu'à la tour emblématique offrant un panorama à 360° sur les 25 arrondissements et les montagnes environnantes.", tag:"paid", price:"~12 €" },
+      { icon:"🛍️", name:"Insadong & Bukchon Hanok Village", desc:"Insadong est la rue des galeries d'art et des thés traditionnels. Bukchon est un quartier de 900 maisons hanok du XIVe siècle, entièrement préservé — l'un des plus photographiés de Corée.", tag:"free", price:"Gratuit" },
+      { icon:"🌊", name:"Han River au coucher du soleil", desc:"Les parcs de la rivière Han sont le lieu de vie des Séoulites. Louer un vélo (3€) et longer les berges jusqu'au coucher du soleil est l'une des meilleures expériences de la capitale.", tag:"free", price:"~3 € (vélo)" },
+    ]
+  },
+  {
+    id: 2, name: "Suwon", korean: "수원", color: "#B84A22",
+    dates: "12 – 13 novembre · 1 nuit",
+    lat: 37.2636, lng: 127.0286,
+    desc: "À 30 min de Séoul, la forteresse Hwaseong (UNESCO) se pare de teintes dorées en automne. Les remparts offrent une vue imprenable sur la ville et les collines.",
+    budget: { heberg: "~45 €", repas: "~25 €", activites: "~10 €", total: "~80 €" },
+    activites: [
+      { icon:"🏯", name:"Forteresse Hwaseong", desc:"Chef-d'œuvre de l'architecture militaire coréenne (1796), classé UNESCO. Les 5,7 km de remparts sont ponctués de 8 portes royales, tours de guet et bastions. En novembre, les arbres alentour se parent de rouge et or.", tag:"paid", price:"~4 €" },
+      { icon:"🌅", name:"Coucher de soleil depuis Seojangdae", desc:"Le pavillon de commandement ouest offre le panorama le plus saisissant sur la plaine de l'ouest au coucher du soleil. Un lieu calme et souvent ignoré des touristes.", tag:"free", price:"Inclus forteresse" },
+      { icon:"🎭", name:"Son et lumière nocturne", desc:"En saison (oct.–nov.), les remparts de Hwaseong accueillent une projection mapping spectaculaire qui retrace l'histoire de la forteresse. Un show à ne pas manquer si vous êtes là un soir de week-end.", tag:"must", price:"~5 €" },
+    ]
+  },
+  {
+    id: 3, name: "Daejeon", korean: "대전", color: "#2D6B3A",
+    dates: "13 – 14 novembre · 1 nuit",
+    lat: 36.3504, lng: 127.3845,
+    desc: "Carrefour de la Corée et porte vers le Jeollanam-do. Le parc Gyeryongsan vire au rouge et or en novembre — l'un des plus beaux feuillages du pays.",
+    budget: { heberg: "~50 €", repas: "~30 €", activites: "~15 €", total: "~95 €" },
+    activites: [
+      { icon:"🌿", name:"Parc national Gyeryongsan", desc:"Massif montagneux à 30 min de Daejeon, réputé pour son feuillage automnal spectaculaire. Le sentier principal jusqu'au pic Sambulbong (825 m) offre des vues dégagées sur la forêt embrasée. Compter 3h de randonnée.", tag:"free", price:"Gratuit" },
+      { icon:"🔬", name:"Expo Science Park (Daedeok)", desc:"Parc scientifique construit sur le site de l'Expo Mondiale 1993. Idéal pour une demi-journée avec de nombreux espaces interactifs sur l'espace, l'énergie et les technologies du futur.", tag:"paid", price:"~8 €" },
+      { icon:"🏛️", name:"Musée national de Daejeon", desc:"Collections permanentes d'artefacts historiques de la région Chungcheong. La salle des arts bouddhistes et les poteries Joseon sont particulièrement remarquables. Entrée gratuite.", tag:"free", price:"Gratuit" },
+    ]
+  },
+  {
+    id: 4, name: "Jeonju", korean: "전주", color: "#7A4F2A",
+    dates: "14 – 16 novembre · 2 nuits",
+    lat: 35.8242, lng: 127.1480,
+    desc: "Capitale gastronomique et culturelle de Corée, à l'entrée du Jeollanam-do. Le village Hanok de Jeonju est magique à l'automne, avec ses tuiles grises entre les érables rouges.",
+    budget: { heberg: "~100 €", repas: "~60 €", activites: "~25 €", total: "~185 €" },
+    activites: [
+      { icon:"🏘️", name:"Village Hanok de Jeonju", desc:"Le plus grand ensemble de maisons traditionnelles hanok de Corée : 900 maisons datant de la période Joseon, nichées au pied de la montagne Omokdae. En novembre, les érables rouges et gingkos jaunes encadrent les toits incurvés.", tag:"free", price:"Gratuit" },
+      { icon:"🎋", name:"Location de hanbok", desc:"Revêtir le costume traditionnel coréen pour se promener dans le village hanok est une expérience incontournable à Jeonju. De nombreuses boutiques proposent des locations incluant coiffure et accessoires.", tag:"paid", price:"~10 €" },
+      { icon:"🏛️", name:"Musée National de Jeonju", desc:"L'une des plus belles collections de céladons coréens au monde, ainsi que d'importantes œuvres de la période Baekje. Le jardin extérieur est particulièrement beau en automne.", tag:"free", price:"Gratuit" },
+      { icon:"🌊", name:"Rivière Jeonju & lanternes", desc:"Le long de la rivière Jeonju, la promenade nocturne avec les lanternes flottantes offre une atmosphère féerique et intimiste, loin de l'agitation du village hanok.", tag:"free", price:"Gratuit" },
+    ]
+  },
+  {
+    id: 5, name: "Gwangju", korean: "광주", color: "#8B3A6A",
+    dates: "16 – 17 novembre · 1 nuit",
+    lat: 35.1595, lng: 126.8526,
+    desc: "Capitale culturelle du Jeollanam-do, ville d'art et de mémoire. La cuisine de Gwangju est réputée comme la meilleure de Corée.",
+    budget: { heberg: "~50 €", repas: "~35 €", activites: "~15 €", total: "~100 €" },
+    activites: [
+      { icon:"🌿", name:"Parc national Mudeungsan", desc:"Le massif tutélaire de Gwangju explose de couleurs en novembre. Le sentier vers le plateau Seoseokdae (1050 m) traverse des forêts de chênes et d'érables, avec des vues imprenables sur la vallée. Accès en bus depuis le centre.", tag:"free", price:"Gratuit" },
+      { icon:"🏛️", name:"May 18th National Cemetery", desc:"Site de mémoire dédié au soulèvement démocratique de mai 1980, réprimé dans le sang. Un lieu sobre et poignant qui explique pourquoi Gwangju est le symbole de la démocratie coréenne.", tag:"free", price:"Gratuit" },
+      { icon:"🎨", name:"Asian Culture Complex (ACC)", desc:"Immense centre culturel de 160 000 m² entièrement souterrain, inauguré en 2015. Musée, cinémathèque, théâtre et galeries d'art contemporain, le tout gratuitement ou pour une modique entrée.", tag:"paid", price:"~5 €" },
+      { icon:"🖼️", name:"Gwangju Biennale Foundation", desc:"La plus ancienne biennale d'art contemporain d'Asie (depuis 1995) a son siège permanent à Gwangju. Même hors biennale, les expositions et archives sont accessibles et souvent surprenantes.", tag:"paid", price:"~3 €" },
+    ]
+  },
+  {
+    id: 6, name: "Mokpo", korean: "목포", color: "#4A7FA5",
+    dates: "17 – 18 novembre · 1 nuit",
+    lat: 34.8118, lng: 126.3922,
+    desc: "Ville portuaire au bout de la péninsule, porte des îles du Dadohae. En novembre, la lumière sur les îlots et la mer du Sud crée une atmosphère d'une beauté mélancolique.",
+    budget: { heberg: "~48 €", repas: "~30 €", activites: "~25 €", total: "~103 €" },
+    activites: [
+      { icon:"⛵", name:"Ferry vers les îles Dadohae", desc:"L'archipel de 1 000 îles au large de Mokpo est l'un des plus beaux de Corée. Des ferries partent régulièrement vers les îles Heuksan, Hongdo (île Rouge) ou Bigeum. Une journée de navigation dans ce dédale d'îlots est inoubliable.", tag:"paid", price:"~20 €" },
+      { icon:"🏯", name:"Parc Yudalsan", desc:"Les deux sommets du mont Yudalsan (228 m) offrent la meilleure vue sur le port de Mokpo et l'archipel Dadohae. En novembre, la lumière rasante du coucher de soleil est particulièrement spectaculaire depuis les falaises.", tag:"free", price:"Gratuit" },
+      { icon:"🏛️", name:"Musée maritime national", desc:"L'un des seuls musées maritimes de Corée, abritant des trésors sous-marins récupérés dans la mer du Sud : poteries Song, épaves médiévales et lingots d'étain. Une collection étonnamment riche.", tag:"paid", price:"~3 €" },
+      { icon:"🚢", name:"Promenade du port au coucher du soleil", desc:"Le front de mer de Mokpo, bordé de chalutiers colorés et de restaurants de poulpe, est le cadre parfait pour terminer une journée. La lumière dorée de novembre sur les îlots crée des tableaux saisissants.", tag:"free", price:"Gratuit" },
+    ]
+  },
+  {
+    id: 7, name: "Yeosu", korean: "여수", color: "#3D6B8A",
+    dates: "18 – 20 novembre · 2 nuits",
+    lat: 34.7604, lng: 127.6622,
+    desc: "Joyau côtier du Jeollanam-do, Yeosu s'étend sur une presqu'île face à un archipel magnifique. En novembre, la mer scintille et les forêts de camélias bordent les falaises.",
+    budget: { heberg: "~120 €", repas: "~60 €", activites: "~35 €", total: "~215 €" },
+    activites: [
+      { icon:"🛕", name:"Temple Hyangiram", desc:"Fondé en 663 apr. J.-C., ce temple bouddhiste est perché sur les falaises de l'île Dolsan, face à la mer. Le chemin de rochers qui mène à l'entrée, à travers les camélias sauvages, est l'un des plus beaux de Corée.", tag:"paid", price:"~2 €" },
+      { icon:"🚡", name:"Téléphérique maritime", desc:"L'une des rares cabines de téléphérique qui survole la mer en Corée. La traversée de 1,5 km au-dessus de la baie de Yeosu offre une vue à couper le souffle sur les îles, le pont Dolsan et la ville.", tag:"paid", price:"~10 €" },
+      { icon:"⛵", name:"Croisière archipel de Yeosu", desc:"Des excursions en bateau partent quotidiennement vers l'île Odongdo (célèbre pour ses camélias) et les îles plus éloignées de Geomundo. En novembre, peu de touristes, les îlots sont pour vous seul.", tag:"paid", price:"~15 €" },
+      { icon:"🌉", name:"Pont Dolsan illuminé", desc:"Le pont Dolsan, reliant Yeosu au centre, est illuminé chaque soir en novembre de LED multicolores. La promenade depuis le quai jusqu'au pont au crépuscule, face aux îles silhouettées, est un moment de grâce.", tag:"free", price:"Gratuit" },
+    ]
+  },
+  {
+    id: 8, name: "Busan", korean: "부산", color: "#1F5C7A",
+    dates: "20 – 23 novembre · 3 nuits",
+    lat: 35.1796, lng: 129.0756,
+    desc: "Deuxième ville de Corée, terminus de la route de l'ouest. Busan est un kaléidoscope de plages, temples perchés, marchés colorés et cuisine incomparable.",
+    budget: { heberg: "~180 €", repas: "~80 €", activites: "~30 €", total: "~290 €" },
+    activites: [
+      { icon:"🛕", name:"Temple Haedong Yonggungsa", desc:"L'un des rares temples bouddhistes construits directement sur les rochers en bord de mer, au nord de Busan. Les vagues s'écrasent sur les falaises en contrebas pendant que l'encens parfume l'air. Arriver tôt le matin pour éviter la foule.", tag:"free", price:"Gratuit" },
+      { icon:"🎨", name:"Village Gamcheon", desc:"L'un des quartiers les plus photogéniques de Corée. D'anciens réfugiés de la guerre de Corée ont transformé ce village en galerie d'art à ciel ouvert. Les ruelles colorées et les escaliers muraux s'étagent à flanc de colline.", tag:"free", price:"Gratuit" },
+      { icon:"🏖️", name:"Haeundae & Gwangalli Beach", desc:"Haeundae est la plage mythique de Corée. En novembre, elle est quasi déserte mais étonnamment belle sous la lumière automnale. Gwangalli, plus petite, offre la vue iconique sur le pont Gwangan illuminé la nuit.", tag:"free", price:"Gratuit" },
+      { icon:"🚡", name:"Songdo Sky Walk", desc:"Cette passerelle vitrée de 365 m surplombe la mer de l'Est depuis les falaises de la baie de Songdo. Entièrement gratuite, elle offre des vues vertigineuses et une brise marine revivifiante.", tag:"free", price:"Gratuit" },
+    ]
+  }
+];
+
+// ═══ COULEURS PAR INDEX ═══
+const stopColors = ["#1E3A5F","#B84A22","#2D6B3A","#7A4F2A","#8B3A6A","#4A7FA5","#3D6B8A","#1F5C7A"];
+
+// ═══ MAP ═══
+const map = L.map('map', {
+  center: [35.9, 127.8],
+  zoom: 7,
+  zoomControl: true,
+  scrollWheelZoom: true
+});
+
+L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', {
+  attribution: '© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors © <a href="https://carto.com/attributions">CARTO</a>',
+  subdomains: 'abcd',
+  maxZoom: 19
+}).addTo(map);
+
+// Tracé route
+const routeCoords = stops.map(s => [s.lat, s.lng]);
+L.polyline(routeCoords, {
+  color: '#C4562A',
+  weight: 2.5,
+  opacity: 0.55,
+  dashArray: '8, 6'
+}).addTo(map);
+
+// ═══ BUILD UI ═══
+const tabsEl   = document.getElementById('cityTabs');
+const panelEl  = document.getElementById('activitiesPanel');
+let activeIdx  = 0;
+let mapMarkers = [];
+
+function getTagHTML(tag, price) {
+  if (tag === 'free') return `<span class="activity-tag tag-free">✓ ${price}</span>`;
+  if (tag === 'must') return `<span class="activity-tag tag-must">⭐ Incontournable · ${price}</span>`;
+  return `<span class="activity-tag tag-paid">💳 ${price}</span>`;
+}
+
+stops.forEach((stop, i) => {
+  // ─ Tab ─
+  const tab = document.createElement('button');
+  tab.className = 'city-tab' + (i === 0 ? ' active' : '');
+  tab.style.color = stop.color;
+  tab.style.borderBottomColor = i === 0 ? stop.color : 'transparent';
+  tab.innerHTML = `<span class="tab-num" style="background:${stop.color}"><span>${stop.id}</span></span>${stop.name}`;
+  tab.addEventListener('click', () => selectStop(i));
+  tabsEl.appendChild(tab);
+
+  // ─ Panel ─
+  const acts = stop.activites.map(a => `
+    <div class="activity-card">
+      <div class="activity-icon">${a.icon}</div>
+      <div class="activity-body">
+        <div class="activity-name">${a.name}</div>
+        <div class="activity-sub">${a.desc}</div>
+        ${getTagHTML(a.tag, a.price)}
+      </div>
+    </div>`).join('');
+
+  const panel = document.createElement('div');
+  panel.className = 'city-panel' + (i === 0 ? ' active' : '');
+  panel.id = `panel-${i}`;
+  panel.innerHTML = `
+    <div class="city-header" style="background:${stop.color}" data-korean="${stop.korean}">
+      <div class="city-badge">Étape ${stop.id} · 🍂 Automne</div>
+      <div class="city-name">${stop.name}</div>
+      <div class="city-dates">📅 ${stop.dates}</div>
+    </div>
+    <div class="city-desc">${stop.desc}</div>
+    <div class="activities-list">${acts}</div>
+    <div class="budget-bar">
+      <div class="budget-bar-title">💰 Budget étape — 1 personne</div>
+      <div class="budget-items">
+        <div class="budget-item"><span class="budget-item-label">Hébergement</span><span class="budget-item-value">${stop.budget.heberg}</span></div>
+        <div class="budget-item"><span class="budget-item-label">Restauration</span><span class="budget-item-value">${stop.budget.repas}</span></div>
+        <div class="budget-item"><span class="budget-item-label">Activités</span><span class="budget-item-value">${stop.budget.activites}</span></div>
+        <div class="budget-item"><span class="budget-item-label">Total étape</span><span class="budget-item-value budget-total">${stop.budget.total}</span></div>
+      </div>
+    </div>`;
+  panelEl.appendChild(panel);
+
+  // ─ Map marker ─
+  const color = stop.color;
+  const icon = L.divIcon({
+    html: `<div class="map-pin" id="pin-${i}">
+             <div class="map-pin-body" style="background:${color}">
+               <span class="map-pin-number">${stop.id}</span>
+             </div>
+           </div>`,
+    iconSize: [36, 44],
+    iconAnchor: [18, 44],
+    popupAnchor: [0, -46],
+    className: ''
+  });
+
+  const marker = L.marker([stop.lat, stop.lng], { icon }).addTo(map);
+  marker.on('click', () => selectStop(i));
+  mapMarkers.push(marker);
+});
+
+// ─ Encart "Budget du voyage" (modale dédiée, hors slider) ─
+document.getElementById('budgetModalBody').innerHTML = `
+  <div class="budget-global-header" data-korean="여행">
+    <div class="city-badge">Estimations · 1 personne</div>
+    <div class="city-name">Budget global du voyage</div>
+    <div class="city-dates">📅 14 jours · 9 – 23 novembre 2026</div>
+  </div>
+  <div class="budget-global-desc">
+    Estimations indicatives pour préparer le budget global du voyage, en complément des budgets détaillés par étape (hébergement, repas, activités sur place). Les tarifs réels varient selon la date de réservation, la disponibilité et la saisonnalité — à vérifier idéalement 2 à 4 mois avant le départ.
+  </div>
+
+  <div class="budget-global-section">
+    <div class="budget-section-title">✈️ Billets d'avion aller-retour</div>
+    <div class="budget-card">
+      <div class="budget-card-row">
+        <div>
+          <div class="budget-card-label">Vol avec escale (Asiana, Korean Air, Air China…)</div>
+          <div class="budget-card-sub">Paris (CDG) ↔ Séoul (ICN), classe économique, 1 escale</div>
+        </div>
+        <div class="budget-card-amount">~550 – 750 €</div>
+      </div>
+      <div class="budget-card-row">
+        <div>
+          <div class="budget-card-label">Vol direct (Air France, Korean Air)</div>
+          <div class="budget-card-sub">Paris (CDG) ↔ Séoul (ICN), classe économique, sans escale</div>
+        </div>
+        <div class="budget-card-amount">~750 – 1 000 €</div>
+      </div>
+      <div class="budget-card-row">
+        <div>
+          <div class="budget-card-label">Vol retour depuis Busan (optionnel)</div>
+          <div class="budget-card-sub">Si retour Busan → Séoul puis vol international depuis Séoul, ou vol intérieur Busan → Séoul (~1h, ~40 €) avant le vol international</div>
+        </div>
+        <div class="budget-card-amount">+ ~40 – 60 €</div>
+      </div>
+    </div>
+    <div class="budget-links">
+      <a class="budget-link" href="https://www.skyscanner.fr/transport/vols/par/seol/" target="_blank" rel="noopener">🔍 Skyscanner</a>
+      <a class="budget-link" href="https://www.koreanair.com" target="_blank" rel="noopener">Korean Air</a>
+      <a class="budget-link" href="https://flyasiana.com" target="_blank" rel="noopener">Asiana Airlines</a>
+      <a class="budget-link" href="https://www.airfrance.fr" target="_blank" rel="noopener">Air France</a>
+    </div>
+  </div>
+
+  <div class="budget-global-section">
+    <div class="budget-section-title">🏨 Hébergements (total des 8 étapes)</div>
+    <div class="budget-card">
+      <div class="budget-card-row">
+        <div>
+          <div class="budget-card-label">Total hébergements — 13 nuits</div>
+          <div class="budget-card-sub">Cumul des estimations par étape : guesthouses, hanok et hôtels 2-3★, chambre double partagée (prix par personne)</div>
+        </div>
+        <div class="budget-card-amount">~728 €</div>
+      </div>
+      <div class="budget-card-row">
+        <div>
+          <div class="budget-card-label">Moyenne par nuit</div>
+          <div class="budget-card-sub">Variable selon la ville : ~45 € (Suwon, Daejeon, Mokpo) à ~60 € (Séoul, Yeosu, Busan)</div>
+        </div>
+        <div class="budget-card-amount">~56 €/nuit</div>
+      </div>
+    </div>
+
+    <div class="budget-card">
+      <div class="budget-card-row">
+        <div>
+          <div class="budget-card-label">🛏️ Séoul — 3 nuits</div>
+          <div class="budget-card-sub">Myeongdong Hotel Skypark / Ibis Styles Myeongdong (hôtel 3★, double) · ou guesthouse Bukchon Hanok (chambre traditionnelle)</div>
+        </div>
+        <div class="budget-card-amount">~45 €/nuit</div>
+      </div>
+      <div class="budget-card-row">
+        <div>
+          <div class="budget-card-label">🛏️ Suwon — 1 nuit</div>
+          <div class="budget-card-sub">Suwon Hotel Castle / Ramada Encore Suwon (hôtel 2-3★ proche forteresse Hwaseong)</div>
+        </div>
+        <div class="budget-card-amount">~45 €/nuit</div>
+      </div>
+      <div class="budget-card-row">
+        <div>
+          <div class="budget-card-label">🛏️ Daejeon — 1 nuit</div>
+          <div class="budget-card-sub">Hotel Interciti Daejeon / Daejeon Tourist Hotel (hôtel d'affaires central, proche gare KTX)</div>
+        </div>
+        <div class="budget-card-amount">~50 €/nuit</div>
+      </div>
+      <div class="budget-card-row">
+        <div>
+          <div class="budget-card-label">🛏️ Jeonju — 2 nuits</div>
+          <div class="budget-card-sub">Hanok stay dans le Village Hanok (ex. Gung Hanok Stay, Jeonju Mokjeon) — chambre traditionnelle avec chauffage au sol ondol</div>
+        </div>
+        <div class="budget-card-amount">~50 €/nuit</div>
+      </div>
+      <div class="budget-card-row">
+        <div>
+          <div class="budget-card-label">🛏️ Gwangju — 1 nuit</div>
+          <div class="budget-card-sub">Hotel The Style Gwangju / Ramada Gwangju (hôtel central proche ACC)</div>
+        </div>
+        <div class="budget-card-amount">~50 €/nuit</div>
+      </div>
+      <div class="budget-card-row">
+        <div>
+          <div class="budget-card-label">🛏️ Mokpo — 1 nuit</div>
+          <div class="budget-card-sub">Mokpo Marine Hotel / Hotel Oceanvil (vue sur le port, proche Yudalsan)</div>
+        </div>
+        <div class="budget-card-amount">~48 €/nuit</div>
+      </div>
+      <div class="budget-card-row">
+        <div>
+          <div class="budget-card-label">🛏️ Yeosu — 2 nuits</div>
+          <div class="budget-card-sub">Yeosu Ocean Resort Hotel / Hotel Ramada Yeosu (vue baie, proche téléphérique et pont Dolsan)</div>
+        </div>
+        <div class="budget-card-amount">~60 €/nuit</div>
+      </div>
+      <div class="budget-card-row">
+        <div>
+          <div class="budget-card-label">🛏️ Busan — 3 nuits</div>
+          <div class="budget-card-sub">Hotel Skypark Dongseong / Toyoko Inn Busan Seomyeon (hôtel 3★ central) ou guesthouse vue mer à Haeundae</div>
+        </div>
+        <div class="budget-card-amount">~60 €/nuit</div>
+      </div>
+      <div class="budget-card-row">
+        <div>
+          <div class="budget-card-label">📌 Où réserver</div>
+          <div class="budget-card-sub">Agoda et Booking.com couvrent bien la Corée pour les hôtels ; pour les hanok stays, Airbnb ou les sites locaux (Yeogi Eottae) offrent souvent plus de choix</div>
+        </div>
+      </div>
+    </div>
+    <div class="budget-links">
+      <a class="budget-link" href="https://www.booking.com/searchresults.html?ss=South+Korea" target="_blank" rel="noopener">🔍 Booking.com</a>
+      <a class="budget-link" href="https://www.agoda.com/fr-fr/country/south-korea.html" target="_blank" rel="noopener">Agoda</a>
+      <a class="budget-link" href="https://www.airbnb.fr/s/South-Korea/homes" target="_blank" rel="noopener">Airbnb</a>
+    </div>
+  </div>
+
+  <div class="budget-global-section">
+    <div class="budget-section-title">🚗 Location de véhicule</div>
+    <div class="budget-card">
+      <div class="budget-card-row">
+        <div>
+          <div class="budget-card-label">Location 14 jours — véhicule compact</div>
+          <div class="budget-card-sub">Type Hyundai Avante / Kia K3, boîte automatique, assurance complémentaire incluse</div>
+        </div>
+        <div class="budget-card-amount">~480 – 650 €</div>
+      </div>
+      <div class="budget-card-row">
+        <div>
+          <div class="budget-card-label">Carburant</div>
+          <div class="budget-card-sub">Trajet Séoul → Busan via Suwon, Daejeon, Jeonju, Gwangju, Mokpo, Yeosu (~750 km au total)</div>
+        </div>
+        <div class="budget-card-amount">~110 – 150 €</div>
+      </div>
+      <div class="budget-card-row">
+        <div>
+          <div class="budget-card-label">Péages d'autoroute</div>
+          <div class="budget-card-sub">Réseau d'autoroutes (Expressway) entre les différentes étapes</div>
+        </div>
+        <div class="budget-card-amount">~35 – 50 €</div>
+      </div>
+      <div class="budget-card-row">
+        <div>
+          <div class="budget-card-label">À répartir entre les passagers</div>
+          <div class="budget-card-sub">Le total ci-dessus (~625 – 850 €) correspond au véhicule complet — à diviser selon le nombre de voyageurs</div>
+        </div>
+        <div class="budget-card-amount">÷ nb. pers.</div>
+      </div>
+    </div>
+
+    <div class="budget-card">
+      <div class="budget-card-row">
+        <div>
+          <div class="budget-card-label">⚡ Alternative véhicule électrique</div>
+          <div class="budget-card-sub">Type Hyundai Ioniq 5 / Kona Electric / Kia EV6 — souvent au même tarif journalier qu'un thermique, parfois moins cher chez SOCAR (tarifs incitatifs)</div>
+        </div>
+        <div class="budget-card-amount">~450 – 620 €</div>
+      </div>
+      <div class="budget-card-row">
+        <div>
+          <div class="budget-card-label">"Carburant" (recharge)</div>
+          <div class="budget-card-sub">Pour ~750 km : recharge rapide sur autoroute (~0,30-0,35 €/kWh) — bien moins cher que l'essence</div>
+        </div>
+        <div class="budget-card-amount">~35 – 55 €</div>
+      </div>
+      <div class="budget-card-row">
+        <div>
+          <div class="budget-card-label">Péages</div>
+          <div class="budget-card-sub">Identiques au véhicule thermique — aucune réduction spécifique aux VE sur les autoroutes coréennes</div>
+        </div>
+        <div class="budget-card-amount">~35 – 50 €</div>
+      </div>
+      <div class="budget-card-row">
+        <div>
+          <div class="budget-card-label">⚠️ Points de vigilance</div>
+          <div class="budget-card-sub">Bornes rapides (50-200 kW) bien présentes sur les aires d'autoroute et en ville, mais plus rares dans les zones rurales (Mokpo, Yeosu) ; prévoir 30-45 min de recharge tous les 250-300 km et anticiper via une appli (ex. EV Infra). Autonomie réelle hivernale réduite de ~15-20 % par grand froid.</div>
+        </div>
+      </div>
+      <div class="budget-card-row">
+        <div>
+          <div class="budget-card-label">💰 Bilan</div>
+          <div class="budget-card-sub">Total VE (~520 – 725 €) légèrement inférieur au thermique (~625 – 850 €), grâce surtout à la recharge moins chère — au prix d'une logistique de trajet un peu plus contraignante</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="budget-grand-total">
+    <div>
+      <div class="budget-grand-total-label">Total estimé · 1 personne</div>
+      <div class="budget-grand-total-sub">Vol A/R + hébergements + part de véhicule (pour 2 pers.) + repas/activités (~660 €)</div>
+    </div>
+    <div class="budget-grand-total-amount">~1 750 – 2 200 €</div>
+  </div>
+
+  <div class="budget-note">
+    💡 Astuce : réserver les billets d'avion 3 à 4 mois à l'avance et comparer Korean Air / Asiana / Air France pour le meilleur tarif sur la période de mi-novembre. Pour la voiture, les comparateurs type RentalCars ou les loueurs locaux (Lotte Rent-a-Car, SOCAR) permettent souvent d'obtenir de meilleurs prix qu'en réservant sur place.
+  </div>`;
+
+const budgetFab = document.getElementById('budgetFab');
+const budgetOverlay = document.getElementById('budgetOverlay');
+const budgetClose = document.getElementById('budgetClose');
+
+budgetFab.addEventListener('click', () => budgetOverlay.classList.add('active'));
+budgetClose.addEventListener('click', () => budgetOverlay.classList.remove('active'));
+budgetOverlay.addEventListener('click', (e) => {
+  if (e.target === budgetOverlay) budgetOverlay.classList.remove('active');
+});
+
+// ═══ SELECT STOP ═══
+function selectStop(idx) {
+  // Update tabs
+  document.querySelectorAll('.city-tab').forEach((t, i) => {
+    t.classList.toggle('active', i === idx);
+    t.style.borderBottomColor = i === idx ? stops[i].color : 'transparent';
+  });
+
+  // Update panels
+  document.querySelectorAll('.city-panel').forEach((p, i) => {
+    p.classList.toggle('active', i === idx);
+  });
+
+  // Pan map
+  map.flyTo([stops[idx].lat, stops[idx].lng], 10, { duration: 0.8 });
+
+  // Scroll tab into view
+  const tabs = document.querySelectorAll('.city-tab');
+  tabs[idx].scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
+
+  // Scroll panel to top
+  document.getElementById('activitiesPanel').scrollTop = 0;
+
+  activeIdx = idx;
+}
+</script>
+
+<script>
+  // ─── Enregistrement du Service Worker (PWA) ───
+  if ('serviceWorker' in navigator) {
+    window.addEventListener('load', () => {
+      navigator.serviceWorker.register('./service-worker.js')
+        .then((reg) => console.log('[PWA] Service worker enregistré :', reg.scope))
+        .catch((err) => console.warn('[PWA] Échec de l\'enregistrement :', err));
+    });
+  }
+</script>
+</body>
+</html>
