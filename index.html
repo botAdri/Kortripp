@@ -791,29 +791,19 @@ const stopsAutomne = [
     id: 1, name: "Séoul", korean: "서울", color: "#1E3A5F",
     dates: "3 nuits",
     lat: 37.5665, lng: 126.9780,
-    desc: "Capitale vibrante où tradition et modernité s'entremêlent. En novembre, le feuillage doré des parcs Bukhansan et Namsan offre un spectacle inoubliable.",
-    budget: { heberg: "~135 €", repas: "~75 €", activites: "~40 €", total: "~250 €" },
+    desc: "Capitale vibrante où tradition et modernité s'entremêlent. En novembre, le feuillage doré des parcs Bukhansan et Namsan offre un spectacle inoubliable. Dernier jour : excursion à Suwon (30 min) avant de reprendre la route vers le sud — pas besoin d'une nuit sur place.",
+    budget: { heberg: "~135 €", repas: "~75 €", activites: "~55 €", total: "~265 €" },
     activites: [
       { icon:"🏯", name:"Palais Gyeongbokgung", desc:"Principale résidence royale de la Corée de Joseon. La cérémonie de relève de la garde en costume traditionnel se tient à 10h et 14h. Feuillage exceptionnel dans les jardins en novembre.", tag:"paid", price:"~3 €" },
       { icon:"🌿", name:"Parc Namsan & Tour N Seoul", desc:"Le poumon vert de Séoul surplombe la ville à 262 m. Le téléphérique monte jusqu'à la tour emblématique offrant un panorama à 360° sur les 25 arrondissements et les montagnes environnantes.", tag:"paid", price:"~12 €" },
       { icon:"🛍️", name:"Insadong & Bukchon Hanok Village", desc:"Insadong est la rue des galeries d'art et des thés traditionnels. Bukchon est un quartier de 900 maisons hanok du XIVe siècle, entièrement préservé — l'un des plus photographiés de Corée.", tag:"free", price:"Gratuit" },
       { icon:"🌊", name:"Han River au coucher du soleil", desc:"Les parcs de la rivière Han sont le lieu de vie des Séoulites. Louer un vélo (3€) et longer les berges jusqu'au coucher du soleil est l'une des meilleures expériences de la capitale.", tag:"free", price:"~3 € (vélo)" },
+      { icon:"🏯", name:"Excursion à Suwon — Forteresse Hwaseong", desc:"À 30 min de train ou de route de Séoul, chef-d'œuvre de l'architecture militaire coréenne (1796), classé UNESCO, dont les 5,7 km de remparts se parent de rouge et or en novembre. À faire en aller-retour dans la journée, idéalement le dernier jour à Séoul, avant de reprendre la route vers Daejeon le lendemain matin.", tag:"paid", price:"~4 €" },
+      { icon:"🎭", name:"Suwon — Son et lumière nocturne (oct.–nov.)", desc:"En saison, les remparts de Hwaseong accueillent une projection mapping spectaculaire qui retrace l'histoire de la forteresse. Un bon complément à l'excursion si l'on prolonge jusqu'en fin d'après-midi, avec un retour à Séoul en soirée par le dernier train.", tag:"must", price:"~5 €" },
     ]
   },
   {
-    id: 2, name: "Suwon", korean: "수원", color: "#B84A22",
-    dates: "1 nuit",
-    lat: 37.2636, lng: 127.0286,
-    desc: "À 30 min de Séoul, la forteresse Hwaseong (UNESCO) se pare de teintes dorées en automne. Les remparts offrent une vue imprenable sur la ville et les collines.",
-    budget: { heberg: "~45 €", repas: "~25 €", activites: "~10 €", total: "~80 €" },
-    activites: [
-      { icon:"🏯", name:"Forteresse Hwaseong", desc:"Chef-d'œuvre de l'architecture militaire coréenne (1796), classé UNESCO. Les 5,7 km de remparts sont ponctués de 8 portes royales, tours de guet et bastions. En novembre, les arbres alentour se parent de rouge et or.", tag:"paid", price:"~4 €" },
-      { icon:"🌅", name:"Coucher de soleil depuis Seojangdae", desc:"Le pavillon de commandement ouest offre le panorama le plus saisissant sur la plaine de l'ouest au coucher du soleil. Un lieu calme et souvent ignoré des touristes.", tag:"free", price:"Inclus forteresse" },
-      { icon:"🎭", name:"Son et lumière nocturne", desc:"En saison (oct.–nov.), les remparts de Hwaseong accueillent une projection mapping spectaculaire qui retrace l'histoire de la forteresse. Un show à ne pas manquer si vous êtes là un soir de week-end.", tag:"must", price:"~5 €" },
-    ]
-  },
-  {
-    id: 3, name: "Daejeon", korean: "대전", color: "#2D6B3A",
+    id: 2, name: "Daejeon", korean: "대전", color: "#2D6B3A",
     dates: "1 nuit",
     lat: 36.3504, lng: 127.3845,
     desc: "Carrefour de la Corée et porte vers le Jeollanam-do. Le parc Gyeryongsan vire au rouge et or en novembre — l'un des plus beaux feuillages du pays.",
@@ -825,20 +815,21 @@ const stopsAutomne = [
     ]
   },
   {
-    id: 4, name: "Jeonju", korean: "전주", color: "#7A4F2A",
+    id: 3, name: "Jeonju", korean: "전주", color: "#7A4F2A",
     dates: "2 nuits",
     lat: 35.8242, lng: 127.1480,
-    desc: "Capitale gastronomique et culturelle de Corée, à l'entrée du Jeollanam-do. Le village Hanok de Jeonju est magique à l'automne, avec ses tuiles grises entre les érables rouges.",
-    budget: { heberg: "~100 €", repas: "~60 €", activites: "~25 €", total: "~185 €" },
+    desc: "Capitale gastronomique et culturelle de Corée, à l'entrée du Jeollanam-do. Le village Hanok de Jeonju est magique à l'automne, avec ses tuiles grises entre les érables rouges — et sert de camp de base pour Naejangsan, l'un des tout meilleurs feuillages du pays.",
+    budget: { heberg: "~100 €", repas: "~60 €", activites: "~37 €", total: "~197 €" },
     activites: [
       { icon:"🏘️", name:"Village Hanok de Jeonju", desc:"Le plus grand ensemble de maisons traditionnelles hanok de Corée : 900 maisons datant de la période Joseon, nichées au pied de la montagne Omokdae. En novembre, les érables rouges et gingkos jaunes encadrent les toits incurvés.", tag:"free", price:"Gratuit" },
       { icon:"🎋", name:"Location de hanbok", desc:"Revêtir le costume traditionnel coréen pour se promener dans le village hanok est une expérience incontournable à Jeonju. De nombreuses boutiques proposent des locations incluant coiffure et accessoires.", tag:"paid", price:"~10 €" },
       { icon:"🏛️", name:"Musée National de Jeonju", desc:"L'une des plus belles collections de céladons coréens au monde, ainsi que d'importantes œuvres de la période Baekje. Le jardin extérieur est particulièrement beau en automne.", tag:"free", price:"Gratuit" },
       { icon:"🌊", name:"Rivière Jeonju & lanternes", desc:"Le long de la rivière Jeonju, la promenade nocturne avec les lanternes flottantes offre une atmosphère féerique et intimiste, loin de l'agitation du village hanok.", tag:"free", price:"Gratuit" },
+      { icon:"🍁", name:"Excursion à Naejangsan", desc:"À environ 40 min de route de Jeonju, ce parc national est unanimement considéré comme l'un des trois plus beaux feuillages d'automne de Corée (avec Seoraksan et Odaesan). Le sentier vers le sommet Naejangsan (763 m) traverse une forêt d'érables et de gingkos incandescents ; le téléphérique permet aussi une vue d'ensemble sans effort. Pic de couleurs généralement entre le 25 octobre et le 5 novembre — à caler avec les dates du séjour.", tag:"paid", price:"~5 €" },
     ]
   },
   {
-    id: 5, name: "Gwangju", korean: "광주", color: "#8B3A6A",
+    id: 4, name: "Gwangju", korean: "광주", color: "#8B3A6A",
     dates: "1 nuit",
     lat: 35.1595, lng: 126.8526,
     desc: "Capitale culturelle du Jeollanam-do, ville d'art et de mémoire. La cuisine de Gwangju est réputée comme la meilleure de Corée.",
@@ -851,7 +842,7 @@ const stopsAutomne = [
     ]
   },
   {
-    id: 6, name: "Mokpo", korean: "목포", color: "#4A7FA5",
+    id: 5, name: "Mokpo", korean: "목포", color: "#4A7FA5",
     dates: "1 nuit",
     lat: 34.8118, lng: 126.3922,
     desc: "Ville portuaire au bout de la péninsule, porte des îles du Dadohae. En novembre, la lumière sur les îlots et la mer du Sud crée une atmosphère d'une beauté mélancolique.",
@@ -861,6 +852,18 @@ const stopsAutomne = [
       { icon:"🏯", name:"Parc Yudalsan", desc:"Les deux sommets du mont Yudalsan (228 m) offrent la meilleure vue sur le port de Mokpo et l'archipel Dadohae. En novembre, la lumière rasante du coucher de soleil est particulièrement spectaculaire depuis les falaises.", tag:"free", price:"Gratuit" },
       { icon:"🏛️", name:"Musée maritime national", desc:"L'un des seuls musées maritimes de Corée, abritant des trésors sous-marins récupérés dans la mer du Sud : poteries Song, épaves médiévales et lingots d'étain. Une collection étonnamment riche.", tag:"paid", price:"~3 €" },
       { icon:"🚢", name:"Promenade du port au coucher du soleil", desc:"Le front de mer de Mokpo, bordé de chalutiers colorés et de restaurants de poulpe, est le cadre parfait pour terminer une journée. La lumière dorée de novembre sur les îlots crée des tableaux saisissants.", tag:"free", price:"Gratuit" },
+    ]
+  },
+  {
+    id: 6, name: "Suncheon", korean: "순천", color: "#C9913A",
+    dates: "1 nuit",
+    lat: 34.9506, lng: 127.4872,
+    desc: "Ville jardin du Jeollanam-do, entre Mokpo et Yeosu. La réserve naturelle de Suncheonman se couvre en novembre de roseaux dorés à perte de vue — l'un des plus beaux spectacles d'automne du pays, et souvent méconnu des visiteurs.",
+    budget: { heberg: "~52 €", repas: "~30 €", activites: "~14 €", total: "~96 €" },
+    activites: [
+      { icon:"🌾", name:"Réserve naturelle de Suncheonman", desc:"Cette immense zone humide protégée est réputée pour ses roseaux dorés en automne, ondulant à perte de vue le long des pontons en bois. Meilleure lumière en fin d'après-midi ; la tour d'observation de Yongsan offre la vue d'ensemble la plus spectaculaire sur les méandres de la baie.", tag:"paid", price:"~7 €" },
+      { icon:"🏘️", name:"Village folklorique de Nagan", desc:"Enceinte fortifiée du XIVe siècle encore habitée, où les toits de chaume se marient aux couleurs d'automne des arbres alentour. L'un des villages les plus authentiques de Corée, loin des foules.", tag:"paid", price:"~3 €" },
+      { icon:"🌷", name:"Jardin national de Suncheon", desc:"Ce parc de 111 hectares, aménagé pour l'Expo florale de 2013, se pare de teintes rouille en automne, avec ses massifs floraux tardifs et son lac aux nénuphars fanés. Une promenade plus tranquille en complément de la baie.", tag:"paid", price:"~4 €" },
     ]
   },
   {
@@ -892,36 +895,73 @@ const stopsAutomne = [
 ];
 
 // ═══ DONNÉES — ITINÉRAIRE DE PRINTEMPS ═══
-// Départ Séoul, arrivée Busan, Daejeon en étape intermédiaire (imposés).
-// Route Sud-Est, pensée pour la floraison des cerisiers (fin mars – mi-avril).
+// Départ Busan (sud), arrivée Séoul (nord), Daejeon en étape intermédiaire (imposés).
+// Route Sud-Est → Nord, pensée pour SUIVRE la vague de floraison des cerisiers, qui remonte
+// du sud vers le nord fin mars – mi-avril (Busan/Jinhae fleurissent ~1 à 2 semaines avant Séoul).
 const stopsPrintemps = [
   {
-    id: 1, name: "Séoul", korean: "서울", color: "#1E3A5F",
+    id: 1, name: "Busan", korean: "부산", color: "#1F5C7A",
     dates: "3 nuits",
-    lat: 37.5665, lng: 126.9780,
-    desc: "Capitale vibrante où tradition et modernité s'entremêlent. Au printemps, les cerisiers en fleurs transforment Yeouido et les douves du palais en un spectacle rose et blanc.",
-    budget: { heberg: "~165 €", repas: "~75 €", activites: "~40 €", total: "~280 €" },
+    lat: 35.1796, lng: 129.0756,
+    desc: "Deuxième ville de Corée, point de départ au sud pour profiter des toutes premières floraisons. Au printemps, la route des cerisiers de Dalmaji-gil et les lanternes du festival de Bouddha illuminent la ville portuaire.",
+    budget: { heberg: "~210 €", repas: "~80 €", activites: "~30 €", total: "~320 €" },
     activites: [
-      { icon:"🌸", name:"Festival des cerisiers de Yeouido", desc:"L'avenue Yunjungno, bordée de 1 600 cerisiers, est LE rendez-vous printanier de Séoul. Le festival Yeouido Spring Flower s'y tient chaque année début avril, avec stands, concerts et une marée de pétales roses.", tag:"free", price:"Gratuit" },
-      { icon:"🏯", name:"Palais Gyeongbokgung en fleurs", desc:"Les jardins du palais royal se parent de cerisiers et d'azalées au printemps. La cérémonie de relève de la garde en costume traditionnel a toujours lieu à 10h et 14h.", tag:"paid", price:"~3 €" },
-      { icon:"🛍️", name:"Insadong & Bukchon Hanok Village", desc:"Insadong est la rue des galeries d'art et des thés traditionnels. Bukchon, ses 900 maisons hanok du XIVe siècle, est particulièrement photogénique avec les magnolias en fleurs entre les toits.", tag:"free", price:"Gratuit" },
-      { icon:"🌊", name:"Pique-nique au bord de la Han River", desc:"Dès les beaux jours, les parcs de la rivière Han se couvrent de tentes de pique-nique. Location de vélo (3€) et fraises coréennes achetées en supérette font partie du rituel printanier local.", tag:"free", price:"~3 € (vélo)" },
+      { icon:"🌸", name:"Route des cerisiers de Dalmaji-gil", desc:"Cette route sinueuse surplombant la mer, près de Haeundae, est bordée de cerisiers centenaires. Café en terrasse et vue sur l'océan en font l'une des plus belles balades printanières de Busan.", tag:"free", price:"Gratuit" },
+      { icon:"🏮", name:"Festival des lanternes de Samgwangsa", desc:"À l'approche de l'anniversaire de Bouddha (avril-mai selon le calendrier lunaire), le temple Samgwangsa se pare de dizaines de milliers de lanternes colorées. Un spectacle féerique, surtout à la tombée de la nuit.", tag:"free", price:"Gratuit" },
+      { icon:"🎨", name:"Village Gamcheon", desc:"L'un des quartiers les plus photogéniques de Corée. D'anciens réfugiés de la guerre de Corée ont transformé ce village en galerie d'art à ciel ouvert, avec glycines et azalées accrochées aux escaliers muraux.", tag:"free", price:"Gratuit" },
+      { icon:"🏖️", name:"Taejongdae & falaises printanières", desc:"Ce parc naturel à la pointe de l'île Yeongdo offre des falaises spectaculaires sur la mer, encadrées de camélias et d'azalées au printemps. Le petit train touristique permet d'en faire le tour sans effort.", tag:"free", price:"~2 € (train)" },
     ]
   },
   {
-    id: 2, name: "Daejeon", korean: "대전", color: "#B84A22",
+    id: 2, name: "Jinhae", korean: "진해", color: "#3D6B8A",
     dates: "1 nuit",
-    lat: 36.3504, lng: 127.3845,
-    desc: "Étape intermédiaire incontournable entre Séoul et le Sud-Est. Au printemps, l'arboretum Hanbat et les rives du Gap Cheon se couvrent de cerisiers et de forsythias jaunes.",
+    lat: 35.1500, lng: 128.7000,
+    desc: "Capitale incontestée des cerisiers en Corée. Chaque année début avril, le festival Jinhae Gunhangje attire des millions de visiteurs autour du ruisseau Yeojwacheon et de la voie ferrée historique — l'une des toutes premières villes du pays à fleurir.",
+    budget: { heberg: "~90 €", repas: "~30 €", activites: "~10 €", total: "~130 €" },
+    activites: [
+      { icon:"🌸", name:"Ruisseau Yeojwacheon", desc:"Le tunnel de cerisiers qui surplombe ce petit canal urbain est devenu l'image la plus partagée du printemps coréen. Mieux vaut y aller tôt le matin ou en soirée pour éviter la foule du festival Gunhangje.", tag:"free", price:"Gratuit" },
+      { icon:"🚉", name:"Gare de Gyeonghwa", desc:"Cette gare désaffectée, entièrement encerclée de cerisiers centenaires, est un lieu de pèlerinage photographique. D'anciens wagons y sont exposés au milieu des pétales.", tag:"free", price:"Gratuit" },
+      { icon:"⚓", name:"Base navale & Jehwangsan Park", desc:"Jinhae abrite la principale base de la marine coréenne, ouverte au public lors du festival avec démonstrations de navires. Le parc Jehwangsan, sur les hauteurs, offre une vue d'ensemble sur la ville rose et la baie.", tag:"free", price:"Gratuit" },
+    ]
+  },
+  {
+    id: 3, name: "Tongyeong", korean: "통영", color: "#4A7FA5",
+    dates: "1 nuit",
+    lat: 34.8544, lng: 128.4331,
+    desc: "Surnommée la « Naples de la Corée », cette ville portuaire multiplie les criques et îlots. Le printemps y apporte une lumière douce, des azalées sur les collines et les premiers fruits de mer de saison.",
+    budget: { heberg: "~60 €", repas: "~35 €", activites: "~20 €", total: "~115 €" },
+    activites: [
+      { icon:"🚡", name:"Téléphérique du mont Mireuksan", desc:"Le plus long téléphérique de Corée continentale grimpe à 400 m d'altitude. Par temps clair, la vue embrasse l'archipel de Hallyeohaesang, ourlé d'azalées roses au printemps.", tag:"paid", price:"~12 €" },
+      { icon:"🎨", name:"Village de fresques Dongpirang", desc:"Ce quartier de pêcheurs à flanc de colline a été transformé en galerie de street art colorée. Les ruelles en escalier, bordées de pruniers en fleurs, offrent des vues sur le port à chaque tournant.", tag:"free", price:"Gratuit" },
+      { icon:"🦑", name:"Marché aux poissons de Jungang", desc:"Le marché couvert le plus animé de la côte sud propose les meilleurs fruits de mer de printemps : anguilles, huîtres et le fameux poisson-globe (bok-uh). Idéal pour un déjeuner mémorable.", tag:"paid", price:"~15 €" },
+    ]
+  },
+  {
+    id: 4, name: "Suncheon", korean: "순천", color: "#8B3A6A",
+    dates: "1 nuit",
+    lat: 34.9506, lng: 127.4872,
+    desc: "Ville jardin du Jeollanam-do, célèbre pour sa baie protégée et son gigantesque jardin national. Le festival des fleurs de printemps y transforme des hectares entiers en mosaïque de tulipes et de pensées.",
     budget: { heberg: "~55 €", repas: "~30 €", activites: "~15 €", total: "~100 €" },
     activites: [
-      { icon:"🌳", name:"Arboretum Hanbat", desc:"Immense parc botanique en plein cœur de la ville, avec serres tropicales et jardins thématiques. Au printemps, les massifs de tulipes et les cerisiers offrent une parenthèse verdoyante entre deux trajets.", tag:"free", price:"Gratuit" },
-      { icon:"♨️", name:"Sources chaudes de Yuseong", desc:"Le quartier thermal de Yuseong exploite des sources chaudes naturelles depuis des siècles. Plusieurs spas publics et hôtels proposent bains extérieurs et jjimjilbang pour se délasser après la route.", tag:"paid", price:"~10 €" },
-      { icon:"🌷", name:"Rives du Gap Cheon", desc:"La rivière qui traverse Daejeon est bordée de pistes cyclables et de massifs fleuris au printemps. Une courte promenade au coucher du soleil offre un aperçu paisible de la vie locale.", tag:"free", price:"Gratuit" },
+      { icon:"🌷", name:"Jardin national de Suncheon", desc:"Ce parc de 111 hectares, aménagé pour l'Expo florale de 2013, se réinvente chaque printemps avec des massifs de tulipes multicolores et un lac aux nénuphars. Le jardin français et le jardin coréen s'y répondent avec élégance.", tag:"paid", price:"~7 €" },
+      { icon:"🌾", name:"Réserve naturelle de Suncheonman", desc:"Cette immense zone humide protégée, réputée pour ses roseaux dorés en automne, s'éveille au printemps avec le retour des oiseaux migrateurs. Une promenade sur les pontons en bois offre une vue apaisante sur les marais.", tag:"paid", price:"~4 €" },
+      { icon:"🏘️", name:"Village folklorique de Nagan", desc:"Enceinte fortifiée du XIVe siècle encore habitée, où les maisons de chaume traditionnelles sont entourées de vergers en fleurs au printemps. L'un des villages les plus authentiques de Corée, loin des foules.", tag:"paid", price:"~3 €" },
     ]
   },
   {
-    id: 3, name: "Jeonju", korean: "전주", color: "#2D6B3A",
+    id: 5, name: "Damyang", korean: "담양", color: "#7A4F2A",
+    dates: "1 nuit",
+    lat: 35.3212, lng: 126.9882,
+    desc: "Petite ville rurale du Jeollanam-do, réputée pour ses forêts de bambous et ses paysages verdoyants. Au printemps, la nouvelle pousse de bambou et les métaséquoias en jeunes feuilles créent une palette de verts éclatants.",
+    budget: { heberg: "~50 €", repas: "~28 €", activites: "~12 €", total: "~90 €" },
+    activites: [
+      { icon:"🎍", name:"Forêt de bambous Juknokwon", desc:"Cette forêt de bambous de 16 hectares, l'une des plus belles de Corée, offre une fraîcheur bienvenue et une lumière filtrée particulièrement photogénique au printemps. Plusieurs sentiers serpentent entre les bambous géants.", tag:"paid", price:"~3 €" },
+      { icon:"🌳", name:"Route des métaséquoias", desc:"Cette allée bordée de métaséquoias centenaires, aux jeunes feuilles vert tendre au printemps, est l'un des tunnels végétaux les plus photographiés de Corée. Fermée à la circulation, elle se parcourt à pied ou à vélo.", tag:"free", price:"Gratuit" },
+      { icon:"🚣", name:"Radeau de bambou sur la Gwanbangnimok", desc:"Descente tranquille en radeau de bambou traditionnel (daetongbae) le long de la rivière, entre rizières naissantes et roselières printanières. Une activité paisible et authentique, loin des foules.", tag:"paid", price:"~9 €" },
+    ]
+  },
+  {
+    id: 6, name: "Jeonju", korean: "전주", color: "#2D6B3A",
     dates: "2 nuits",
     lat: 35.8242, lng: 127.1480,
     desc: "Capitale gastronomique et culturelle de Corée. Au printemps, le village Hanok se pare de magnolias et de cerisiers entre les toits de tuiles grises, pour une atmosphère particulièrement romantique.",
@@ -934,64 +974,28 @@ const stopsPrintemps = [
     ]
   },
   {
-    id: 4, name: "Damyang", korean: "담양", color: "#7A4F2A",
+    id: 7, name: "Daejeon", korean: "대전", color: "#B84A22",
     dates: "1 nuit",
-    lat: 35.3212, lng: 126.9882,
-    desc: "Petite ville rurale du Jeollanam-do, réputée pour ses forêts de bambous et ses paysages verdoyants. Au printemps, la nouvelle pousse de bambou et les métaséquoias en jeunes feuilles créent une palette de verts éclatants.",
-    budget: { heberg: "~50 €", repas: "~28 €", activites: "~12 €", total: "~90 €" },
-    activites: [
-      { icon:"🎍", name:"Forêt de bambous Juknokwon", desc:"Cette forêt de bambous de 16 hectares, l'une des plus belles de Corée, offre une fraîcheur bienvenue et une lumière filtrée particulièrement photogénique au printemps. Plusieurs sentiers serpentent entre les bambous géants.", tag:"paid", price:"~3 €" },
-      { icon:"🌳", name:"Route des métaséquoias", desc:"Cette allée bordée de métaséquoias centenaires, aux jeunes feuilles vert tendre au printemps, est l'un des tunnels végétaux les plus photographiés de Corée. Fermée à la circulation, elle se parcourt à pied ou à vélo.", tag:"free", price:"Gratuit" },
-      { icon:"🚣", name:"Radeau de bambou sur la Gwanbangnimok", desc:"Descente tranquille en radeau de bambou traditionnel (daetongbae) le long de la rivière, entre rizières naissantes et roselières printanières. Une activité paisible et authentique, loin des foules.", tag:"paid", price:"~9 €" },
-    ]
-  },
-  {
-    id: 5, name: "Suncheon", korean: "순천", color: "#8B3A6A",
-    dates: "1 nuit",
-    lat: 34.9506, lng: 127.4872,
-    desc: "Ville jardin du Jeollanam-do, célèbre pour sa baie protégée et son gigantesque jardin national. Le festival des fleurs de printemps y transforme des hectares entiers en mosaïque de tulipes et de pensées.",
+    lat: 36.3504, lng: 127.3845,
+    desc: "Étape intermédiaire incontournable entre le Sud-Est et Séoul. Au printemps, l'arboretum Hanbat et les rives du Gap Cheon se couvrent de cerisiers et de forsythias jaunes.",
     budget: { heberg: "~55 €", repas: "~30 €", activites: "~15 €", total: "~100 €" },
     activites: [
-      { icon:"🌷", name:"Jardin national de Suncheon", desc:"Ce parc de 111 hectares, aménagé pour l'Expo florale de 2013, se réinvente chaque printemps avec des massifs de tulipes multicolores et un lac aux nénuphars. Le jardin français et le jardin coréen s'y répondent avec élégance.", tag:"paid", price:"~7 €" },
-      { icon:"🌾", name:"Réserve naturelle de Suncheonman", desc:"Cette immense zone humide protégée, réputée pour ses roseaux dorés en automne, s'éveille au printemps avec le retour des oiseaux migrateurs. Une promenade sur les pontons en bois offre une vue apaisante sur les marais.", tag:"paid", price:"~4 €" },
-      { icon:"🏘️", name:"Village folklorique de Nagan", desc:"Enceinte fortifiée du XIVe siècle encore habitée, où les maisons de chaume traditionnelles sont entourées de vergers en fleurs au printemps. L'un des villages les plus authentiques de Corée, loin des foules.", tag:"paid", price:"~3 €" },
+      { icon:"🌳", name:"Arboretum Hanbat", desc:"Immense parc botanique en plein cœur de la ville, avec serres tropicales et jardins thématiques. Au printemps, les massifs de tulipes et les cerisiers offrent une parenthèse verdoyante entre deux trajets.", tag:"free", price:"Gratuit" },
+      { icon:"♨️", name:"Sources chaudes de Yuseong", desc:"Le quartier thermal de Yuseong exploite des sources chaudes naturelles depuis des siècles. Plusieurs spas publics et hôtels proposent bains extérieurs et jjimjilbang pour se délasser après la route.", tag:"paid", price:"~10 €" },
+      { icon:"🌷", name:"Rives du Gap Cheon", desc:"La rivière qui traverse Daejeon est bordée de pistes cyclables et de massifs fleuris au printemps. Une courte promenade au coucher du soleil offre un aperçu paisible de la vie locale.", tag:"free", price:"Gratuit" },
     ]
   },
   {
-    id: 6, name: "Tongyeong", korean: "통영", color: "#4A7FA5",
-    dates: "1 nuit",
-    lat: 34.8544, lng: 128.4331,
-    desc: "Surnommée la « Naples de la Corée », cette ville portuaire multiplie les criques et îlots. Le printemps y apporte une lumière douce, des azalées sur les collines et les premiers fruits de mer de saison.",
-    budget: { heberg: "~60 €", repas: "~35 €", activites: "~20 €", total: "~115 €" },
-    activites: [
-      { icon:"🚡", name:"Téléphérique du mont Mireuksan", desc:"Le plus long téléphérique de Corée continentale grimpe à 400 m d'altitude. Par temps clair, la vue embrasse l'archipel de Hallyeohaesang, ourlé d'azalées roses au printemps.", tag:"paid", price:"~12 €" },
-      { icon:"🎨", name:"Village de fresques Dongpirang", desc:"Ce quartier de pêcheurs à flanc de colline a été transformé en galerie de street art colorée. Les ruelles en escalier, bordées de pruniers en fleurs, offrent des vues sur le port à chaque tournant.", tag:"free", price:"Gratuit" },
-      { icon:"🦑", name:"Marché aux poissons de Jungang", desc:"Le marché couvert le plus animé de la côte sud propose les meilleurs fruits de mer de printemps : anguilles, huîtres et le fameux poisson-globe (bok-uh). Idéal pour un déjeuner mémorable.", tag:"paid", price:"~15 €" },
-    ]
-  },
-  {
-    id: 7, name: "Jinhae", korean: "진해", color: "#3D6B8A",
-    dates: "1 nuit",
-    lat: 35.1500, lng: 128.7000,
-    desc: "Capitale incontestée des cerisiers en Corée. Chaque année début avril, le festival Jinhae Gunhangje attire des millions de visiteurs autour du ruisseau Yeojwacheon et de la voie ferrée historique.",
-    budget: { heberg: "~90 €", repas: "~30 €", activites: "~10 €", total: "~130 €" },
-    activites: [
-      { icon:"🌸", name:"Ruisseau Yeojwacheon", desc:"Le tunnel de cerisiers qui surplombe ce petit canal urbain est devenu l'image la plus partagée du printemps coréen. Mieux vaut y aller tôt le matin ou en soirée pour éviter la foule du festival Gunhangje.", tag:"free", price:"Gratuit" },
-      { icon:"🚉", name:"Gare de Gyeonghwa", desc:"Cette gare désaffectée, entièrement encerclée de cerisiers centenaires, est un lieu de pèlerinage photographique. D'anciens wagons y sont exposés au milieu des pétales.", tag:"free", price:"Gratuit" },
-      { icon:"⚓", name:"Base navale & Jehwangsan Park", desc:"Jinhae abrite la principale base de la marine coréenne, ouverte au public lors du festival avec démonstrations de navires. Le parc Jehwangsan, sur les hauteurs, offre une vue d'ensemble sur la ville rose et la baie.", tag:"free", price:"Gratuit" },
-    ]
-  },
-  {
-    id: 8, name: "Busan", korean: "부산", color: "#1F5C7A",
+    id: 8, name: "Séoul", korean: "서울", color: "#1E3A5F",
     dates: "3 nuits",
-    lat: 35.1796, lng: 129.0756,
-    desc: "Deuxième ville de Corée, terminus de la route du Sud-Est. Au printemps, la route des cerisiers de Dalmaji-gil et les lanternes du festival de Bouddha illuminent la ville portuaire.",
-    budget: { heberg: "~210 €", repas: "~80 €", activites: "~30 €", total: "~320 €" },
+    lat: 37.5665, lng: 126.9780,
+    desc: "Capitale vibrante où tradition et modernité s'entremêlent. Dernière étape du séjour : les cerisiers y fleurissent 1 à 2 semaines après le sud, ce qui les met pile en pleine floraison à la toute fin du voyage — Yeouido et les douves du palais offrent alors un spectacle rose et blanc.",
+    budget: { heberg: "~165 €", repas: "~75 €", activites: "~40 €", total: "~280 €" },
     activites: [
-      { icon:"🌸", name:"Route des cerisiers de Dalmaji-gil", desc:"Cette route sinueuse surplombant la mer, près de Haeundae, est bordée de cerisiers centenaires. Café en terrasse et vue sur l'océan en font l'une des plus belles balades printanières de Busan.", tag:"free", price:"Gratuit" },
-      { icon:"🏮", name:"Festival des lanternes de Samgwangsa", desc:"À l'approche de l'anniversaire de Bouddha (avril-mai selon le calendrier lunaire), le temple Samgwangsa se pare de dizaines de milliers de lanternes colorées. Un spectacle féerique, surtout à la tombée de la nuit.", tag:"free", price:"Gratuit" },
-      { icon:"🎨", name:"Village Gamcheon", desc:"L'un des quartiers les plus photogéniques de Corée. D'anciens réfugiés de la guerre de Corée ont transformé ce village en galerie d'art à ciel ouvert, avec glycines et azalées accrochées aux escaliers muraux.", tag:"free", price:"Gratuit" },
-      { icon:"🏖️", name:"Taejongdae & falaises printanières", desc:"Ce parc naturel à la pointe de l'île Yeongdo offre des falaises spectaculaires sur la mer, encadrées de camélias et d'azalées au printemps. Le petit train touristique permet d'en faire le tour sans effort.", tag:"free", price:"~2 € (train)" },
+      { icon:"🌸", name:"Festival des cerisiers de Yeouido", desc:"L'avenue Yunjungno, bordée de 1 600 cerisiers, est LE rendez-vous printanier de Séoul. Le festival Yeouido Spring Flower s'y tient chaque année début avril, avec stands, concerts et une marée de pétales roses.", tag:"free", price:"Gratuit" },
+      { icon:"🏯", name:"Palais Gyeongbokgung en fleurs", desc:"Les jardins du palais royal se parent de cerisiers et d'azalées au printemps. La cérémonie de relève de la garde en costume traditionnel a toujours lieu à 10h et 14h.", tag:"paid", price:"~3 €" },
+      { icon:"🛍️", name:"Insadong & Bukchon Hanok Village", desc:"Insadong est la rue des galeries d'art et des thés traditionnels. Bukchon, ses 900 maisons hanok du XIVe siècle, est particulièrement photogénique avec les magnolias en fleurs entre les toits.", tag:"free", price:"Gratuit" },
+      { icon:"🌊", name:"Pique-nique au bord de la Han River", desc:"Dès les beaux jours, les parcs de la rivière Han se couvrent de tentes de pique-nique. Location de vélo (3€) et fraises coréennes achetées en supérette font partie du rituel printanier local.", tag:"free", price:"~3 € (vélo)" },
     ]
   }
 ];
@@ -1196,37 +1200,39 @@ const BUDGET_DATA = {
       layover: "~550 – 750 €",
       direct: "~750 – 1 000 €",
       busanReturn: "+ ~40 – 60 €",
+      busanReturnLabel: "Vol retour depuis Busan (optionnel)",
+      busanReturnSub: "Si retour Busan → Séoul puis vol international depuis Séoul, ou vol intérieur Busan → Séoul (~1h, ~40 €) avant le vol international",
     },
-    accomTotal: "~728 €",
+    accomTotal: "~733 €",
     accomAvg: "~52 €/nuit",
-    accomAvgSub: "Variable selon la ville : ~45 € (Suwon, Daejeon, Mokpo) à ~60 € (Séoul, Yeosu, Busan)",
+    accomAvgSub: "Variable selon la ville : ~45 € (Daejeon, Mokpo) à ~60 € (Séoul, Yeosu, Busan)",
     accomCities: [
-      { name:"Séoul", nights:"3 nuits", sub:"Myeongdong Hotel Skypark / Ibis Styles Myeongdong (hôtel 3★, double) · ou guesthouse Bukchon Hanok (chambre traditionnelle)", price:"~45 €/nuit" },
-      { name:"Suwon", nights:"1 nuit", sub:"Suwon Hotel Castle / Ramada Encore Suwon (hôtel 2-3★ proche forteresse Hwaseong)", price:"~45 €/nuit" },
+      { name:"Séoul", nights:"3 nuits", sub:"Myeongdong Hotel Skypark / Ibis Styles Myeongdong (hôtel 3★, double) · ou guesthouse Bukchon Hanok (chambre traditionnelle) — Suwon se visite en excursion à la journée depuis Séoul, sans nuit supplémentaire", price:"~45 €/nuit" },
       { name:"Daejeon", nights:"1 nuit", sub:"Hotel Interciti Daejeon / Daejeon Tourist Hotel (hôtel d'affaires central, proche gare KTX)", price:"~50 €/nuit" },
-      { name:"Jeonju", nights:"2 nuits", sub:"Hanok stay dans le Village Hanok (ex. Gung Hanok Stay, Jeonju Mokjeon) — chambre traditionnelle avec chauffage au sol ondol", price:"~50 €/nuit" },
+      { name:"Jeonju", nights:"2 nuits", sub:"Hanok stay dans le Village Hanok (ex. Gung Hanok Stay, Jeonju Mokjeon) — chambre traditionnelle avec chauffage au sol ondol, camp de base pour l'excursion à Naejangsan", price:"~50 €/nuit" },
       { name:"Gwangju", nights:"1 nuit", sub:"Hotel The Style Gwangju / Ramada Gwangju (hôtel central proche ACC)", price:"~50 €/nuit" },
       { name:"Mokpo", nights:"1 nuit", sub:"Mokpo Marine Hotel / Hotel Oceanvil (vue sur le port, proche Yudalsan)", price:"~48 €/nuit" },
+      { name:"Suncheon", nights:"1 nuit", sub:"Suncheon Bay Eco Hotel / Suncheon Tourist Hotel (proche de la réserve naturelle de Suncheonman)", price:"~50 €/nuit" },
       { name:"Yeosu", nights:"2 nuits", sub:"Yeosu Ocean Resort Hotel / Hotel Ramada Yeosu (vue baie, proche téléphérique et pont Dolsan)", price:"~60 €/nuit" },
       { name:"Busan", nights:"3 nuits", sub:"Hotel Skypark Dongseong / Toyoko Inn Busan Seomyeon (hôtel 3★ central) ou guesthouse vue mer à Haeundae", price:"~60 €/nuit" },
     ],
     reserveNote: "Agoda et Booking.com couvrent bien la Corée pour les hôtels ; pour les hanok stays, Airbnb ou les sites locaux (Yeogi Eottae) offrent souvent plus de choix",
     car: {
       rental: "~480 – 650 €",
-      fuel: "~110 – 150 €",
-      fuelSub: "Trajet Séoul → Busan via Suwon, Daejeon, Jeonju, Gwangju, Mokpo, Yeosu (~750 km au total)",
+      fuel: "~115 – 155 €",
+      fuelSub: "Trajet Séoul (excursion Suwon incluse) → Busan via Daejeon, Jeonju (excursion Naejangsan), Gwangju, Mokpo, Suncheon, Yeosu (~780 km au total)",
       tolls: "~35 – 50 €",
-      totalForSplit: "625 – 850 €",
+      totalForSplit: "630 – 855 €",
     },
     ev: {
       rental: "~450 – 620 €",
       recharge: "~35 – 55 €",
       tolls: "~35 – 50 €",
-      bilan: "Total VE (~520 – 725 €) légèrement inférieur au thermique (~625 – 850 €), grâce surtout à la recharge moins chère — au prix d'une logistique de trajet un peu plus contraignante",
-      vigilance: "Bornes rapides (50-200 kW) bien présentes sur les aires d'autoroute et en ville, mais plus rares dans les zones rurales (Mokpo, Yeosu) ; prévoir 30-45 min de recharge tous les 250-300 km et anticiper via une appli (ex. EV Infra). Autonomie réelle hivernale réduite de ~15-20 % par grand froid.",
+      bilan: "Total VE (~520 – 725 €) légèrement inférieur au thermique (~630 – 855 €), grâce surtout à la recharge moins chère — au prix d'une logistique de trajet un peu plus contraignante",
+      vigilance: "Bornes rapides (50-200 kW) bien présentes sur les aires d'autoroute et en ville, mais plus rares dans les zones rurales (Mokpo, Suncheon) ; prévoir 30-45 min de recharge tous les 250-300 km et anticiper via une appli (ex. EV Infra). Autonomie réelle hivernale réduite de ~15-20 % par grand froid.",
     },
     grandTotal: "~2 180 – 2 500 €",
-    grandTotalSub: "Vol A/R (avec escale) + hébergements (728 €) + part de véhicule (pour 2 pers.) + repas/activités (590 €)",
+    grandTotalSub: "Vol A/R (avec escale) + hébergements (733 €) + part de véhicule (pour 2 pers.) + repas/activités (605 €)",
     tip: "💡 Astuce : réserver les billets d'avion 3 à 4 mois à l'avance et comparer Korean Air / Asiana / Air France pour le meilleur tarif sur la période de mi-novembre. Pour la voiture, les comparateurs type RentalCars ou les loueurs locaux (Lotte Rent-a-Car, SOCAR) permettent souvent d'obtenir de meilleurs prix qu'en réservant sur place.",
   },
   printemps: {
@@ -1235,26 +1241,28 @@ const BUDGET_DATA = {
     flights: {
       layover: "~650 – 900 €",
       direct: "~900 – 1 200 €",
-      busanReturn: "+ ~45 – 65 €",
+      busanReturn: "≈ tarif équivalent (vol « open-jaw »)",
+      busanReturnLabel: "Vol « open-jaw » : arrivée Busan / retour Séoul",
+      busanReturnSub: "Recommandé pour cet itinéraire (Busan → Séoul) : arrivée à Busan (Gimhae) ou Séoul-Incheon + train vers Busan, puis retour international depuis Séoul (Incheon) en fin de séjour — évite tout aller-retour inutile",
     },
     accomTotal: "~805 €",
     accomAvg: "~62 €/nuit",
     accomAvgSub: "Variable selon la ville : ~50 € (Damyang) à ~90 € (Jinhae, forte affluence pendant le festival des cerisiers)",
     accomCities: [
-      { name:"Séoul", nights:"3 nuits", sub:"Myeongdong Hotel Skypark / Ibis Styles Myeongdong (hôtel 3★, double) · ou guesthouse Bukchon Hanok (chambre traditionnelle)", price:"~55 €/nuit" },
-      { name:"Daejeon", nights:"1 nuit", sub:"Hotel Interciti Daejeon / Daejeon Tourist Hotel (hôtel d'affaires central, proche gare KTX)", price:"~55 €/nuit" },
-      { name:"Jeonju", nights:"2 nuits", sub:"Hanok stay dans le Village Hanok (ex. Gung Hanok Stay, Jeonju Mokjeon) — chambre traditionnelle avec chauffage au sol ondol, forte demande au printemps", price:"~60 €/nuit" },
-      { name:"Damyang", nights:"1 nuit", sub:"Damyang Bamboo Forest Pension / Soswaewon Hanok Stay (pension nichée près de la forêt de bambous)", price:"~50 €/nuit" },
-      { name:"Suncheon", nights:"1 nuit", sub:"Suncheon Bay Eco Hotel / Suncheon Tourist Hotel (proche du jardin national)", price:"~55 €/nuit" },
-      { name:"Tongyeong", nights:"1 nuit", sub:"Tongyeong Marina Resort / Hotel The Beach (vue sur le port et l'archipel)", price:"~60 €/nuit" },
-      { name:"Jinhae", nights:"1 nuit", sub:"Commodore Hotel Jinhae / Jinhae Tourist Hotel — ⚠️ réserver 3 à 4 mois à l'avance, complet dès janvier pendant le festival Gunhangje", price:"~90 €/nuit" },
       { name:"Busan", nights:"3 nuits", sub:"Hotel Skypark Dongseong / Toyoko Inn Busan Seomyeon (hôtel 3★ central) ou guesthouse vue mer à Haeundae", price:"~70 €/nuit" },
+      { name:"Jinhae", nights:"1 nuit", sub:"Commodore Hotel Jinhae / Jinhae Tourist Hotel — ⚠️ réserver 3 à 4 mois à l'avance, complet dès janvier pendant le festival Gunhangje", price:"~90 €/nuit" },
+      { name:"Tongyeong", nights:"1 nuit", sub:"Tongyeong Marina Resort / Hotel The Beach (vue sur le port et l'archipel)", price:"~60 €/nuit" },
+      { name:"Suncheon", nights:"1 nuit", sub:"Suncheon Bay Eco Hotel / Suncheon Tourist Hotel (proche du jardin national)", price:"~55 €/nuit" },
+      { name:"Damyang", nights:"1 nuit", sub:"Damyang Bamboo Forest Pension / Soswaewon Hanok Stay (pension nichée près de la forêt de bambous)", price:"~50 €/nuit" },
+      { name:"Jeonju", nights:"2 nuits", sub:"Hanok stay dans le Village Hanok (ex. Gung Hanok Stay, Jeonju Mokjeon) — chambre traditionnelle avec chauffage au sol ondol, forte demande au printemps", price:"~60 €/nuit" },
+      { name:"Daejeon", nights:"1 nuit", sub:"Hotel Interciti Daejeon / Daejeon Tourist Hotel (hôtel d'affaires central, proche gare KTX)", price:"~55 €/nuit" },
+      { name:"Séoul", nights:"3 nuits", sub:"Myeongdong Hotel Skypark / Ibis Styles Myeongdong (hôtel 3★, double) · ou guesthouse Bukchon Hanok (chambre traditionnelle)", price:"~55 €/nuit" },
     ],
     reserveNote: "Agoda et Booking.com couvrent bien la Corée pour les hôtels ; pour Jinhae en particulier, réserver dès que possible (festival Gunhangje début avril) — les hébergements affichent complet plusieurs mois à l'avance",
     car: {
       rental: "~550 – 720 €",
       fuel: "~115 – 155 €",
-      fuelSub: "Trajet Séoul → Busan via Daejeon, Jeonju, Damyang, Suncheon, Tongyeong, Jinhae (~780 km au total)",
+      fuelSub: "Trajet Busan → Séoul via Jinhae, Tongyeong, Suncheon, Damyang, Jeonju, Daejeon (~780 km au total)",
       tolls: "~35 – 50 €",
       totalForSplit: "700 – 925 €",
     },
@@ -1266,8 +1274,8 @@ const BUDGET_DATA = {
       vigilance: "Bornes rapides (50-200 kW) bien présentes sur les aires d'autoroute et en ville, y compris sur la côte sud ; prévoir 30-45 min de recharge tous les 250-300 km et anticiper via une appli (ex. EV Infra). Affluence accrue aux bornes pendant les week-ends de festival des cerisiers.",
     },
     grandTotal: "~2 330 – 2 700 €",
-    grandTotalSub: "Vol A/R (avec escale) + hébergements (805 €) + part de véhicule (pour 2 pers.) + repas/activités (525 €)",
-    tip: "💡 Astuce : la floraison des cerisiers étant une période très demandée, réserver vols et hébergements 4 à 5 mois à l'avance — en particulier à Jinhae. Comparer Korean Air / Asiana / Air France, et pour la voiture, les loueurs locaux (Lotte Rent-a-Car, SOCAR) tôt dans la saison pour éviter les ruptures de stock.",
+    grandTotalSub: "Vol « open-jaw » arrivée Busan / retour Séoul + hébergements (805 €) + part de véhicule (pour 2 pers.) + repas/activités (525 €)",
+    tip: "💡 Astuce : la floraison des cerisiers étant une période très demandée, réserver vols et hébergements 4 à 5 mois à l'avance — en particulier à Jinhae. Privilégier un vol « open-jaw » (arrivée à Busan/Gimhae, retour depuis Séoul/Incheon) pour suivre la vague de floraison sud→nord sans revenir sur ses pas ; comparer Korean Air / Asiana / Air France, et pour la voiture, les loueurs locaux (Lotte Rent-a-Car, SOCAR) tôt dans la saison pour éviter les ruptures de stock.",
   },
 };
 
@@ -1315,8 +1323,8 @@ function renderBudgetModal(season) {
       </div>
       <div class="budget-card-row">
         <div>
-          <div class="budget-card-label">Vol retour depuis Busan (optionnel)</div>
-          <div class="budget-card-sub">Si retour Busan → Séoul puis vol international depuis Séoul, ou vol intérieur Busan → Séoul (~1h, ~40 €) avant le vol international</div>
+          <div class="budget-card-label">${b.flights.busanReturnLabel}</div>
+          <div class="budget-card-sub">${b.flights.busanReturnSub}</div>
         </div>
         <div class="budget-card-amount">${b.flights.busanReturn}</div>
       </div>
