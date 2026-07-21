@@ -484,7 +484,7 @@ html, body {
   gap: 6px;
   flex-shrink: 0;
 }
-.price-input {
+.price-input, .flight-price-input {
   width: 56px;
   font-size: 12px;
   font-weight: 700;
@@ -493,7 +493,10 @@ html, body {
   border-radius: 6px;
   text-align: right;
 }
-.price-edit-btn {
+.flight-price-input {
+  width: 96px;
+}
+.price-edit-btn, .flight-price-edit-btn {
   background: none;
   border: none;
   cursor: pointer;
@@ -502,7 +505,7 @@ html, body {
   opacity: .55;
   line-height: 1;
 }
-.price-edit-btn:hover {
+.price-edit-btn:hover, .flight-price-edit-btn:hover {
   opacity: 1;
 }
 .budget-reset-btn {
@@ -1323,6 +1326,67 @@ const BUDGET_DATA = {
   },
 };
 
+function getFlightOverrides(season) {
+  try {
+    const raw = localStorage.getItem(`kortripp-flight-overrides-${season}`);
+    return raw ? JSON.parse(raw) : {};
+  } catch { return {}; }
+}
+
+function setFlightOverride(season, key, value) {
+  const overrides = getFlightOverrides(season);
+  overrides[key] = value;
+  localStorage.setItem(`kortripp-flight-overrides-${season}`, JSON.stringify(overrides));
+}
+
+function resetFlightOverrides(season) {
+  localStorage.removeItem(`kortripp-flight-overrides-${season}`);
+}
+
+function renderFlightRow(season, key, label, sub, defaultValue) {
+  const overrides = getFlightOverrides(season);
+  const value = overrides[key] !== undefined ? overrides[key] : defaultValue;
+  return `
+      <div class="budget-card-row">
+        <div>
+          <div class="budget-card-label">${label}</div>
+          <div class="budget-card-sub">${sub}</div>
+        </div>
+        <div class="budget-price-edit">
+          <span class="budget-card-amount flight-price-display" data-flight-key="${key}">${value}</span>
+          <input type="text" class="flight-price-input" data-flight-key="${key}" value="${value}" style="display:none;" />
+          <button class="flight-price-edit-btn" aria-label="Modifier le tarif" data-flight-key="${key}">✏️</button>
+        </div>
+      </div>`;
+}
+
+function handleFlightEditClick(e) {
+  const btn = e.target.closest('.flight-price-edit-btn');
+  if (!btn) return;
+  const row = btn.closest('.budget-card-row');
+  const display = row.querySelector('.flight-price-display');
+  const input = row.querySelector('.flight-price-input');
+  if (input.style.display === 'none') {
+    display.style.display = 'none';
+    input.style.display = 'inline-block';
+    input.focus();
+    input.select();
+  } else {
+    saveFlightEdit(btn.dataset.flightKey, row);
+  }
+}
+
+function saveFlightEdit(key, row) {
+  const display = row.querySelector('.flight-price-display');
+  const input = row.querySelector('.flight-price-input');
+  const value = input.value.trim() || display.textContent;
+  setFlightOverride(currentSeason, key, value);
+  display.textContent = value;
+  display.style.display = 'inline';
+  input.style.display = 'none';
+}
+
+
 function getPriceOverrides(season) {
   try {
     const raw = localStorage.getItem(`kortripp-price-overrides-${season}`);
@@ -1427,7 +1491,13 @@ document.getElementById('budgetModalBody').addEventListener('click', (e) => {
     renderBudgetModal(currentSeason);
     return;
   }
+  if (e.target.closest('#resetFlightsBtn')) {
+    resetFlightOverrides(currentSeason);
+    renderBudgetModal(currentSeason);
+    return;
+  }
   handlePriceEditClick(e);
+  handleFlightEditClick(e);
 });
 document.getElementById('budgetModalBody').addEventListener('keydown', (e) => {
   if (e.key === 'Enter' && e.target.classList.contains('price-input')) {
@@ -1435,6 +1505,11 @@ document.getElementById('budgetModalBody').addEventListener('keydown', (e) => {
     const row = e.target.closest('.budget-card-row');
     const city = e.target.dataset.city;
     savePriceEdit(city, row);
+  }
+  if (e.key === 'Enter' && e.target.classList.contains('flight-price-input')) {
+    e.preventDefault();
+    const row = e.target.closest('.budget-card-row');
+    saveFlightEdit(e.target.dataset.flightKey, row);
   }
 });
 
@@ -1455,31 +1530,14 @@ function renderBudgetModal(season) {
 
   <div class="budget-global-section">
     <div class="budget-section-title">✈️ Billets d'avion aller-retour</div>
+    <button class="budget-reset-btn" id="resetFlightsBtn">🔄 Réinitialiser les tarifs par défaut</button>
     <div class="budget-card">
-      <div class="budget-card-row">
-        <div>
-          <div class="budget-card-label">Vol avec escale (Asiana, Korean Air, Air China…)</div>
-          <div class="budget-card-sub">Paris (CDG) ↔ Séoul (ICN), classe économique, 1 escale</div>
-        </div>
-        <div class="budget-card-amount">${b.flights.layover}</div>
-      </div>
-      <div class="budget-card-row">
-        <div>
-          <div class="budget-card-label">Vol direct (Air France, Korean Air)</div>
-          <div class="budget-card-sub">Paris (CDG) ↔ Séoul (ICN), classe économique, sans escale</div>
-        </div>
-        <div class="budget-card-amount">${b.flights.direct}</div>
-      </div>
-      <div class="budget-card-row">
-        <div>
-          <div class="budget-card-label">${b.flights.busanReturnLabel}</div>
-          <div class="budget-card-sub">${b.flights.busanReturnSub}</div>
-        </div>
-        <div class="budget-card-amount">${b.flights.busanReturn}</div>
-      </div>
+      ${renderFlightRow(season, 'layover', 'Vol avec escale (Asiana, Korean Air, Air China…)', 'Paris (CDG) ↔ Séoul (ICN), classe économique, 1 escale', b.flights.layover)}
+      ${renderFlightRow(season, 'direct', 'Vol direct (Air France, Korean Air)', 'Paris (CDG) ↔ Séoul (ICN), classe économique, sans escale', b.flights.direct)}
+      ${renderFlightRow(season, 'busanReturn', b.flights.busanReturnLabel, b.flights.busanReturnSub, b.flights.busanReturn)}
     </div>
     <div class="budget-links">
-      <a class="budget-link" href="https://www.skyscanner.fr/transport/vols/pari/sela/?adultsv2=1&cabinclass=economy&childrenv2=&ref=home&rtn=0&preferdirects=false&outboundaltsenabled=false&inboundaltsenabled=false&oym=2611&selectedoday=01" target="_blank" rel="noopener">🔍 Skyscanner</a>
+      <a class="budget-link" href="https://www.skyscanner.fr/transport/vols/par/seol/" target="_blank" rel="noopener">🔍 Skyscanner</a>
       <a class="budget-link" href="https://www.koreanair.com" target="_blank" rel="noopener">Korean Air</a>
       <a class="budget-link" href="https://flyasiana.com" target="_blank" rel="noopener">Asiana Airlines</a>
       <a class="budget-link" href="https://www.airfrance.fr" target="_blank" rel="noopener">Air France</a>
