@@ -1278,8 +1278,9 @@ const BUDGET_DATA = {
       bilan: "Total VE (~520 – 725 €) légèrement inférieur au thermique (~630 – 855 €), grâce surtout à la recharge moins chère — au prix d'une logistique de trajet un peu plus contraignante",
       vigilance: "Bornes rapides (50-200 kW) bien présentes sur les aires d'autoroute et en ville, mais plus rares dans les zones rurales (Mokpo, Suncheon) ; prévoir 30-45 min de recharge tous les 250-300 km et anticiper via une appli (ex. EV Infra). Autonomie réelle hivernale réduite de ~15-20 % par grand froid.",
     },
+    repasActivitesTotal: 605,
     grandTotal: "~2 180 – 2 500 €",
-    grandTotalSub: "Vol A/R (avec escale) + hébergements (733 €) + part de véhicule (pour 2 pers.) + repas/activités (605 €)",
+    grandTotalSub: "Vol A/R (direct) + hébergements (733 €) + part de véhicule (pour 2 pers.) + repas/activités (605 €)",
     tip: "💡 Astuce : réserver les billets d'avion 3 à 4 mois à l'avance et comparer Korean Air / Asiana / Air France pour le meilleur tarif sur la période de mi-novembre. Pour la voiture, les comparateurs type RentalCars ou les loueurs locaux (Lotte Rent-a-Car, SOCAR) permettent souvent d'obtenir de meilleurs prix qu'en réservant sur place.",
   },
   printemps: {
@@ -1320,11 +1321,43 @@ const BUDGET_DATA = {
       bilan: "Total VE (~590 – 800 €) légèrement inférieur au thermique (~700 – 925 €), grâce surtout à la recharge moins chère — au prix d'une logistique de trajet un peu plus contraignante",
       vigilance: "Bornes rapides (50-200 kW) bien présentes sur les aires d'autoroute et en ville, y compris sur la côte sud ; prévoir 30-45 min de recharge tous les 250-300 km et anticiper via une appli (ex. EV Infra). Affluence accrue aux bornes pendant les week-ends de festival des cerisiers.",
     },
+    repasActivitesTotal: 525,
     grandTotal: "~2 330 – 2 700 €",
     grandTotalSub: "Vol « open-jaw » arrivée Busan / retour Séoul + hébergements (805 €) + part de véhicule (pour 2 pers.) + repas/activités (525 €)",
     tip: "💡 Astuce : la floraison des cerisiers étant une période très demandée, réserver vols et hébergements 4 à 5 mois à l'avance — en particulier à Jinhae. Privilégier un vol « open-jaw » (arrivée à Busan/Gimhae, retour depuis Séoul/Incheon) pour suivre la vague de floraison sud→nord sans revenir sur ses pas ; comparer Korean Air / Asiana / Air France, et pour la voiture, les loueurs locaux (Lotte Rent-a-Car, SOCAR) tôt dans la saison pour éviter les ruptures de stock.",
   },
 };
+
+function parseRangeNumbers(str) {
+  const matches = (String(str).match(/\d+(?:[.,]\d+)?/g) || []).map(n => parseFloat(n.replace(',', '.')));
+  if (matches.length === 0) return [0, 0];
+  if (matches.length === 1) return [matches[0], matches[0]];
+  return [matches[0], matches[1]];
+}
+
+function formatEuro(n) {
+  return Math.round(n).toLocaleString('fr-FR');
+}
+
+function computeGrandTotal(season) {
+  const b = BUDGET_DATA[season];
+  const flightOverrides = getFlightOverrides(season);
+  const flightStr = flightOverrides['direct'] !== undefined ? flightOverrides['direct'] : b.flights.direct;
+  const [flightMin, flightMax] = parseRangeNumbers(flightStr);
+  const accomStats = computeAccomStats(season);
+  const [carMin, carMax] = parseRangeNumbers(b.car.totalForSplit);
+  const repas = b.repasActivitesTotal;
+  const min = flightMin + accomStats.total + (carMin / 2) + repas;
+  const max = flightMax + accomStats.total + (carMax / 2) + repas;
+  return { min: Math.round(min), max: Math.round(max) };
+}
+
+function refreshGrandTotal(season) {
+  const el = document.getElementById('grand-total-amount');
+  if (!el) return;
+  const { min, max } = computeGrandTotal(season);
+  el.textContent = `~${formatEuro(min)} – ${formatEuro(max)} €`;
+}
 
 function getFlightOverrides(season) {
   try {
@@ -1384,6 +1417,7 @@ function saveFlightEdit(key, row) {
   display.textContent = value;
   display.style.display = 'inline';
   input.style.display = 'none';
+  refreshGrandTotal(currentSeason);
 }
 
 
@@ -1475,6 +1509,7 @@ function savePriceEdit(city, row) {
   display.style.display = 'inline';
   input.style.display = 'none';
   refreshAccomTotals(currentSeason);
+  refreshGrandTotal(currentSeason);
 }
 
 function refreshAccomTotals(season) {
@@ -1653,9 +1688,9 @@ function renderBudgetModal(season) {
   <div class="budget-grand-total">
     <div>
       <div class="budget-grand-total-label">Total estimé · 1 personne</div>
-      <div class="budget-grand-total-sub">${b.grandTotalSub}</div>
+      <div class="budget-grand-total-sub">${b.grandTotalSub} · recalculé selon vos tarifs modifiés (vol direct + hébergements)</div>
     </div>
-    <div class="budget-grand-total-amount">${b.grandTotal}</div>
+    <div class="budget-grand-total-amount" id="grand-total-amount">${(() => { const t = computeGrandTotal(season); return `~${formatEuro(t.min)} – ${formatEuro(t.max)} €`; })()}</div>
   </div>
 
   <div class="budget-note">
