@@ -12,6 +12,7 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
 <meta name="apple-mobile-web-app-title" content="한국 Voyage">
+<meta name="format-detection" content="telephone=no, date=no, address=no, email=no">
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Noto+Serif+KR:wght@400;600&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
 <style>
@@ -461,6 +462,11 @@ html, body {
   align-items: baseline;
   gap: 10px;
   padding: 4px 0;
+  flex-wrap: wrap;
+}
+.budget-card-row > div:first-child {
+  flex: 1 1 auto;
+  min-width: 140px;
 }
 .budget-card-row + .budget-card-row {
   border-top: 1px dashed var(--border);
@@ -530,6 +536,11 @@ html, body {
   font-weight: 700;
   color: var(--terra);
   white-space: nowrap;
+}
+.flight-price-display {
+  white-space: normal;
+  max-width: 140px;
+  text-align: right;
 }
 .budget-grand-total {
   margin: 6px 18px 22px;
@@ -1332,7 +1343,7 @@ function parseRangeNumbers(str) {
   const matches = (String(str).match(/\d+(?:[.,]\d+)?/g) || []).map(n => parseFloat(n.replace(',', '.')));
   if (matches.length === 0) return [0, 0];
   if (matches.length === 1) return [matches[0], matches[0]];
-  return [matches[0], matches[1]];
+  return [Math.min(matches[0], matches[1]), Math.max(matches[0], matches[1])];
 }
 
 function formatEuro(n) {
@@ -1349,7 +1360,7 @@ function computeGrandTotal(season) {
   const repas = b.repasActivitesTotal;
   const min = flightMin + accomStats.total + (carMin / 2) + repas;
   const max = flightMax + accomStats.total + (carMax / 2) + repas;
-  return { min: Math.round(min), max: Math.round(max) };
+  return { min: Math.round(Math.min(min, max)), max: Math.round(Math.max(min, max)) };
 }
 
 function refreshGrandTotal(season) {
