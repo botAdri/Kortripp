@@ -168,6 +168,48 @@ html, body {
 @media (max-width: 720px) {
   .season-btn { padding: 6px 10px; font-size: 11px; }
 }
+.currency-toggle {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  background: var(--cream);
+  border: 1.5px solid var(--border);
+  border-radius: 999px;
+  padding: 3px;
+  gap: 2px;
+}
+.currency-toggle-pill {
+  position: absolute;
+  top: 3px;
+  left: 3px;
+  height: calc(100% - 6px);
+  width: calc(50% - 3px);
+  border-radius: 999px;
+  background: var(--sage);
+  transition: transform .28s cubic-bezier(.4,0,.2,1);
+  z-index: 0;
+}
+.currency-toggle[data-currency="KRW"] .currency-toggle-pill {
+  transform: translateX(100%);
+}
+.currency-btn {
+  position: relative;
+  z-index: 1;
+  border: none;
+  background: transparent;
+  padding: 6px 12px;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--ink-light);
+  cursor: pointer;
+  border-radius: 999px;
+  transition: color .2s;
+}
+.currency-toggle[data-currency="EUR"] .currency-btn[data-value="EUR"],
+.currency-toggle[data-currency="KRW"] .currency-btn[data-value="KRW"] {
+  color: white;
+}
 .back-btn {
   display:inline-flex;
   align-items:center;
@@ -195,6 +237,26 @@ html, body {
   font-size:11px;
   color:var(--ink-light);
   font-weight:500;
+}
+.action-pill {
+  display:inline-flex;
+  align-items:center;
+  gap:4px;
+  padding:5px 11px;
+  border-radius:999px;
+  background:var(--cream);
+  border:1px solid var(--border);
+  font-size:11px;
+  color:var(--ink-light);
+  font-weight:600;
+  cursor:pointer;
+}
+.action-pill:hover {
+  border-color: var(--terra);
+  color: var(--terra);
+}
+.action-pill:active {
+  transform: scale(0.96);
 }
 
 /* ═══ BODY SPLIT ═══ */
@@ -791,6 +853,8 @@ html, body {
     </div>
 
     <div class="header-right">
+      <button class="action-pill" id="currencyToggleBtn" title="Basculer € / ₩ (hôtels, activités, location — hors vols)">💱 €</button>
+      <button class="action-pill" id="icsExportBtn" title="Exporter les dates de l'itinéraire au format calendrier">📅 .ics</button>
       <span class="stat-pill">🗺️ 8 villes</span>
       <span class="stat-pill">🎯 28 activités</span>
       <span class="stat-pill">📅 14 jours</span>
@@ -1082,6 +1146,29 @@ const SEASON_META = {
 };
 
 let currentSeason = localStorage.getItem('kortripp-season') || 'automne';
+let currentCurrency = localStorage.getItem('kortripp-currency') || 'EUR';
+const KRW_RATE = 1450; // taux approximatif € → ₩, à vérifier avant départ
+
+// Convertit une chaîne de prix en € ("~4 €", "480 – 650 €", "Gratuit"...) vers ₩ si le
+// toggle devise est actif. Ne touche jamais aux montants sans symbole € (ex. "Gratuit").
+function formatPrice(str) {
+  if (currentCurrency === 'EUR' || !/€/.test(str)) return str;
+  const converted = str.replace(/\d[\d\s.,]*\d|\d/g, (match) => {
+    const clean = match.replace(/\s/g, '').replace(',', '.');
+    const num = parseFloat(clean);
+    if (isNaN(num)) return match;
+    const krw = Math.round((num * KRW_RATE) / 50) * 50;
+    return krw.toLocaleString('fr-FR');
+  });
+  return converted.replace(/€/g, '₩');
+}
+
+// Convertit un montant numérique déjà en €, pour l'affichage (accom, totaux calculés).
+function displayAmount(eur, suffix = '') {
+  if (currentCurrency === 'EUR') return `${Math.round(eur)} €${suffix}`;
+  const krw = Math.round((eur * KRW_RATE) / 50) * 50;
+  return `${krw.toLocaleString('fr-FR')} ₩${suffix}`;
+}
 
 function applySeason(season, { persist = true } = {}) {
   if (!SEASON_META[season]) return;
@@ -1152,6 +1239,21 @@ function getTagHTML(tag, price) {
   return `<span class="activity-tag tag-paid">💳 ${price}</span>`;
 }
 
+// Recalcule uniquement le texte des prix d'activités déjà affichées (sans reconstruire
+// les onglets/panneaux/carte), pour un basculement de devise instantané.
+function refreshActivityPrices() {
+  document.querySelectorAll('.city-panel').forEach((panel, i) => {
+    const stop = stops[i];
+    if (!stop) return;
+    const tagEls = panel.querySelectorAll('.activity-tag');
+    stop.activites.forEach((a, j) => {
+      const el = tagEls[j];
+      if (!el) return;
+      el.outerHTML = getTagHTML(a.tag, formatPrice(a.price));
+    });
+  });
+}
+
 // Construit (ou reconstruit) tabs, panneaux, marqueurs, tracé et légende
 // à partir des données de la saison active.
 function buildItinerary(stopsData) {
@@ -1199,7 +1301,7 @@ function buildItinerary(stopsData) {
         <div class="activity-body">
           <div class="activity-name">${a.name}</div>
           <div class="activity-sub">${a.desc}</div>
-          ${getTagHTML(a.tag, a.price)}
+          ${getTagHTML(a.tag, formatPrice(a.price))}
         </div>
       </div>`).join('');
 
@@ -1486,8 +1588,8 @@ function renderAccomCityRows(cities, season) {
           <div class="budget-card-sub">${c.sub}</div>
         </div>
         <div class="budget-price-edit">
-          <span class="budget-card-amount price-display" data-city="${c.name}">${Math.round(price)} €/nuit</span>
-          <input type="number" class="price-input" data-city="${c.name}" value="${Math.round(price)}" style="display:none;" min="0" step="1" />
+          <span class="budget-card-amount price-display" data-city="${c.name}">${displayAmount(price, '/nuit')}</span>
+          <input type="number" class="price-input" data-city="${c.name}" value="${Math.round(price)}" style="display:none;" min="0" step="1" title="Saisie toujours en €" />
           <button class="price-edit-btn" aria-label="Modifier le prix de ${c.name}" data-city="${c.name}">✏️</button>
         </div>
       </div>`;
@@ -1516,7 +1618,7 @@ function savePriceEdit(city, row) {
   const input = row.querySelector('.price-input');
   const value = Math.max(0, parseFloat(input.value) || 0);
   setPriceOverride(currentSeason, city, value);
-  display.textContent = `${Math.round(value)} €/nuit`;
+  display.textContent = displayAmount(value, '/nuit');
   display.style.display = 'inline';
   input.style.display = 'none';
   refreshAccomTotals(currentSeason);
@@ -1527,19 +1629,23 @@ function refreshAccomTotals(season) {
   const stats = computeAccomStats(season);
   const totalEl = document.getElementById('accom-total-amount');
   const avgEl = document.getElementById('accom-avg-amount');
-  if (totalEl) totalEl.textContent = `~${stats.total} €`;
-  if (avgEl) avgEl.textContent = `~${stats.avg} €/nuit`;
+  if (totalEl) totalEl.textContent = displayAmount(stats.total);
+  if (avgEl) avgEl.textContent = displayAmount(stats.avg, '/nuit');
 }
 
 document.getElementById('budgetModalBody').addEventListener('click', (e) => {
   if (e.target.closest('#resetPricesBtn')) {
-    resetPriceOverrides(currentSeason);
-    renderBudgetModal(currentSeason);
+    if (confirm('Réinitialiser tous les tarifs d\'hébergement modifiés à leurs valeurs par défaut ?\n\nCette action est irréversible.')) {
+      resetPriceOverrides(currentSeason);
+      renderBudgetModal(currentSeason);
+    }
     return;
   }
   if (e.target.closest('#resetFlightsBtn')) {
-    resetFlightOverrides(currentSeason);
-    renderBudgetModal(currentSeason);
+    if (confirm('Réinitialiser tous les tarifs de vols modifiés à leurs valeurs par défaut ?\n\nCette action est irréversible.')) {
+      resetFlightOverrides(currentSeason);
+      renderBudgetModal(currentSeason);
+    }
     return;
   }
   handlePriceEditClick(e);
@@ -1599,14 +1705,14 @@ function renderBudgetModal(season) {
           <div class="budget-card-label">Total hébergements — ${b.nights} nuits</div>
           <div class="budget-card-sub">Cumul des estimations par étape : guesthouses, hanok et hôtels 2-3★, chambre double partagée (prix par personne)</div>
         </div>
-        <div class="budget-card-amount" id="accom-total-amount">~${stats.total} €</div>
+        <div class="budget-card-amount" id="accom-total-amount">${displayAmount(stats.total)}</div>
       </div>
       <div class="budget-card-row">
         <div>
           <div class="budget-card-label">Moyenne par nuit</div>
           <div class="budget-card-sub">${b.accomAvgSub}</div>
         </div>
-        <div class="budget-card-amount" id="accom-avg-amount">~${stats.avg} €/nuit</div>
+        <div class="budget-card-amount" id="accom-avg-amount">${displayAmount(stats.avg, '/nuit')}</div>
       </div>
     </div>
 
@@ -1634,26 +1740,26 @@ function renderBudgetModal(season) {
           <div class="budget-card-label">Location 14 jours — véhicule compact</div>
           <div class="budget-card-sub">Type Hyundai Avante / Kia K3, boîte automatique, assurance complémentaire incluse</div>
         </div>
-        <div class="budget-card-amount">${b.car.rental}</div>
+        <div class="budget-card-amount">${formatPrice(b.car.rental)}</div>
       </div>
       <div class="budget-card-row">
         <div>
           <div class="budget-card-label">Carburant</div>
           <div class="budget-card-sub">${b.car.fuelSub}</div>
         </div>
-        <div class="budget-card-amount">${b.car.fuel}</div>
+        <div class="budget-card-amount">${formatPrice(b.car.fuel)}</div>
       </div>
       <div class="budget-card-row">
         <div>
           <div class="budget-card-label">Péages d'autoroute</div>
           <div class="budget-card-sub">Réseau d'autoroutes (Expressway) entre les différentes étapes</div>
         </div>
-        <div class="budget-card-amount">${b.car.tolls}</div>
+        <div class="budget-card-amount">${formatPrice(b.car.tolls)}</div>
       </div>
       <div class="budget-card-row">
         <div>
           <div class="budget-card-label">À répartir entre les passagers</div>
-          <div class="budget-card-sub">Le total ci-dessus (~${b.car.totalForSplit}) correspond au véhicule complet — à diviser selon le nombre de voyageurs</div>
+          <div class="budget-card-sub">Le total ci-dessus (~${formatPrice(b.car.totalForSplit)}) correspond au véhicule complet — à diviser selon le nombre de voyageurs</div>
         </div>
         <div class="budget-card-amount">÷ nb. pers.</div>
       </div>
@@ -1665,21 +1771,21 @@ function renderBudgetModal(season) {
           <div class="budget-card-label">⚡ Alternative véhicule électrique</div>
           <div class="budget-card-sub">Type Hyundai Ioniq 5 / Kona Electric / Kia EV6 — souvent au même tarif journalier qu'un thermique, parfois moins cher chez SOCAR (tarifs incitatifs)</div>
         </div>
-        <div class="budget-card-amount">${b.ev.rental}</div>
+        <div class="budget-card-amount">${formatPrice(b.ev.rental)}</div>
       </div>
       <div class="budget-card-row">
         <div>
           <div class="budget-card-label">"Carburant" (recharge)</div>
           <div class="budget-card-sub">Pour le trajet complet : recharge rapide sur autoroute (~0,30-0,35 €/kWh) — bien moins cher que l'essence</div>
         </div>
-        <div class="budget-card-amount">${b.ev.recharge}</div>
+        <div class="budget-card-amount">${formatPrice(b.ev.recharge)}</div>
       </div>
       <div class="budget-card-row">
         <div>
           <div class="budget-card-label">Péages</div>
           <div class="budget-card-sub">Identiques au véhicule thermique — aucune réduction spécifique aux VE sur les autoroutes coréennes</div>
         </div>
-        <div class="budget-card-amount">${b.ev.tolls}</div>
+        <div class="budget-card-amount">${formatPrice(b.ev.tolls)}</div>
       </div>
       <div class="budget-card-row">
         <div>
@@ -1711,6 +1817,88 @@ function renderBudgetModal(season) {
 
 // Construction initiale avec la saison courante (persistée ou par défaut)
 applySeason(currentSeason, { persist: false });
+
+// ═══ TOGGLE DEVISE (€ / ₩) ═══
+// S'applique à l'affichage des activités, hébergements et location de véhicule.
+// Les vols restent toujours en € (les compagnies aériennes facturent en €/$ de toute façon).
+const currencyToggleBtn = document.getElementById('currencyToggleBtn');
+function updateCurrencyBtnLabel() {
+  if (currencyToggleBtn) currencyToggleBtn.textContent = currentCurrency === 'EUR' ? '💱 €' : '💱 ₩';
+}
+updateCurrencyBtnLabel();
+
+currencyToggleBtn?.addEventListener('click', () => {
+  currentCurrency = currentCurrency === 'EUR' ? 'KRW' : 'EUR';
+  try { localStorage.setItem('kortripp-currency', currentCurrency); } catch (e) { /* ignore */ }
+  updateCurrencyBtnLabel();
+  refreshActivityPrices();
+  if (typeof renderBudgetModal === 'function') renderBudgetModal(currentSeason);
+});
+
+// ═══ EXPORT CALENDRIER (.ics) ═══
+function icsEscape(str) {
+  return String(str)
+    .replace(/\\/g, '\\\\')
+    .replace(/;/g, '\\;')
+    .replace(/,/g, '\\,')
+    .replace(/\n/g, '\\n');
+}
+
+function pad2(n) { return String(n).padStart(2, '0'); }
+
+function fmtICSDate(date) {
+  return `${date.getFullYear()}${pad2(date.getMonth() + 1)}${pad2(date.getDate())}`;
+}
+
+function generateICS(season) {
+  const stopsData = SEASON_STOPS[season];
+  const input = prompt('Date de début du voyage (JJ/MM/AAAA) :', '');
+  if (!input) return;
+  const parts = input.split(/[\/\-.]/).map((p) => p.trim());
+  if (parts.length !== 3) { alert("Format de date non reconnu. Utilisez JJ/MM/AAAA (ex. 25/10/2026)."); return; }
+  let [d, m, y] = parts.map(Number);
+  if (y < 100) y += 2000;
+  let cursor = new Date(y, m - 1, d);
+  if (isNaN(cursor.getTime())) { alert('Date invalide.'); return; }
+
+  const nowStamp = fmtICSDate(new Date()) + 'T000000Z';
+  let ics = 'BEGIN:VCALENDAR\r\nVERSION:2.0\r\nPRODID:-//Kortripp//Guide de Voyage//FR\r\nCALSCALE:GREGORIAN\r\n';
+
+  stopsData.forEach((stop, i) => {
+    const nights = parseNights(stop.dates);
+    const start = new Date(cursor);
+    const end = new Date(cursor);
+    end.setDate(end.getDate() + Math.max(nights, 1));
+
+    ics += 'BEGIN:VEVENT\r\n';
+    ics += `UID:kortripp-${season}-${i}-${start.getTime()}@kortripp\r\n`;
+    ics += `DTSTAMP:${nowStamp}\r\n`;
+    ics += `DTSTART;VALUE=DATE:${fmtICSDate(start)}\r\n`;
+    ics += `DTEND;VALUE=DATE:${fmtICSDate(end)}\r\n`;
+    ics += `SUMMARY:${icsEscape(`${stop.name} (${stop.korean}) — ${stop.dates}`)}\r\n`;
+    ics += `DESCRIPTION:${icsEscape(stop.desc)}\r\n`;
+    ics += `LOCATION:${icsEscape(`${stop.name}, Corée du Sud`)}\r\n`;
+    ics += 'END:VEVENT\r\n';
+
+    cursor = end;
+  });
+
+  ics += 'END:VCALENDAR\r\n';
+
+  const blob = new Blob([ics], { type: 'text/calendar;charset=utf-8' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = `kortripp-${season}.ics`;
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+}
+
+document.getElementById('icsExportBtn')?.addEventListener('click', () => {
+  generateICS(currentSeason);
+});
 
 
 const budgetFab = document.getElementById('budgetFab');
