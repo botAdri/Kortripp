@@ -855,6 +855,7 @@ html, body {
     <div class="header-right">
       <button class="action-pill" id="currencyToggleBtn" title="Basculer € / ₩ (hôtels, activités, location — hors vols)">💱 €</button>
       <button class="action-pill" id="icsExportBtn" title="Exporter les dates de l'itinéraire au format calendrier">📅 .ics</button>
+      <button class="action-pill" id="shareBtn" title="Partager cette page">🔗 Partager</button>
       <span class="stat-pill">🗺️ 8 villes</span>
       <span class="stat-pill">🎯 28 activités</span>
       <span class="stat-pill">📅 14 jours</span>
@@ -1145,6 +1146,9 @@ const SEASON_META = {
   },
 };
 
+// ═══════════════════════════════════════════════════════════
+// ÉTAT GLOBAL & UTILITAIRES (saison, devise, formatage prix)
+// ═══════════════════════════════════════════════════════════
 let currentSeason = localStorage.getItem('kortripp-season') || 'automne';
 let currentCurrency = localStorage.getItem('kortripp-currency') || 'EUR';
 const KRW_RATE = 1450; // taux approximatif € → ₩, à vérifier avant départ
@@ -1210,6 +1214,9 @@ document.getElementById('seasonToggle')?.querySelectorAll('.season-btn').forEach
 });
 
 // ═══ MAP ═══
+// ═══════════════════════════════════════════════════════════
+// CARTE & ITINÉRAIRE (Leaflet)
+// ═══════════════════════════════════════════════════════════
 const map = L.map('map', {
   center: [35.9, 127.8],
   zoom: 7,
@@ -1352,6 +1359,9 @@ function buildItinerary(stopsData) {
 }
 
 // ═══ DONNÉES BUDGET GLOBAL — PAR SAISON ═══
+// ═══════════════════════════════════════════════════════════
+// DONNÉES BUDGET (vols, hébergements, véhicule, par saison)
+// ═══════════════════════════════════════════════════════════
 const BUDGET_DATA = {
   automne: {
     dates: "Dates à définir",
@@ -1363,8 +1373,6 @@ const BUDGET_DATA = {
       busanReturnLabel: "Vol retour depuis Busan (optionnel)",
       busanReturnSub: "Si retour Busan → Séoul puis vol international depuis Séoul, ou vol intérieur Busan → Séoul (~1h, ~40 €) avant le vol international",
     },
-    accomTotal: "~733 €",
-    accomAvg: "~52 €/nuit",
     accomAvgSub: "Variable selon la ville : ~45 € (Daejeon, Mokpo) à ~60 € (Séoul, Yeosu, Busan)",
     accomCities: [
       { name:"Séoul", nights:"3 nuits", sub:"Myeongdong Hotel Skypark / Ibis Styles Myeongdong (hôtel 3★, double) · ou guesthouse Bukchon Hanok (chambre traditionnelle) — Suwon se visite en excursion à la journée depuis Séoul, sans nuit supplémentaire", price:"~45 €/nuit" },
@@ -1406,8 +1414,6 @@ const BUDGET_DATA = {
       busanReturnLabel: "Vol « open-jaw » : arrivée Busan / retour Séoul",
       busanReturnSub: "Recommandé pour cet itinéraire (Busan → Séoul) : arrivée à Busan (Gimhae) ou Séoul-Incheon + train vers Busan, puis retour international depuis Séoul (Incheon) en fin de séjour — évite tout aller-retour inutile",
     },
-    accomTotal: "~805 €",
-    accomAvg: "~62 €/nuit",
     accomAvgSub: "Variable selon la ville : ~50 € (Damyang) à ~90 € (Jinhae, forte affluence pendant le festival des cerisiers)",
     accomCities: [
       { name:"Busan", nights:"3 nuits", sub:"Hotel Skypark Dongseong / Toyoko Inn Busan Seomyeon (hôtel 3★ central) ou guesthouse vue mer à Haeundae", price:"~70 €/nuit" },
@@ -1441,6 +1447,9 @@ const BUDGET_DATA = {
   },
 };
 
+// ═══════════════════════════════════════════════════════════
+// LOGIQUE BUDGET : parsing, surcharges de prix, totaux calculés
+// ═══════════════════════════════════════════════════════════
 function parseRangeNumbers(str) {
   const matches = (String(str).match(/\d+(?:[.,]\d+)?/g) || []).map(n => parseFloat(n.replace(',', '.')));
   if (matches.length === 0) return [0, 0];
@@ -1665,6 +1674,9 @@ document.getElementById('budgetModalBody').addEventListener('keydown', (e) => {
   }
 });
 
+// ═══════════════════════════════════════════════════════════
+// RENDU DU MODAL BUDGET
+// ═══════════════════════════════════════════════════════════
 function renderBudgetModal(season) {
   const meta = SEASON_META[season];
   const b = BUDGET_DATA[season];
@@ -1818,9 +1830,10 @@ function renderBudgetModal(season) {
 // Construction initiale avec la saison courante (persistée ou par défaut)
 applySeason(currentSeason, { persist: false });
 
-// ═══ TOGGLE DEVISE (€ / ₩) ═══
-// S'applique à l'affichage des activités, hébergements et location de véhicule.
-// Les vols restent toujours en € (les compagnies aériennes facturent en €/$ de toute façon).
+// ═══════════════════════════════════════════════════════════
+// TOGGLE DEVISE (€ / ₩) — s'applique aux activités, hébergements
+// et location de véhicule ; les vols restent toujours en €.
+// ═══════════════════════════════════════════════════════════
 const currencyToggleBtn = document.getElementById('currencyToggleBtn');
 function updateCurrencyBtnLabel() {
   if (currencyToggleBtn) currencyToggleBtn.textContent = currentCurrency === 'EUR' ? '💱 €' : '💱 ₩';
@@ -1835,7 +1848,9 @@ currencyToggleBtn?.addEventListener('click', () => {
   if (typeof renderBudgetModal === 'function') renderBudgetModal(currentSeason);
 });
 
-// ═══ EXPORT CALENDRIER (.ics) ═══
+// ═══════════════════════════════════════════════════════════
+// EXPORT CALENDRIER (.ics)
+// ═══════════════════════════════════════════════════════════
 function icsEscape(str) {
   return String(str)
     .replace(/\\/g, '\\\\')
@@ -1900,7 +1915,49 @@ document.getElementById('icsExportBtn')?.addEventListener('click', () => {
   generateICS(currentSeason);
 });
 
+// ═══════════════════════════════════════════════════════════
+// PARTAGE DE LA PAGE — Web Share API (mobile) avec repli presse-papiers
+// ═══════════════════════════════════════════════════════════
+const shareBtn = document.getElementById('shareBtn');
 
+function flashShareBtnLabel(label, revertAfterMs = 2000) {
+  if (!shareBtn) return;
+  const original = '🔗 Partager';
+  shareBtn.textContent = label;
+  setTimeout(() => { shareBtn.textContent = original; }, revertAfterMs);
+}
+
+async function shareCurrentPage() {
+  const shareData = {
+    title: document.title || 'Guide de Voyage — Corée du Sud',
+    text: 'Mon itinéraire de road trip en Corée du Sud 🇰🇷',
+    url: window.location.href,
+  };
+
+  if (navigator.share) {
+    try {
+      await navigator.share(shareData);
+    } catch (err) {
+      // L'utilisateur a annulé le partage, ou une erreur est survenue : rien à faire.
+    }
+    return;
+  }
+
+  try {
+    await navigator.clipboard.writeText(shareData.url);
+    flashShareBtnLabel('✅ Lien copié');
+  } catch (err) {
+    // Dernier recours si l'accès au presse-papiers est refusé par le navigateur
+    window.prompt('Copiez ce lien pour le partager :', shareData.url);
+  }
+}
+
+shareBtn?.addEventListener('click', shareCurrentPage);
+
+
+// ═══════════════════════════════════════════════════════════
+// MODAL BUDGET : ouverture/fermeture, et navigation entre étapes
+// ═══════════════════════════════════════════════════════════
 const budgetFab = document.getElementById('budgetFab');
 const budgetOverlay = document.getElementById('budgetOverlay');
 const budgetClose = document.getElementById('budgetClose');
