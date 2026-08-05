@@ -119,6 +119,9 @@ html, body {
   gap:8px;
   flex-wrap:wrap;
 }
+.stat-pills-group {
+  display: contents;
+}
 
 /* ═══ SÉLECTEUR DE SAISON ═══ */
 .season-toggle {
@@ -831,7 +834,9 @@ html, body {
   .map-wrap { height: 50vh; }
   .body { overflow: visible; height: auto; }
   .header { gap:10px; }
-  .header-right { display:none; }
+  .header-right { width: 100%; margin-left: 0; }
+  .stat-pills-group { display:none; }
+  .action-pill { font-size:10.5px; padding:5px 9px; }
 }
 </style>
 </head>
@@ -856,9 +861,11 @@ html, body {
       <button class="action-pill" id="currencyToggleBtn" title="Basculer € / ₩ (hôtels, activités, location — hors vols)">💱 €</button>
       <button class="action-pill" id="icsExportBtn" title="Exporter les dates de l'itinéraire au format calendrier">📅 .ics</button>
       <button class="action-pill" id="shareBtn" title="Partager cette page">🔗 Partager</button>
-      <span class="stat-pill">🗺️ 8 villes</span>
-      <span class="stat-pill">🎯 28 activités</span>
-      <span class="stat-pill">📅 14 jours</span>
+      <span class="stat-pills-group">
+        <span class="stat-pill">🗺️ 8 villes</span>
+        <span class="stat-pill">🎯 28 activités</span>
+        <span class="stat-pill">📅 14 jours</span>
+      </span>
     </div>
   </header>
 
