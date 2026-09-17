@@ -1231,9 +1231,8 @@ const map = L.map('map', {
   scrollWheelZoom: true
 });
 
-L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', {
+L.tileLayer('https://basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}.png?key=cb1_3p1q_1_7b57fbc2cc6c1f213af532ba', {
   attribution: '© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors © <a href="https://carto.com/attributions">CARTO</a>',
-  subdomains: 'abcd',
   maxZoom: 19
 }).addTo(map);
 
