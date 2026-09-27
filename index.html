@@ -432,6 +432,29 @@ html, body {
 .tag-paid { background: #FDF4EE; color: #8B4A1E; border: 1px solid #E8C4AA; }
 .tag-must { background: #FEF9EE; color: #8B6A1E; border: 1px solid #E8D8AA; }
 
+/* Restaurants */
+.restaurants-list {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.restaurant-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 8px 0;
+}
+.restaurant-item:not(:last-child) {
+  border-bottom: 1px solid rgba(0,0,0,.05);
+}
+.restaurant-price {
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--terra);
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
 /* Budget bar */
 .budget-bar {
   margin: 0 14px 14px;
@@ -930,6 +953,10 @@ const stopsAutomne = [
       { icon:"🌊", name:"Han River au coucher du soleil", desc:"Les parcs de la rivière Han sont le lieu de vie des Séoulites. Louer un vélo (3€) et longer les berges jusqu'au coucher du soleil est l'une des meilleures expériences de la capitale.", tag:"free", price:"~3 € (vélo)" },
       { icon:"🏯", name:"Excursion à Suwon — Forteresse Hwaseong", desc:"À 30 min de train ou de route de Séoul, chef-d'œuvre de l'architecture militaire coréenne (1796), classé UNESCO, dont les 5,7 km de remparts se parent de rouge et or en novembre. À faire en aller-retour dans la journée, idéalement le dernier jour à Séoul, avant de reprendre la route vers Daejeon le lendemain matin.", tag:"paid", price:"~4 €" },
       { icon:"🎭", name:"Suwon — Son et lumière nocturne (oct.–nov.)", desc:"En saison, les remparts de Hwaseong accueillent une projection mapping spectaculaire qui retrace l'histoire de la forteresse. Un bon complément à l'excursion si l'on prolonge jusqu'en fin d'après-midi, avec un retour à Séoul en soirée par le dernier train.", tag:"must", price:"~5 €" },
+    ],
+    restaurants: [
+      { icon:"🍜", name:"Myeongdong Kyoja", desc:"Institution près de Myeongdong depuis 1966, réputée pour ses raviolis (mandu) et sa soupe de nouilles kalguksu au poulet.", price:"~9 €" },
+      { icon:"🐔", name:"Tosokchon Samgyetang", desc:"À deux pas du palais Gyeongbokgung, ce restaurant sert depuis des décennies le samgyetang, poulet entier mijoté au ginseng et riz gluant.", price:"~15 €" },
     ]
   },
   {
@@ -942,6 +969,10 @@ const stopsAutomne = [
       { icon:"🌿", name:"Parc national Gyeryongsan", desc:"Massif montagneux à 30 min de Daejeon, réputé pour son feuillage automnal spectaculaire. Le sentier principal jusqu'au pic Sambulbong (825 m) offre des vues dégagées sur la forêt embrasée. Compter 3h de randonnée.", tag:"free", price:"Gratuit" },
       { icon:"🔬", name:"Expo Science Park (Daedeok)", desc:"Parc scientifique construit sur le site de l'Expo Mondiale 1993. Idéal pour une demi-journée avec de nombreux espaces interactifs sur l'espace, l'énergie et les technologies du futur.", tag:"paid", price:"~8 €" },
       { icon:"🏛️", name:"Musée national de Daejeon", desc:"Collections permanentes d'artefacts historiques de la région Chungcheong. La salle des arts bouddhistes et les poteries Joseon sont particulièrement remarquables. Entrée gratuite.", tag:"free", price:"Gratuit" },
+    ],
+    restaurants: [
+      { icon:"🥐", name:"Sungsimdang", desc:"Boulangerie-pâtisserie historique de Daejeon (depuis 1956), célèbre pour son pain fourré à la pâte de haricots rouges (soboro-ppang).", price:"~5 €" },
+      { icon:"🍢", name:"Marché Jung-ang", desc:"Le grand marché couvert de Daejeon regorge d'étals de street food : tteokbokki, sundae et jeon à petit prix.", price:"~8 €" },
     ]
   },
   {
@@ -956,6 +987,10 @@ const stopsAutomne = [
       { icon:"🏛️", name:"Musée National de Jeonju", desc:"L'une des plus belles collections de céladons coréens au monde, ainsi que d'importantes œuvres de la période Baekje. Le jardin extérieur est particulièrement beau en automne.", tag:"free", price:"Gratuit" },
       { icon:"🌊", name:"Rivière Jeonju & lanternes", desc:"Le long de la rivière Jeonju, la promenade nocturne avec les lanternes flottantes offre une atmosphère féerique et intimiste, loin de l'agitation du village hanok.", tag:"free", price:"Gratuit" },
       { icon:"🍁", name:"Excursion à Naejangsan", desc:"À environ 40 min de route de Jeonju, ce parc national est unanimement considéré comme l'un des trois plus beaux feuillages d'automne de Corée (avec Seoraksan et Odaesan). Le sentier vers le sommet Naejangsan (763 m) traverse une forêt d'érables et de gingkos incandescents ; le téléphérique permet aussi une vue d'ensemble sans effort. Pic de couleurs généralement entre le 25 octobre et le 5 novembre — à caler avec les dates du séjour.", tag:"paid", price:"~5 €" },
+    ],
+    restaurants: [
+      { icon:"🍚", name:"Gajok Hoegwan", desc:"Bibimbap traditionnel de Jeonju servi dans un bol en bronze, recette familiale transmise depuis trois générations.", price:"~10 €" },
+      { icon:"🍶", name:"Hanguk Jip", desc:"Dans le village hanok, ce restaurant sert makgeolli (alcool de riz fermenté) accompagné de jeon croustillants.", price:"~12 €" },
     ]
   },
   {
@@ -969,6 +1004,10 @@ const stopsAutomne = [
       { icon:"🏛️", name:"May 18th National Cemetery", desc:"Site de mémoire dédié au soulèvement démocratique de mai 1980, réprimé dans le sang. Un lieu sobre et poignant qui explique pourquoi Gwangju est le symbole de la démocratie coréenne.", tag:"free", price:"Gratuit" },
       { icon:"🎨", name:"Asian Culture Complex (ACC)", desc:"Immense centre culturel de 160 000 m² entièrement souterrain, inauguré en 2015. Musée, cinémathèque, théâtre et galeries d'art contemporain, le tout gratuitement ou pour une modique entrée.", tag:"paid", price:"~5 €" },
       { icon:"🖼️", name:"Gwangju Biennale Foundation", desc:"La plus ancienne biennale d'art contemporain d'Asie (depuis 1995) a son siège permanent à Gwangju. Même hors biennale, les expositions et archives sont accessibles et souvent surprenantes.", tag:"paid", price:"~3 €" },
+    ],
+    restaurants: [
+      { icon:"🍱", name:"Songjukhoegwan", desc:"Référence locale du hanjeongsik, le menu traditionnel à multiples petits plats, spécialité réputée de Gwangju.", price:"~18 €" },
+      { icon:"🍜", name:"Marché Yangdong", desc:"Nouilles kalguksu maison et galettes de kimchi (kimchi-jeon) dans le plus grand marché couvert de la ville.", price:"~7 €" },
     ]
   },
   {
@@ -982,6 +1021,10 @@ const stopsAutomne = [
       { icon:"🏯", name:"Parc Yudalsan", desc:"Les deux sommets du mont Yudalsan (228 m) offrent la meilleure vue sur le port de Mokpo et l'archipel Dadohae. En novembre, la lumière rasante du coucher de soleil est particulièrement spectaculaire depuis les falaises.", tag:"free", price:"Gratuit" },
       { icon:"🏛️", name:"Musée maritime national", desc:"L'un des seuls musées maritimes de Corée, abritant des trésors sous-marins récupérés dans la mer du Sud : poteries Song, épaves médiévales et lingots d'étain. Une collection étonnamment riche.", tag:"paid", price:"~3 €" },
       { icon:"🚢", name:"Promenade du port au coucher du soleil", desc:"Le front de mer de Mokpo, bordé de chalutiers colorés et de restaurants de poulpe, est le cadre parfait pour terminer une journée. La lumière dorée de novembre sur les îlots crée des tableaux saisissants.", tag:"free", price:"Gratuit" },
+    ],
+    restaurants: [
+      { icon:"🐙", name:"Marché Mokpo Nakji", desc:"Le nakji-tang, ragoût de petit poulpe épicé, est la spécialité incontournable de Mokpo — à goûter directement au marché.", price:"~14 €" },
+      { icon:"🐟", name:"Yeongnan Hongeohoe", desc:"La raie fermentée (hongeo), plat culte et corsé du Jeollanam-do, se déguste ici accompagnée de porc bouilli et de kimchi.", price:"~20 €" },
     ]
   },
   {
@@ -994,6 +1037,10 @@ const stopsAutomne = [
       { icon:"🌾", name:"Réserve naturelle de Suncheonman", desc:"Cette immense zone humide protégée est réputée pour ses roseaux dorés en automne, ondulant à perte de vue le long des pontons en bois. Meilleure lumière en fin d'après-midi ; la tour d'observation de Yongsan offre la vue d'ensemble la plus spectaculaire sur les méandres de la baie.", tag:"paid", price:"~7 €" },
       { icon:"🏘️", name:"Village folklorique de Nagan", desc:"Enceinte fortifiée du XIVe siècle encore habitée, où les toits de chaume se marient aux couleurs d'automne des arbres alentour. L'un des villages les plus authentiques de Corée, loin des foules.", tag:"paid", price:"~3 €" },
       { icon:"🌷", name:"Jardin national de Suncheon", desc:"Ce parc de 111 hectares, aménagé pour l'Expo florale de 2013, se pare de teintes rouille en automne, avec ses massifs floraux tardifs et son lac aux nénuphars fanés. Une promenade plus tranquille en complément de la baie.", tag:"paid", price:"~4 €" },
+    ],
+    restaurants: [
+      { icon:"🦪", name:"Restaurant du marché de Suncheon", desc:"Fruits de mer et galettes de fruits de mer (haemul-jeon) face à la réserve naturelle de Suncheonman.", price:"~12 €" },
+      { icon:"🍲", name:"Restaurant du village de Nagan", desc:"Cuisine traditionnelle mijotée dans l'enceinte fortifiée de Nagan, ambiance rustique et authentique.", price:"~9 €" },
     ]
   },
   {
@@ -1007,6 +1054,10 @@ const stopsAutomne = [
       { icon:"🚡", name:"Téléphérique maritime", desc:"L'une des rares cabines de téléphérique qui survole la mer en Corée. La traversée de 1,5 km au-dessus de la baie de Yeosu offre une vue à couper le souffle sur les îles, le pont Dolsan et la ville.", tag:"paid", price:"~10 €" },
       { icon:"⛵", name:"Croisière archipel de Yeosu", desc:"Des excursions en bateau partent quotidiennement vers l'île Odongdo (célèbre pour ses camélias) et les îles plus éloignées de Geomundo. En novembre, peu de touristes, les îlots sont pour vous seul.", tag:"paid", price:"~15 €" },
       { icon:"🌉", name:"Pont Dolsan illuminé", desc:"Le pont Dolsan, reliant Yeosu au centre, est illuminé chaque soir en novembre de LED multicolores. La promenade depuis le quai jusqu'au pont au crépuscule, face aux îles silhouettées, est un moment de grâce.", tag:"free", price:"Gratuit" },
+    ],
+    restaurants: [
+      { icon:"🦀", name:"Yeosu Dolge-jang", desc:"Le gejang, crabe mariné cru dans une sauce soja épicée, est une spécialité incontournable du port de Yeosu.", price:"~25 €" },
+      { icon:"🐚", name:"Marché Jinnam", desc:"Fruits de mer grillés et coquillages tout juste pêchés, à déguster face au port et au pont Dolsan illuminé.", price:"~15 €" },
     ]
   },
   {
@@ -1020,6 +1071,10 @@ const stopsAutomne = [
       { icon:"🎨", name:"Village Gamcheon", desc:"L'un des quartiers les plus photogéniques de Corée. D'anciens réfugiés de la guerre de Corée ont transformé ce village en galerie d'art à ciel ouvert. Les ruelles colorées et les escaliers muraux s'étagent à flanc de colline.", tag:"free", price:"Gratuit" },
       { icon:"🏖️", name:"Haeundae & Gwangalli Beach", desc:"Haeundae est la plage mythique de Corée. En novembre, elle est quasi déserte mais étonnamment belle sous la lumière automnale. Gwangalli, plus petite, offre la vue iconique sur le pont Gwangan illuminé la nuit.", tag:"free", price:"Gratuit" },
       { icon:"🚡", name:"Songdo Sky Walk", desc:"Cette passerelle vitrée de 365 m surplombe la mer de l'Est depuis les falaises de la baie de Songdo. Entièrement gratuite, elle offre des vues vertigineuses et une brise marine revivifiante.", tag:"free", price:"Gratuit" },
+    ],
+    restaurants: [
+      { icon:"🐟", name:"Marché Jagalchi", desc:"Le plus grand marché aux poissons de Corée : sashimi et fruits de mer d'une fraîcheur incomparable, choisis sur l'étal.", price:"~20 €" },
+      { icon:"🍜", name:"Marché Gukje", desc:"Le milmyeon, nouilles froides de blé nées après la guerre de Corée, est une spécialité emblématique de Busan.", price:"~7 €" },
     ]
   }
 ];
@@ -1040,6 +1095,10 @@ const stopsPrintemps = [
       { icon:"🏮", name:"Festival des lanternes de Samgwangsa", desc:"À l'approche de l'anniversaire de Bouddha (avril-mai selon le calendrier lunaire), le temple Samgwangsa se pare de dizaines de milliers de lanternes colorées. Un spectacle féerique, surtout à la tombée de la nuit.", tag:"free", price:"Gratuit" },
       { icon:"🎨", name:"Village Gamcheon", desc:"L'un des quartiers les plus photogéniques de Corée. D'anciens réfugiés de la guerre de Corée ont transformé ce village en galerie d'art à ciel ouvert, avec glycines et azalées accrochées aux escaliers muraux.", tag:"free", price:"Gratuit" },
       { icon:"🏖️", name:"Taejongdae & falaises printanières", desc:"Ce parc naturel à la pointe de l'île Yeongdo offre des falaises spectaculaires sur la mer, encadrées de camélias et d'azalées au printemps. Le petit train touristique permet d'en faire le tour sans effort.", tag:"free", price:"~2 € (train)" },
+    ],
+    restaurants: [
+      { icon:"🐟", name:"Marché Jagalchi", desc:"Le plus grand marché aux poissons de Corée : sashimi et fruits de mer d'une fraîcheur incomparable, choisis sur l'étal.", price:"~20 €" },
+      { icon:"🍜", name:"Marché Gukje", desc:"Le milmyeon, nouilles froides de blé nées après la guerre de Corée, est une spécialité emblématique de Busan.", price:"~7 €" },
     ]
   },
   {
@@ -1052,6 +1111,10 @@ const stopsPrintemps = [
       { icon:"🌸", name:"Ruisseau Yeojwacheon", desc:"Le tunnel de cerisiers qui surplombe ce petit canal urbain est devenu l'image la plus partagée du printemps coréen. Mieux vaut y aller tôt le matin ou en soirée pour éviter la foule du festival Gunhangje.", tag:"free", price:"Gratuit" },
       { icon:"🚉", name:"Gare de Gyeonghwa", desc:"Cette gare désaffectée, entièrement encerclée de cerisiers centenaires, est un lieu de pèlerinage photographique. D'anciens wagons y sont exposés au milieu des pétales.", tag:"free", price:"Gratuit" },
       { icon:"⚓", name:"Base navale & Jehwangsan Park", desc:"Jinhae abrite la principale base de la marine coréenne, ouverte au public lors du festival avec démonstrations de navires. Le parc Jehwangsan, sur les hauteurs, offre une vue d'ensemble sur la ville rose et la baie.", tag:"free", price:"Gratuit" },
+    ],
+    restaurants: [
+      { icon:"🦐", name:"Jinhae Hoegwan", desc:"Restaurant familial de fruits de mer, très demandé pendant le festival des cerisiers — mieux vaut réserver.", price:"~15 €" },
+      { icon:"🍲", name:"Marché de Jinhae", desc:"Le dwaeji-gukbap, soupe de porc et de riz, est un classique réconfortant à petit prix dans les gargotes du marché.", price:"~7 €" },
     ]
   },
   {
@@ -1064,6 +1127,10 @@ const stopsPrintemps = [
       { icon:"🚡", name:"Téléphérique du mont Mireuksan", desc:"Le plus long téléphérique de Corée continentale grimpe à 400 m d'altitude. Par temps clair, la vue embrasse l'archipel de Hallyeohaesang, ourlé d'azalées roses au printemps.", tag:"paid", price:"~12 €" },
       { icon:"🎨", name:"Village de fresques Dongpirang", desc:"Ce quartier de pêcheurs à flanc de colline a été transformé en galerie de street art colorée. Les ruelles en escalier, bordées de pruniers en fleurs, offrent des vues sur le port à chaque tournant.", tag:"free", price:"Gratuit" },
       { icon:"🦑", name:"Marché aux poissons de Jungang", desc:"Le marché couvert le plus animé de la côte sud propose les meilleurs fruits de mer de printemps : anguilles, huîtres et le fameux poisson-globe (bok-uh). Idéal pour un déjeuner mémorable.", tag:"paid", price:"~15 €" },
+    ],
+    restaurants: [
+      { icon:"🦪", name:"Marché Jungang", desc:"Huîtres et fruits de mer frais tout juste débarqués, à déguster sur place face au port de pêche.", price:"~13 €" },
+      { icon:"🍙", name:"Tongyeong Kimbap", desc:"Le kimbap sans garniture terrestre, servi avec calamars et anguille de mer épicés, est une spécialité unique à Tongyeong.", price:"~6 €" },
     ]
   },
   {
@@ -1076,6 +1143,10 @@ const stopsPrintemps = [
       { icon:"🌷", name:"Jardin national de Suncheon", desc:"Ce parc de 111 hectares, aménagé pour l'Expo florale de 2013, se réinvente chaque printemps avec des massifs de tulipes multicolores et un lac aux nénuphars. Le jardin français et le jardin coréen s'y répondent avec élégance.", tag:"paid", price:"~7 €" },
       { icon:"🌾", name:"Réserve naturelle de Suncheonman", desc:"Cette immense zone humide protégée, réputée pour ses roseaux dorés en automne, s'éveille au printemps avec le retour des oiseaux migrateurs. Une promenade sur les pontons en bois offre une vue apaisante sur les marais.", tag:"paid", price:"~4 €" },
       { icon:"🏘️", name:"Village folklorique de Nagan", desc:"Enceinte fortifiée du XIVe siècle encore habitée, où les maisons de chaume traditionnelles sont entourées de vergers en fleurs au printemps. L'un des villages les plus authentiques de Corée, loin des foules.", tag:"paid", price:"~3 €" },
+    ],
+    restaurants: [
+      { icon:"🦪", name:"Restaurant du marché de Suncheon", desc:"Fruits de mer et galettes de fruits de mer (haemul-jeon) face à la réserve naturelle de Suncheonman.", price:"~12 €" },
+      { icon:"🍲", name:"Restaurant du village de Nagan", desc:"Cuisine traditionnelle mijotée dans l'enceinte fortifiée de Nagan, ambiance rustique et authentique.", price:"~9 €" },
     ]
   },
   {
@@ -1088,6 +1159,10 @@ const stopsPrintemps = [
       { icon:"🎍", name:"Forêt de bambous Juknokwon", desc:"Cette forêt de bambous de 16 hectares, l'une des plus belles de Corée, offre une fraîcheur bienvenue et une lumière filtrée particulièrement photogénique au printemps. Plusieurs sentiers serpentent entre les bambous géants.", tag:"paid", price:"~3 €" },
       { icon:"🌳", name:"Route des métaséquoias", desc:"Cette allée bordée de métaséquoias centenaires, aux jeunes feuilles vert tendre au printemps, est l'un des tunnels végétaux les plus photographiés de Corée. Fermée à la circulation, elle se parcourt à pied ou à vélo.", tag:"free", price:"Gratuit" },
       { icon:"🚣", name:"Radeau de bambou sur la Gwanbangnimok", desc:"Descente tranquille en radeau de bambou traditionnel (daetongbae) le long de la rivière, entre rizières naissantes et roselières printanières. Une activité paisible et authentique, loin des foules.", tag:"paid", price:"~9 €" },
+    ],
+    restaurants: [
+      { icon:"🎍", name:"Restaurant de la forêt de bambous", desc:"Le daetongbap, riz cuit et servi directement dans une tige de bambou, est la spécialité signature de Damyang.", price:"~11 €" },
+      { icon:"🍚", name:"Restaurant traditionnel de Damyang", desc:"Hanjeongsik simple et copieux, composé de légumes de saison et de namul cueillis en montagne.", price:"~13 €" },
     ]
   },
   {
@@ -1101,6 +1176,10 @@ const stopsPrintemps = [
       { icon:"🎋", name:"Location de hanbok", desc:"Revêtir le costume traditionnel coréen pour se promener parmi les cerisiers du village hanok est une expérience incontournable au printemps. De nombreuses boutiques proposent location, coiffure et accessoires assortis aux couleurs pastel de saison.", tag:"paid", price:"~10 €" },
       { icon:"🌸", name:"Cerisiers de la rivière Jeonjucheon", desc:"La promenade qui longe le ruisseau Jeonjucheon se couvre de cerisiers début avril, offrant une alternative plus paisible et moins fréquentée que le village hanok pour profiter de la floraison.", tag:"free", price:"Gratuit" },
       { icon:"🍚", name:"Marché Nambu & bibimbap printanier", desc:"Le marché couvert de Nambu est le repaire des locaux pour déguster l'authentique bibimbap de Jeonju, agrémenté au printemps de pousses et légumes sauvages (namul) fraîchement cueillis en montagne.", tag:"paid", price:"~8 €" },
+    ],
+    restaurants: [
+      { icon:"🍚", name:"Gajok Hoegwan", desc:"Bibimbap traditionnel de Jeonju servi dans un bol en bronze, recette familiale transmise depuis trois générations.", price:"~10 €" },
+      { icon:"🍶", name:"Hanguk Jip", desc:"Dans le village hanok, ce restaurant sert makgeolli (alcool de riz fermenté) accompagné de jeon croustillants.", price:"~12 €" },
     ]
   },
   {
@@ -1113,6 +1192,10 @@ const stopsPrintemps = [
       { icon:"🌳", name:"Arboretum Hanbat", desc:"Immense parc botanique en plein cœur de la ville, avec serres tropicales et jardins thématiques. Au printemps, les massifs de tulipes et les cerisiers offrent une parenthèse verdoyante entre deux trajets.", tag:"free", price:"Gratuit" },
       { icon:"♨️", name:"Sources chaudes de Yuseong", desc:"Le quartier thermal de Yuseong exploite des sources chaudes naturelles depuis des siècles. Plusieurs spas publics et hôtels proposent bains extérieurs et jjimjilbang pour se délasser après la route.", tag:"paid", price:"~10 €" },
       { icon:"🌷", name:"Rives du Gap Cheon", desc:"La rivière qui traverse Daejeon est bordée de pistes cyclables et de massifs fleuris au printemps. Une courte promenade au coucher du soleil offre un aperçu paisible de la vie locale.", tag:"free", price:"Gratuit" },
+    ],
+    restaurants: [
+      { icon:"🥐", name:"Sungsimdang", desc:"Boulangerie-pâtisserie historique de Daejeon (depuis 1956), célèbre pour son pain fourré à la pâte de haricots rouges (soboro-ppang).", price:"~5 €" },
+      { icon:"🍢", name:"Marché Jung-ang", desc:"Le grand marché couvert de Daejeon regorge d'étals de street food : tteokbokki, sundae et jeon à petit prix.", price:"~8 €" },
     ]
   },
   {
@@ -1126,6 +1209,10 @@ const stopsPrintemps = [
       { icon:"🏯", name:"Palais Gyeongbokgung en fleurs", desc:"Les jardins du palais royal se parent de cerisiers et d'azalées au printemps. La cérémonie de relève de la garde en costume traditionnel a toujours lieu à 10h et 14h.", tag:"paid", price:"~3 €" },
       { icon:"🛍️", name:"Insadong & Bukchon Hanok Village", desc:"Insadong est la rue des galeries d'art et des thés traditionnels. Bukchon, ses 900 maisons hanok du XIVe siècle, est particulièrement photogénique avec les magnolias en fleurs entre les toits.", tag:"free", price:"Gratuit" },
       { icon:"🌊", name:"Pique-nique au bord de la Han River", desc:"Dès les beaux jours, les parcs de la rivière Han se couvrent de tentes de pique-nique. Location de vélo (3€) et fraises coréennes achetées en supérette font partie du rituel printanier local.", tag:"free", price:"~3 € (vélo)" },
+    ],
+    restaurants: [
+      { icon:"🍜", name:"Myeongdong Kyoja", desc:"Institution près de Myeongdong depuis 1966, réputée pour ses raviolis (mandu) et sa soupe de nouilles kalguksu au poulet.", price:"~9 €" },
+      { icon:"🐔", name:"Tosokchon Samgyetang", desc:"À deux pas du palais Gyeongbokgung, ce restaurant sert depuis des décennies le samgyetang, poulet entier mijoté au ginseng et riz gluant.", price:"~15 €" },
     ]
   }
 ];
@@ -1264,6 +1351,12 @@ function refreshActivityPrices() {
       if (!el) return;
       el.outerHTML = getTagHTML(a.tag, formatPrice(a.price));
     });
+    const priceEls = panel.querySelectorAll('.restaurant-price');
+    (stop.restaurants || []).forEach((r, j) => {
+      const el = priceEls[j];
+      if (!el) return;
+      el.textContent = formatPrice(r.price);
+    });
   });
 }
 
@@ -1318,6 +1411,16 @@ function buildItinerary(stopsData) {
         </div>
       </div>`).join('');
 
+    const restos = (stop.restaurants || []).map(r => `
+      <div class="restaurant-item">
+        <div class="activity-icon">${r.icon}</div>
+        <div class="activity-body">
+          <div class="activity-name">${r.name}</div>
+          <div class="activity-sub">${r.desc}</div>
+        </div>
+        <div class="restaurant-price">${formatPrice(r.price)}</div>
+      </div>`).join('');
+
     const panel = document.createElement('div');
     panel.className = 'city-panel' + (i === 0 ? ' active' : '');
     panel.id = `panel-${i}`;
@@ -1329,6 +1432,10 @@ function buildItinerary(stopsData) {
       </div>
       <div class="city-desc">${stop.desc}</div>
       <div class="activities-list">${acts}</div>
+      <div class="budget-bar">
+        <div class="budget-bar-title">🍽️ Où manger</div>
+        <div class="restaurants-list">${restos}</div>
+      </div>
       <div class="budget-bar">
         <div class="budget-bar-title">💰 Budget étape — 1 personne</div>
         <div class="budget-items">
