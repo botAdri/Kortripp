@@ -265,7 +265,7 @@ html, body {
 /* ═══ BODY SPLIT ═══ */
 .body {
   display: grid;
-  grid-template-columns: 340px 1fr;
+  grid-template-columns: 1fr 400px;
   overflow: hidden;
   height: 100%;
 }
@@ -382,6 +382,29 @@ html, body {
   background: var(--cream);
 }
 
+/* Deux colonnes : activités à gauche, restaurants à droite */
+.panel-columns {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0;
+  border-bottom: 1px solid var(--border);
+}
+.panel-col {
+  min-width: 0;
+  padding-bottom: 6px;
+}
+.panel-col + .panel-col {
+  border-left: 1px solid var(--border);
+}
+.panel-col-title {
+  font-size: 9px;
+  letter-spacing: .1em;
+  text-transform: uppercase;
+  color: var(--terra);
+  font-weight: 700;
+  padding: 12px 14px 4px;
+}
+
 /* Activity items */
 .activities-list {
   padding: 10px 14px 20px;
@@ -437,6 +460,7 @@ html, body {
   display: flex;
   flex-direction: column;
   gap: 2px;
+  padding: 0 14px 20px;
 }
 .restaurant-item {
   display: flex;
@@ -860,6 +884,8 @@ html, body {
   .header-right { width: 100%; margin-left: 0; }
   .stat-pills-group { display:none; }
   .action-pill { font-size:10.5px; padding:5px 9px; }
+  .panel-columns { grid-template-columns: 1fr; }
+  .panel-col + .panel-col { border-left: none; border-top: 1px solid var(--border); }
 }
 </style>
 </head>
@@ -1498,10 +1524,15 @@ function buildItinerary(stopsData) {
         <div class="city-dates">📅 ${stop.dates}</div>
       </div>
       <div class="city-desc">${stop.desc}</div>
-      <div class="activities-list">${acts}</div>
-      <div class="budget-bar">
-        <div class="budget-bar-title">🍽️ Où manger</div>
-        <div class="restaurants-list">${restos}</div>
+      <div class="panel-columns">
+        <div class="panel-col">
+          <div class="panel-col-title">🎯 Activités</div>
+          <div class="activities-list">${acts}</div>
+        </div>
+        <div class="panel-col">
+          <div class="panel-col-title">🍽️ Où manger</div>
+          <div class="restaurants-list">${restos}</div>
+        </div>
       </div>
       <div class="budget-bar">
         <div class="budget-bar-title">💰 Budget étape — 1 personne</div>
