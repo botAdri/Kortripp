@@ -462,6 +462,18 @@ html, body {
   gap: 2px;
   padding: 0 14px 20px;
 }
+  .restaurants-card {
+  display: flex;
+  gap: 12px;
+  padding: 12px 0;
+  border-bottom: 1px solid rgba(0,0,0,.05);
+  cursor: default;
+  transition: background .15s;
+  border-radius: 8px;
+}
+.restaurants-card:last-child { border-bottom: none; }
+.restaurants-card:hover { background: var(--cream); padding-left:6px; padding-right:6px; margin:0 -6px; }
+.restaurants-icon {
 .restaurant-item {
   display: flex;
   align-items: center;
