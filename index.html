@@ -1284,8 +1284,25 @@ const SEASON_META = {
 // ═══════════════════════════════════════════════════════════
 // ÉTAT GLOBAL & UTILITAIRES (saison, devise, formatage prix)
 // ═══════════════════════════════════════════════════════════
-let currentSeason = localStorage.getItem('kortripp-season') || 'automne';
-let currentCurrency = localStorage.getItem('kortripp-currency') || 'EUR';
+// Certains navigateurs (navigation privée, "Bloquer tous les cookies" sur Safari...)
+// font planter localStorage avec une SecurityError plutôt que de le désactiver
+// silencieusement. Ce wrapper capture ces erreurs et bascule sur une mémoire en RAM
+// (les préférences ne persistent alors pas d'une session à l'autre, mais l'app ne plante plus).
+const memoryFallback = {};
+const safeStorage = {
+  getItem(key) {
+    try { return localStorage.getItem(key); } catch (e) { return key in memoryFallback ? memoryFallback[key] : null; }
+  },
+  setItem(key, value) {
+    try { localStorage.setItem(key, value); } catch (e) { memoryFallback[key] = value; }
+  },
+  removeItem(key) {
+    try { localStorage.removeItem(key); } catch (e) { delete memoryFallback[key]; }
+  },
+};
+
+let currentSeason = safeStorage.getItem('kortripp-season') || 'automne';
+let currentCurrency = safeStorage.getItem('kortripp-currency') || 'EUR';
 const KRW_RATE = 1450; // taux approximatif € → ₩, à vérifier avant départ
 
 // Convertit une chaîne de prix en € ("~4 €", "480 – 650 €", "Gratuit"...) vers ₩ si le
@@ -1337,7 +1354,7 @@ function applySeason(season, { persist = true } = {}) {
   if (typeof renderBudgetModal === 'function') renderBudgetModal(season);
 
   if (persist) {
-    try { localStorage.setItem('kortripp-season', season); } catch (e) { /* ignore */ }
+    safeStorage.setItem('kortripp-season', season);
   }
 
   // Événement personnalisé — permet d'étendre le comportement au changement de saison
@@ -1646,7 +1663,7 @@ function refreshGrandTotal(season) {
 
 function getFlightOverrides(season) {
   try {
-    const raw = localStorage.getItem(`kortripp-flight-overrides-${season}`);
+    const raw = safeStorage.getItem(`kortripp-flight-overrides-${season}`);
     return raw ? JSON.parse(raw) : {};
   } catch { return {}; }
 }
@@ -1654,11 +1671,11 @@ function getFlightOverrides(season) {
 function setFlightOverride(season, key, value) {
   const overrides = getFlightOverrides(season);
   overrides[key] = value;
-  localStorage.setItem(`kortripp-flight-overrides-${season}`, JSON.stringify(overrides));
+  safeStorage.setItem(`kortripp-flight-overrides-${season}`, JSON.stringify(overrides));
 }
 
 function resetFlightOverrides(season) {
-  localStorage.removeItem(`kortripp-flight-overrides-${season}`);
+  safeStorage.removeItem(`kortripp-flight-overrides-${season}`);
 }
 
 function renderFlightRow(season, key, label, sub, defaultValue) {
@@ -1708,7 +1725,7 @@ function saveFlightEdit(key, row) {
 
 function getPriceOverrides(season) {
   try {
-    const raw = localStorage.getItem(`kortripp-price-overrides-${season}`);
+    const raw = safeStorage.getItem(`kortripp-price-overrides-${season}`);
     return raw ? JSON.parse(raw) : {};
   } catch { return {}; }
 }
@@ -1716,11 +1733,11 @@ function getPriceOverrides(season) {
 function setPriceOverride(season, cityName, value) {
   const overrides = getPriceOverrides(season);
   overrides[cityName] = value;
-  localStorage.setItem(`kortripp-price-overrides-${season}`, JSON.stringify(overrides));
+  safeStorage.setItem(`kortripp-price-overrides-${season}`, JSON.stringify(overrides));
 }
 
 function resetPriceOverrides(season) {
-  localStorage.removeItem(`kortripp-price-overrides-${season}`);
+  safeStorage.removeItem(`kortripp-price-overrides-${season}`);
 }
 
 function parseNights(nightsStr) {
@@ -2005,7 +2022,7 @@ updateCurrencyBtnLabel();
 
 currencyToggleBtn?.addEventListener('click', () => {
   currentCurrency = currentCurrency === 'EUR' ? 'KRW' : 'EUR';
-  try { localStorage.setItem('kortripp-currency', currentCurrency); } catch (e) { /* ignore */ }
+  safeStorage.setItem('kortripp-currency', currentCurrency);
   updateCurrencyBtnLabel();
   refreshActivityPrices();
   if (typeof renderBudgetModal === 'function') renderBudgetModal(currentSeason);
