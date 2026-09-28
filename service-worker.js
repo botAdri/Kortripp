@@ -1,4 +1,4 @@
-const CACHE_NAME = 'guide-coree-v14';
+const CACHE_NAME = 'guide-coree-v15';
 
 const STATIC_ASSETS = [
   '/Kortripp/index.html',
