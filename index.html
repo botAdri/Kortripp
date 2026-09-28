@@ -14,7 +14,7 @@
 <meta name="apple-mobile-web-app-title" content="한국 Voyage">
 <meta name="format-detection" content="telephone=no, date=no, address=no, email=no">
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Noto+Serif+KR:wght@400;600&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
+<link rel="stylesheet" href="./vendor/leaflet/leaflet.css"/>
 <style>
 :root {
   --cream:        #F6F2EC;
@@ -936,7 +936,7 @@ html, body {
   </div>
 </div>
 
-<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script src="./vendor/leaflet/leaflet.js"></script>
 <script>
 // ═══ DONNÉES ═══
 const stopsAutomne = [
@@ -1343,6 +1343,15 @@ document.getElementById('seasonToggle')?.querySelectorAll('.season-btn').forEach
 // ═══════════════════════════════════════════════════════════
 // CARTE & ITINÉRAIRE (Leaflet)
 // ═══════════════════════════════════════════════════════════
+// Repli : si Leaflet ne se charge pas (réseau, CDN bloqué...), on neutralise la carte
+// pour que la liste des étapes, les descriptifs et le budget restent affichés.
+if (typeof L === 'undefined') {
+  const noop = new Proxy(function () {}, { get: (t, p) => (p === 'then' ? undefined : noop), apply: () => noop });
+  window.L = new Proxy({}, { get: () => () => noop });
+  const mapEl = document.getElementById('map');
+  if (mapEl) mapEl.innerHTML = '<div style="padding:24px;text-align:center;color:#888;font-size:13px">Carte indisponible pour le moment (connexion ou chargement impossible). Les étapes restent consultables.</div>';
+}
+
 const map = L.map('map', {
   center: [35.9, 127.8],
   zoom: 7,
