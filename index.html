@@ -864,6 +864,15 @@ html, body {
 </style>
 </head>
 <body>
+<div id="jsErrorBanner" style="display:none; position:fixed; z-index:99999; top:0; left:0; right:0; background:#B84A22; color:#fff; font:12px/1.5 monospace; padding:10px 14px; white-space:pre-wrap;"></div>
+<script>
+  window.addEventListener('error', function (e) {
+    var el = document.getElementById('jsErrorBanner');
+    if (!el) return;
+    el.style.display = 'block';
+    el.textContent = '⚠️ Erreur JS : ' + e.message + ' (' + (e.filename || '').split('/').pop() + ':' + e.lineno + ')';
+  });
+</script>
 <div class="app">
 
   <!-- ═══ HEADER ═══ -->
