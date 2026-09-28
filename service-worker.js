@@ -1,15 +1,20 @@
-const CACHE_NAME = 'guide-coree-v11';
+const CACHE_NAME = 'guide-coree-v14';
 
 const STATIC_ASSETS = [
   '/Kortripp/index.html',
   '/Kortripp/manifest.json',
   '/Kortripp/icons/icon-192.png',
   '/Kortripp/icons/icon-512.png',
+  '/Kortripp/vendor/leaflet/leaflet.js',
+  '/Kortripp/vendor/leaflet/leaflet.css',
+  '/Kortripp/vendor/leaflet/images/layers.png',
+  '/Kortripp/vendor/leaflet/images/layers-2x.png',
+  '/Kortripp/vendor/leaflet/images/marker-icon.png',
+  '/Kortripp/vendor/leaflet/images/marker-icon-2x.png',
+  '/Kortripp/vendor/leaflet/images/marker-shadow.png',
 ];
 
 const EXTERNAL_ASSETS = [
-  'https://unpkg.com/leaflet@1.9.4/dist/leaflet.js',
-  'https://unpkg.com/leaflet@1.9.4/dist/leaflet.css',
   'https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=DM+Sans:wght@400;500;600;700&display=swap',
 ];
 
@@ -40,7 +45,8 @@ self.addEventListener('fetch', (event) => {
   const url = new URL(event.request.url);
   const isMapTile =
     url.hostname.includes('basemaps.cartocdn.com') ||
-    url.hostname.includes('tile.openstreetmap.org');
+    url.hostname.includes('tile.openstreetmap.org') ||
+    url.hostname.includes('maps.wikimedia.org');
 
   if (isMapTile) {
     event.respondWith(
