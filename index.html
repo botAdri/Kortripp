@@ -265,7 +265,7 @@ html, body {
 /* ═══ BODY SPLIT ═══ */
 .body {
   display: grid;
-  grid-template-columns: 1fr minmax(500px, 1250px);
+  grid-template-columns: 1fr 1250px;
   overflow: hidden;
   height: 100%;
 }
@@ -373,6 +373,11 @@ html, body {
   opacity: .8;
   margin-top: 4px;
 }
+.city-travel {
+  font-size: 11px;
+  opacity: .8;
+  margin-top: 2px;
+}
 .city-desc {
   padding: 12px 18px;
   font-size: 12px;
@@ -467,17 +472,9 @@ html, body {
   align-items: center;
   gap: 12px;
   padding: 8px 0;
-  border-radius: 8px;
-  transition: background .15s;
 }
 .restaurant-item:not(:last-child) {
   border-bottom: 1px solid rgba(0,0,0,.05);
-}
-.restaurant-item:hover {
-  background: var(--cream);
-  padding-left: 6px;
-  padding-right: 6px;
-  margin: 0 -6px;
 }
 .restaurant-price {
   font-size: 12px;
@@ -1006,6 +1003,7 @@ const stopsAutomne = [
   },
   {
     id: 2, name: "Daejeon", korean: "대전", color: "#2D6B3A",
+    travel: { km: 160, duration: "1h50" },
     dates: "1 nuit",
     lat: 36.3504, lng: 127.3845,
     desc: "Carrefour de la Corée et porte vers le Jeollanam-do. Le parc Gyeryongsan vire au rouge et or en novembre — l'un des plus beaux feuillages du pays.",
@@ -1024,6 +1022,7 @@ const stopsAutomne = [
   },
   {
     id: 3, name: "Jeonju", korean: "전주", color: "#7A4F2A",
+    travel: { km: 80, duration: "1h05" },
     dates: "2 nuits",
     lat: 35.8242, lng: 127.1480,
     desc: "Capitale gastronomique et culturelle de Corée, à l'entrée du Jeollanam-do. Le village Hanok de Jeonju est magique à l'automne, avec ses tuiles grises entre les érables rouges — et sert de camp de base pour Naejangsan, l'un des tout meilleurs feuillages du pays.",
@@ -1044,6 +1043,7 @@ const stopsAutomne = [
   },
   {
     id: 4, name: "Gwangju", korean: "광주", color: "#8B3A6A",
+    travel: { km: 85, duration: "1h10" },
     dates: "1 nuit",
     lat: 35.1595, lng: 126.8526,
     desc: "Capitale culturelle du Jeollanam-do, ville d'art et de mémoire. La cuisine de Gwangju est réputée comme la meilleure de Corée.",
@@ -1063,6 +1063,7 @@ const stopsAutomne = [
   },
   {
     id: 5, name: "Mokpo", korean: "목포", color: "#4A7FA5",
+    travel: { km: 60, duration: "0h50" },
     dates: "1 nuit",
     lat: 34.8118, lng: 126.3922,
     desc: "Ville portuaire au bout de la péninsule, porte des îles du Dadohae. En novembre, la lumière sur les îlots et la mer du Sud crée une atmosphère d'une beauté mélancolique.",
@@ -1082,6 +1083,7 @@ const stopsAutomne = [
   },
   {
     id: 6, name: "Suncheon", korean: "순천", color: "#C9913A",
+    travel: { km: 110, duration: "1h30" },
     dates: "1 nuit",
     lat: 34.9506, lng: 127.4872,
     desc: "Ville jardin du Jeollanam-do, entre Mokpo et Yeosu. La réserve naturelle de Suncheonman se couvre en novembre de roseaux dorés à perte de vue — l'un des plus beaux spectacles d'automne du pays, et souvent méconnu des visiteurs.",
@@ -1100,6 +1102,7 @@ const stopsAutomne = [
   },
   {
     id: 7, name: "Yeosu", korean: "여수", color: "#3D6B8A",
+    travel: { km: 45, duration: "0h45" },
     dates: "2 nuits",
     lat: 34.7604, lng: 127.6622,
     desc: "Joyau côtier du Jeollanam-do, Yeosu s'étend sur une presqu'île face à un archipel magnifique. En novembre, la mer scintille et les forêts de camélias bordent les falaises.",
@@ -1119,6 +1122,7 @@ const stopsAutomne = [
   },
   {
     id: 8, name: "Busan", korean: "부산", color: "#1F5C7A",
+    travel: { km: 140, duration: "2h00" },
     dates: "3 nuits",
     lat: 35.1796, lng: 129.0756,
     desc: "Deuxième ville de Corée, terminus de la route de l'ouest. Busan est un kaléidoscope de plages, temples perchés, marchés colorés et cuisine incomparable.",
@@ -1164,6 +1168,7 @@ const stopsPrintemps = [
   },
   {
     id: 2, name: "Jinhae", korean: "진해", color: "#3D6B8A",
+    travel: { km: 50, duration: "0h50" },
     dates: "1 nuit",
     lat: 35.1500, lng: 128.7000,
     desc: "Capitale incontestée des cerisiers en Corée. Chaque année début avril, le festival Jinhae Gunhangje attire des millions de visiteurs autour du ruisseau Yeojwacheon et de la voie ferrée historique — l'une des toutes premières villes du pays à fleurir.",
@@ -1182,6 +1187,7 @@ const stopsPrintemps = [
   },
   {
     id: 3, name: "Tongyeong", korean: "통영", color: "#4A7FA5",
+    travel: { km: 40, duration: "0h45" },
     dates: "1 nuit",
     lat: 34.8544, lng: 128.4331,
     desc: "Surnommée la « Naples de la Corée », cette ville portuaire multiplie les criques et îlots. Le printemps y apporte une lumière douce, des azalées sur les collines et les premiers fruits de mer de saison.",
@@ -1200,6 +1206,7 @@ const stopsPrintemps = [
   },
   {
     id: 4, name: "Suncheon", korean: "순천", color: "#8B3A6A",
+    travel: { km: 95, duration: "1h20" },
     dates: "1 nuit",
     lat: 34.9506, lng: 127.4872,
     desc: "Ville jardin du Jeollanam-do, célèbre pour sa baie protégée et son gigantesque jardin national. Le festival des fleurs de printemps y transforme des hectares entiers en mosaïque de tulipes et de pensées.",
@@ -1218,6 +1225,7 @@ const stopsPrintemps = [
   },
   {
     id: 5, name: "Damyang", korean: "담양", color: "#7A4F2A",
+    travel: { km: 75, duration: "1h05" },
     dates: "1 nuit",
     lat: 35.3212, lng: 126.9882,
     desc: "Petite ville rurale du Jeollanam-do, réputée pour ses forêts de bambous et ses paysages verdoyants. Au printemps, la nouvelle pousse de bambou et les métaséquoias en jeunes feuilles créent une palette de verts éclatants.",
@@ -1236,6 +1244,7 @@ const stopsPrintemps = [
   },
   {
     id: 6, name: "Jeonju", korean: "전주", color: "#2D6B3A",
+    travel: { km: 45, duration: "0h50" },
     dates: "2 nuits",
     lat: 35.8242, lng: 127.1480,
     desc: "Capitale gastronomique et culturelle de Corée. Au printemps, le village Hanok se pare de magnolias et de cerisiers entre les toits de tuiles grises, pour une atmosphère particulièrement romantique.",
@@ -1255,6 +1264,7 @@ const stopsPrintemps = [
   },
   {
     id: 7, name: "Daejeon", korean: "대전", color: "#B84A22",
+    travel: { km: 80, duration: "1h05" },
     dates: "1 nuit",
     lat: 36.3504, lng: 127.3845,
     desc: "Étape intermédiaire incontournable entre le Sud-Est et Séoul. Au printemps, l'arboretum Hanbat et les rives du Gap Cheon se couvrent de cerisiers et de forsythias jaunes.",
@@ -1273,6 +1283,7 @@ const stopsPrintemps = [
   },
   {
     id: 8, name: "Séoul", korean: "서울", color: "#1E3A5F",
+    travel: { km: 160, duration: "1h50" },
     dates: "3 nuits",
     lat: 37.5665, lng: 126.9780,
     desc: "Capitale vibrante où tradition et modernité s'entremêlent. Dernière étape du séjour : les cerisiers y fleurissent 1 à 2 semaines après le sud, ce qui les met pile en pleine floraison à la toute fin du voyage — Yeouido et les douves du palais offrent alors un spectacle rose et blanc.",
@@ -1530,6 +1541,7 @@ function buildItinerary(stopsData) {
         <div class="city-badge">Étape ${stop.id} · <span class="season-badge-text">${meta.emoji} ${meta.label}</span></div>
         <div class="city-name">${stop.name}</div>
         <div class="city-dates">📅 ${stop.dates}</div>
+        <div class="city-travel">${stop.travel ? `🚗 Depuis ${stopsData[i - 1].name} : ~${stop.travel.km} km · env. ${stop.travel.duration}` : '🚩 Point de départ du road trip'}</div>
       </div>
       <div class="city-desc">${stop.desc}</div>
       <div class="panel-columns">
