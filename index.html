@@ -472,9 +472,17 @@ html, body {
   align-items: center;
   gap: 12px;
   padding: 8px 0;
+  border-radius: 8px;
+  transition: background .15s;
 }
 .restaurant-item:not(:last-child) {
   border-bottom: 1px solid rgba(0,0,0,.05);
+}
+.restaurant-item:hover {
+  background: var(--cream);
+  padding-left: 6px;
+  padding-right: 6px;
+  margin: 0 -6px;
 }
 .restaurant-price {
   font-size: 12px;
