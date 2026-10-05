@@ -470,10 +470,10 @@ html, body {
 .restaurant-item {
   display: flex;
   align-items: center;
-  cursor: default;
   gap: 12px;
   padding: 8px 0;
   border-radius: 8px;
+  cursor: default;
   transition: background .15s;
 }
 .restaurant-item:not(:last-child) {
@@ -1612,6 +1612,8 @@ const BUDGET_DATA = {
       busanReturn: "+ ~40 – 60 €",
       busanReturnLabel: "Vol retour depuis Busan (optionnel)",
       busanReturnSub: "Si retour Busan → Séoul puis vol international depuis Séoul, ou vol intérieur Busan → Séoul (~1h, ~40 €) avant le vol international",
+      searchUrlRoundTrip: "https://www.google.com/travel/flights?q=Flights%20from%20Paris%20to%20Seoul%20on%202026-10-25%20through%202026-11-08",
+      skyscannerUrlRoundTrip: "https://www.skyscanner.net/transport/flights/cdg/icn/261025/261108/",
     },
     accomAvgSub: "Variable selon la ville : ~45 € (Daejeon, Mokpo) à ~60 € (Séoul, Yeosu, Busan)",
     accomCities: [
@@ -1653,6 +1655,10 @@ const BUDGET_DATA = {
       busanReturn: "≈ tarif équivalent (vol « open-jaw »)",
       busanReturnLabel: "Vol « open-jaw » : arrivée Busan / retour Séoul",
       busanReturnSub: "Recommandé pour cet itinéraire (Busan → Séoul) : arrivée à Busan (Gimhae) ou Séoul-Incheon + train vers Busan, puis retour international depuis Séoul (Incheon) en fin de séjour — évite tout aller-retour inutile",
+      searchUrlRoundTrip: "https://www.google.com/travel/flights?q=Flights%20from%20Paris%20to%20Seoul%20on%202027-03-25%20through%202027-04-08",
+      searchUrlOpenJaw: "https://www.google.com/travel/flights?q=Flights%20from%20Paris%20to%20Busan%20on%202027-03-25%20returning%20from%20Seoul%20on%202027-04-08",
+      skyscannerUrlRoundTrip: "https://www.skyscanner.net/transport/flights/cdg/icn/270325/270408/",
+      skyscannerUrlOpenJaw: "https://www.skyscanner.net/transport/flights/cdg/pus/270325/",
     },
     accomAvgSub: "Variable selon la ville : ~50 € (Damyang) à ~90 € (Jinhae, forte affluence pendant le festival des cerisiers)",
     accomCities: [
@@ -1738,14 +1744,20 @@ function resetFlightOverrides(season) {
   safeStorage.removeItem(`kortripp-flight-overrides-${season}`);
 }
 
-function renderFlightRow(season, key, label, sub, defaultValue) {
+function renderFlightRow(season, key, label, sub, defaultValue, searchUrl, skyscannerUrl) {
   const overrides = getFlightOverrides(season);
   const value = overrides[key] !== undefined ? overrides[key] : defaultValue;
+  const links = [
+    searchUrl ? `<a class="budget-link" href="${searchUrl}" target="_blank" rel="noopener">🔍 Google Flights</a>` : '',
+    skyscannerUrl ? `<a class="budget-link" href="${skyscannerUrl}" target="_blank" rel="noopener">🔍 Skyscanner</a>` : '',
+  ].join('');
+  const linksRow = links ? `<div class="budget-links" style="margin-top:6px">${links}</div>` : '';
   return `
       <div class="budget-card-row">
         <div>
           <div class="budget-card-label">${label}</div>
           <div class="budget-card-sub">${sub}</div>
+          ${linksRow}
         </div>
         <div class="budget-price-edit">
           <span class="budget-card-amount flight-price-display" data-flight-key="${key}">${value}</span>
@@ -1936,12 +1948,11 @@ function renderBudgetModal(season) {
     <div class="budget-section-title">✈️ Billets d'avion aller-retour</div>
     <button class="budget-reset-btn" id="resetFlightsBtn">🔄 Réinitialiser les tarifs par défaut</button>
     <div class="budget-card">
-      ${renderFlightRow(season, 'layover', 'Vol avec escale (Asiana, Korean Air, Air China…)', 'Paris (CDG) ↔ Séoul (ICN), classe économique, 1 escale', b.flights.layover)}
-      ${renderFlightRow(season, 'direct', 'Vol direct (Air France, Korean Air)', 'Paris (CDG) ↔ Séoul (ICN), classe économique, sans escale', b.flights.direct)}
-      ${renderFlightRow(season, 'busanReturn', b.flights.busanReturnLabel, b.flights.busanReturnSub, b.flights.busanReturn)}
+      ${renderFlightRow(season, 'layover', 'Vol avec escale (Asiana, Korean Air, Air China…)', 'Paris (CDG) ↔ Séoul (ICN), classe économique, 1 escale', b.flights.layover, b.flights.searchUrlRoundTrip, b.flights.skyscannerUrlRoundTrip)}
+      ${renderFlightRow(season, 'direct', 'Vol direct (Air France, Korean Air)', 'Paris (CDG) ↔ Séoul (ICN), classe économique, sans escale', b.flights.direct, b.flights.searchUrlRoundTrip, b.flights.skyscannerUrlRoundTrip)}
+      ${renderFlightRow(season, 'busanReturn', b.flights.busanReturnLabel, b.flights.busanReturnSub, b.flights.busanReturn, b.flights.searchUrlOpenJaw, b.flights.skyscannerUrlOpenJaw)}
     </div>
     <div class="budget-links">
-      <a class="budget-link" href="https://www.skyscanner.fr/transport/vols/par/seol/" target="_blank" rel="noopener">🔍 Skyscanner</a>
       <a class="budget-link" href="https://www.koreanair.com" target="_blank" rel="noopener">Korean Air</a>
       <a class="budget-link" href="https://flyasiana.com" target="_blank" rel="noopener">Asiana Airlines</a>
       <a class="budget-link" href="https://www.airfrance.fr" target="_blank" rel="noopener">Air France</a>
