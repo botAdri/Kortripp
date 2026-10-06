@@ -1838,15 +1838,46 @@ function computeAccomStats(season) {
   };
 }
 
+// Dates de départ indicatives par saison (mêmes que l'export .ics), utilisées
+// pour pré-remplir les liens de recherche d'hébergement avec les bonnes dates.
+const TRIP_START_DATES = { automne: '2026-10-25', printemps: '2027-03-25' };
+
+function fmtISODate(date) {
+  return `${date.getFullYear()}-${pad2(date.getMonth() + 1)}-${pad2(date.getDate())}`;
+}
+
+// Calcule, pour chaque ville de l'itinéraire, ses dates d'arrivée/départ en
+// enchaînant les nuits depuis la date de départ du voyage.
+function computeAccomDates(season) {
+  const cities = BUDGET_DATA[season].accomCities;
+  let cursor = new Date(TRIP_START_DATES[season] + 'T00:00:00');
+  return cities.map((c) => {
+    const nights = parseNights(c.nights);
+    const checkin = new Date(cursor);
+    const checkout = new Date(cursor);
+    checkout.setDate(checkout.getDate() + Math.max(nights, 1));
+    cursor = checkout;
+    return { checkin: fmtISODate(checkin), checkout: fmtISODate(checkout) };
+  });
+}
+
 function renderAccomCityRows(cities, season) {
   const overrides = getPriceOverrides(season);
-  return cities.map((c) => {
+  const dates = computeAccomDates(season);
+  return cities.map((c, i) => {
     const price = overrides[c.name] !== undefined ? overrides[c.name] : parsePrice(c.price);
+    const { checkin, checkout } = dates[i];
+    const bookingUrl = `https://www.booking.com/searchresults.html?ss=${encodeURIComponent(c.name + ', Corée du Sud')}&checkin=${checkin}&checkout=${checkout}&lang=fr&selected_currency=EUR`;
+    const airbnbUrl = `https://www.airbnb.fr/s/${encodeURIComponent(c.name)}--Cor%C3%A9e-du-Sud/homes?checkin=${checkin}&checkout=${checkout}&currency=EUR`;
     return `
       <div class="budget-card-row">
         <div>
           <div class="budget-card-label">🛏️ ${c.name} — ${c.nights}</div>
           <div class="budget-card-sub">${c.sub}</div>
+          <div class="budget-links" style="margin-top:6px">
+            <a class="budget-link" href="${bookingUrl}" target="_blank" rel="noopener">🔍 Booking.com</a>
+            <a class="budget-link" href="${airbnbUrl}" target="_blank" rel="noopener">🔍 Airbnb</a>
+          </div>
         </div>
         <div class="budget-price-edit">
           <span class="budget-card-amount price-display" data-city="${c.name}">${displayAmount(price, '/nuit')}</span>
@@ -1982,11 +2013,6 @@ function renderBudgetModal(season) {
           <div class="budget-card-sub">${b.reserveNote}</div>
         </div>
       </div>
-    </div>
-    <div class="budget-links">
-      <a class="budget-link" href="https://www.booking.com/searchresults.html?ss=South+Korea" target="_blank" rel="noopener">🔍 Booking.com</a>
-      <a class="budget-link" href="https://www.agoda.com/fr-fr/country/south-korea.html" target="_blank" rel="noopener">Agoda</a>
-      <a class="budget-link" href="https://www.airbnb.fr/s/South-Korea/homes" target="_blank" rel="noopener">Airbnb</a>
     </div>
   </div>
 
