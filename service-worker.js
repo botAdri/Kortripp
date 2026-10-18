@@ -1,4 +1,4 @@
-const CACHE_NAME = 'guide-coree-v16';
+const CACHE_NAME = 'guide-coree-v26';
 
 const STATIC_ASSETS = [
   '/Kortripp/index.html',
@@ -43,6 +43,8 @@ self.addEventListener('activate', (event) => {
 
 self.addEventListener('fetch', (event) => {
   const url = new URL(event.request.url);
+  // Kakao Maps/Roadview : le navigateur gère directement (pas de mise en cache des panoramas)
+  if (/kakao|daum/.test(url.hostname)) return;
   const isMapTile =
     url.hostname.includes('basemaps.cartocdn.com') ||
     url.hostname.includes('tile.openstreetmap.org') ||
