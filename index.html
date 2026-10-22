@@ -992,6 +992,7 @@ html, body {
       <button class="action-pill" id="currencyToggleBtn" title="Basculer € / ₩ (hôtels, activités, location — hors vols)">💱 €</button>
       <button class="action-pill" id="icsExportBtn" title="Exporter les dates de l'itinéraire au format calendrier">📅 .ics</button>
       <button class="action-pill" id="shareBtn" title="Partager cette page">🔗 Partager</button>
+      <button class="action-pill" id="kakaoSeasonBtn" title="Ouvre la carte saisonnière de Kakao Map">🍁 Feuillages</button>
       <span class="stat-pills-group">
         <span class="stat-pill">🗺️ 8 villes</span>
         <span class="stat-pill">🎯 28 activités</span>
@@ -1434,6 +1435,11 @@ let currentCurrency = safeStorage.getItem('kortripp-currency') || 'EUR';
 // Laisser vide désactive les boutons « Vue rue ». Le domaine du site (ex. botadri.github.io)
 // doit être déclaré dans [JavaScript SDK domain] de cette clé.
 const KAKAO_JS_KEY = '971e575e5286264f78dffb158c453262';
+// TEST : cartes saisonnières de Kakao Map (feuillages / cerisiers)
+const KAKAO_SEASON_MAPS = {
+  automne:   { label: '🍁 Feuillages', q: '단풍 지도' },
+  printemps: { label: '🌸 Cerisiers',  q: '벚꽃 지도' },
+};
 const KRW_RATE = 1450; // taux approximatif € → ₩, à vérifier avant départ
 
 // Convertit une chaîne de prix en € ("~4 €", "480 – 650 €", "Gratuit"...) vers ₩ si le
@@ -1473,6 +1479,7 @@ function applySeason(season, { persist = true } = {}) {
   // Sous-titre du header
   const headerSubEl = document.getElementById('headerSub');
   if (headerSubEl) headerSubEl.textContent = meta.headerSub;
+  updateKakaoSeasonBtn(season);
 
   // Titre de l'onglet navigateur
   document.title = `한국 · Guide de Voyage — ${meta.titleSuffix}`;
@@ -2390,6 +2397,68 @@ document.addEventListener('click', (e) => {
 });
 document.addEventListener('keydown', (e) => {
   if (e.key === 'Escape' && document.getElementById('rvOverlay').classList.contains('active')) closeRoadview();
+});
+
+// ═══════════════════════════════════════════════════════════
+// AUTO-DIAGNOSTIC KAKAO — ouvrir la page avec  ?kakaotest=1
+// Vérifie le chargement du SDK puis chaque lieu (activités + restaurants) :
+// lieu trouvé ? vue rue disponible ? Résultat copiable.
+// ═══════════════════════════════════════════════════════════
+async function runKakaoSelfTest() {
+  const ov = document.createElement('div');
+  ov.style.cssText = 'position:fixed;inset:0;z-index:9999;background:#fff;overflow:auto;padding:16px;font:13px/1.5 system-ui,sans-serif;color:#222';
+  ov.innerHTML = '<h2 style="margin:0 0 6px">Diagnostic Kakao</h2><div id="kt-sum">Démarrage…</div><div style="margin:8px 0"><button id="kt-copy">Copier le rapport</button> <button id="kt-close">Fermer</button></div><table id="kt-tab" style="border-collapse:collapse;width:100%"></table>';
+  document.body.appendChild(ov);
+  const sum = ov.querySelector('#kt-sum'), tab = ov.querySelector('#kt-tab');
+  const lines = [];
+  ov.querySelector('#kt-close').onclick = () => ov.remove();
+  ov.querySelector('#kt-copy').onclick = () => navigator.clipboard && navigator.clipboard.writeText(lines.join('\n'));
+  const row = (icon, a, b, c) => {
+    const tr = document.createElement('tr');
+    tr.innerHTML = [icon, a, b, c].map(x => `<td style="border-bottom:1px solid #eee;padding:3px 6px;vertical-align:top">${x}</td>`).join('');
+    tab.appendChild(tr);
+    lines.push([icon, a, b, c].join(' | '));
+  };
+  if (!KAKAO_JS_KEY) { sum.textContent = '❌ KAKAO_JS_KEY est vide.'; return; }
+  sum.textContent = `Domaine vu par le site : ${location.origin} — chargement du SDK…`;
+  try { await loadKakaoMaps(); }
+  catch (e) { sum.innerHTML = `❌ SDK non chargé (${e.message}). Vérifier clé, domaine <b>${location.origin}</b>, activation Kakao Map, bloqueur de contenu.`; lines.push('SDK KO: ' + e.message); return; }
+  const items = [], seen = new Set();
+  [['Automne', stopsAutomne], ['Printemps', stopsPrintemps]].forEach(([season, arr]) => arr.forEach(st => {
+    st.activites.forEach(a => a.kr && items.push(['Activité', season, st.name, a.name, a.kr]));
+    st.restaurants.forEach(r => r.kr && items.push(['Restaurant', season, st.name, r.name, r.kr]));
+  }));
+  const todo = items.filter(it => { const k = it[4]; if (seen.has(k)) return false; seen.add(k); return true; });
+  const places = new kakao.maps.services.Places(), rv = new kakao.maps.RoadviewClient();
+  const sleep = ms => new Promise(r => setTimeout(r, ms));
+  let ok = 0, nopano = 0, nf = 0, err = 0, i = 0;
+  for (const [type, season, city, name, kr] of todo) {
+    i++; sum.textContent = `SDK OK ✅ — test ${i}/${todo.length}…`;
+    const res = await new Promise(resolve => places.keywordSearch(kr, (data, status) => resolve({ data, status })));
+    if (res.status === kakao.maps.services.Status.OK && res.data.length) {
+      const pl = res.data[0];
+      const pano = await new Promise(resolve => rv.getNearestPanoId(new kakao.maps.LatLng(pl.y, pl.x), 100, resolve));
+      if (pano) { ok++; row('✅', `${type} · ${city}`, `${name} <small>(${kr})</small>`, `${pl.place_name} — ${pl.address_name}`); }
+      else { nopano++; row('🟡 pas de vue rue', `${type} · ${city}`, `${name} <small>(${kr})</small>`, `${pl.place_name} — ${pl.address_name}`); }
+    } else if (res.status === kakao.maps.services.Status.ZERO_RESULT) { nf++; row('❌ introuvable', `${type} · ${city}`, `${name} <small>(${kr})</small>`, ''); }
+    else { err++; row('⚠️ erreur API', `${type} · ${city}`, `${name} <small>(${kr})</small>`, String(res.status)); }
+    await sleep(120);
+  }
+  const final = `Terminé : ✅ ${ok} avec vue rue · 🟡 ${nopano} lieu trouvé sans vue rue · ❌ ${nf} introuvables · ⚠️ ${err} erreurs (sur ${todo.length} lieux uniques)`;
+  sum.textContent = final; lines.unshift(final);
+}
+if (new URLSearchParams(location.search).has('kakaotest')) runKakaoSelfTest();
+
+// ═══════════════════════════════════════════════════════════
+// TEST — carte saisonnière Kakao Map (단풍 지도 / 벚꽃 지도)
+// ═══════════════════════════════════════════════════════════
+function updateKakaoSeasonBtn(season) {
+  const btn = document.getElementById('kakaoSeasonBtn');
+  if (btn && KAKAO_SEASON_MAPS[season]) btn.textContent = KAKAO_SEASON_MAPS[season].label;
+}
+document.getElementById('kakaoSeasonBtn')?.addEventListener('click', () => {
+  const m = KAKAO_SEASON_MAPS[currentSeason];
+  window.open('https://map.kakao.com/?q=' + encodeURIComponent(m.q), '_blank', 'noopener');
 });
 
 // ═══════════════════════════════════════════════════════════
