@@ -2402,10 +2402,11 @@ document.addEventListener('keydown', (e) => {
 async function runKakaoSelfTest() {
   const ov = document.createElement('div');
   ov.style.cssText = 'position:fixed;inset:0;z-index:9999;background:#fff;overflow:auto;padding:16px;font:13px/1.5 system-ui,sans-serif;color:#222';
-  ov.innerHTML = '<h2 style="margin:0 0 6px">Diagnostic Kakao</h2><div id="kt-sum">Démarrage…</div><div style="margin:8px 0"><button id="kt-copy">Copier le rapport</button> <button id="kt-close">Fermer</button></div><table id="kt-tab" style="border-collapse:collapse;width:100%"></table>';
+  ov.innerHTML = '<h2 style="margin:0 0 6px">Diagnostic Kakao</h2><div id="kt-sum">Démarrage…</div><div style="margin:8px 0"><button id="kt-copy">Copier le rapport</button> <button id="kt-json" disabled>Copier le JSON des coordonnées</button> <button id="kt-close">Fermer</button></div><textarea id="kt-out" readonly style="display:none;width:100%;height:110px;font:11px monospace;margin-bottom:8px"></textarea><table id="kt-tab" style="border-collapse:collapse;width:100%"></table>';
   document.body.appendChild(ov);
   const sum = ov.querySelector('#kt-sum'), tab = ov.querySelector('#kt-tab');
   const lines = [];
+  const coords = [];
   ov.querySelector('#kt-close').onclick = () => ov.remove();
   ov.querySelector('#kt-copy').onclick = () => navigator.clipboard && navigator.clipboard.writeText(lines.join('\n'));
   const row = (icon, a, b, c) => {
@@ -2434,6 +2435,7 @@ async function runKakaoSelfTest() {
     if (res.status === kakao.maps.services.Status.OK && res.data.length) {
       const pl = res.data[0];
       const pano = await new Promise(resolve => rv.getNearestPanoId(new kakao.maps.LatLng(pl.y, pl.x), 300, resolve));
+      coords.push([type === 'Restaurant' ? 'R' : 'A', city, name, kr, +(+pl.y).toFixed(6), +(+pl.x).toFixed(6), pl.id, pl.place_name, pano ? 1 : 0]);
       if (pano) { ok++; row('✅', `${type} · ${city}`, `${name} <small>(${kr})</small>`, `${pl.place_name} — ${pl.address_name}`); }
       else { nopano++; row('🟡 pas de vue rue', `${type} · ${city}`, `${name} <small>(${kr})</small>`, `${pl.place_name} — ${pl.address_name}`); }
     } else if (res.status === kakao.maps.services.Status.ZERO_RESULT) { nf++; row('❌ introuvable', `${type} · ${city}`, `${name} <small>(${kr})</small>`, ''); }
@@ -2442,6 +2444,14 @@ async function runKakaoSelfTest() {
   }
   const final = `Terminé : ✅ ${ok} avec vue rue · 🟡 ${nopano} lieu trouvé sans vue rue · ❌ ${nf} introuvables · ⚠️ ${err} erreurs (sur ${todo.length} lieux uniques)`;
   sum.textContent = final; lines.unshift(final);
+  const jsonBtn = ov.querySelector('#kt-json'), out = ov.querySelector('#kt-out');
+  const json = JSON.stringify(coords);
+  out.value = json;
+  jsonBtn.disabled = false;
+  jsonBtn.onclick = () => {
+    out.style.display = 'block'; out.select();
+    if (navigator.clipboard) navigator.clipboard.writeText(json).then(() => { jsonBtn.textContent = '✅ JSON copié (' + coords.length + ' lieux)'; }, () => {});
+  };
 }
 if (new URLSearchParams(location.search).has('kakaotest')) runKakaoSelfTest();
 
