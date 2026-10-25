@@ -1,17 +1,10 @@
-const CACHE_NAME = 'guide-coree-v26';
+const CACHE_NAME = 'guide-coree-v27';
 
 const STATIC_ASSETS = [
   '/Kortripp/index.html',
   '/Kortripp/manifest.json',
   '/Kortripp/icons/icon-192.png',
   '/Kortripp/icons/icon-512.png',
-  '/Kortripp/vendor/leaflet/leaflet.js',
-  '/Kortripp/vendor/leaflet/leaflet.css',
-  '/Kortripp/vendor/leaflet/images/layers.png',
-  '/Kortripp/vendor/leaflet/images/layers-2x.png',
-  '/Kortripp/vendor/leaflet/images/marker-icon.png',
-  '/Kortripp/vendor/leaflet/images/marker-icon-2x.png',
-  '/Kortripp/vendor/leaflet/images/marker-shadow.png',
 ];
 
 const EXTERNAL_ASSETS = [
