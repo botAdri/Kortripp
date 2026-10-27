@@ -791,9 +791,9 @@ html, body {
 
 /* ═══ ENCART BUDGET (bouton flottant + modale) ═══ */
 .budget-fab {
-  position: absolute;
-  top: 14px;
-  right: 14px;
+  position: fixed;
+  top: 20px;
+  right: 20px;
   z-index: 800;
   display: inline-flex;
   align-items: center;
@@ -857,7 +857,7 @@ html, body {
 .budget-modal-close:hover { background: rgba(255,255,255,.4); }
 
 @media (max-width: 720px) {
-  .budget-fab { top: 10px; right: 10px; padding: 7px 12px; font-size: 11px; }
+  .budget-fab { top: 16px; right: 16px; padding: 8px 14px; font-size: 11px; }
 }
 
 /* ═══ MAP ═══ */
@@ -1509,10 +1509,8 @@ function distKm(lat1, lng1, lat2, lng2) {
   const dLat = (lat2 - lat1) * rad, dLng = (lng2 - lng1) * rad;
   const a = Math.sin(dLat / 2) ** 2 + Math.cos(lat1 * rad) * Math.cos(lat2 * rad) * Math.sin(dLng / 2) ** 2;
   return 2 * R * Math.asin(Math.sqrt(a));
-} // taux approximatif € → ₩, à vérifier avant départ
+}
 
-// Convertit une chaîne de prix en € ("~4 €", "480 – 650 €", "Gratuit"...) vers ₩ si le
-// toggle devise est actif. Ne touche jamais aux montants sans symbole € (ex. "Gratuit").
 function formatPrice(str) {
   if (currentCurrency === 'EUR' || !/€/.test(str)) return str;
   const converted = str.replace(/\d[\d\s.,]*\d|\d/g, (match) => {
@@ -1525,7 +1523,6 @@ function formatPrice(str) {
   return converted.replace(/€/g, '₩');
 }
 
-// Convertit un montant numérique déjà en €, pour l'affichage (accom, totaux calculés).
 function displayAmount(eur, suffix = '') {
   if (currentCurrency === 'EUR') return `${Math.round(eur)} €${suffix}`;
   const krw = Math.round((eur * KRW_RATE) / 50) * 50;
@@ -1537,36 +1534,23 @@ function applySeason(season, { persist = true } = {}) {
   currentSeason = season;
   const meta = SEASON_META[season];
 
-  // Attribut sur la racine du document : pilote les variables CSS d'accent
-  // (bouton budget, en-tête de la modale, liseré du header)
   document.documentElement.setAttribute('data-season', season);
-
-  // Toggle visuel (position du curseur + labels actifs)
   const toggleEl = document.getElementById('seasonToggle');
   if (toggleEl) toggleEl.setAttribute('data-season', season);
-
-  // Sous-titre du header
   const headerSubEl = document.getElementById('headerSub');
   if (headerSubEl) headerSubEl.textContent = meta.headerSub;
   updateKakaoSeasonBtn(season);
 
-  // Titre de l'onglet navigateur
   document.title = `한국 · Guide de Voyage — ${meta.titleSuffix}`;
-
-  // Reconstruire l'itinéraire (tabs, panneaux, marqueurs, tracé, légende)
-  // avec les données propres à la saison sélectionnée — inclut la mise à jour des badges
   buildItinerary(SEASON_STOPS[season]);
   const actsEl = document.getElementById('statActs');
   if (actsEl) actsEl.textContent = `🎯 ${SEASON_STOPS[season].reduce((n, st) => n + st.activites.length, 0)} activités`;
-
-  // Reconstruire l'encart budget global avec les tarifs propres à la saison
   if (typeof renderBudgetModal === 'function') renderBudgetModal(season);
 
   if (persist) {
     safeStorage.setItem('kortripp-season', season);
   }
 
-  // Événement personnalisé — permet d'étendre le comportement au changement de saison
   document.dispatchEvent(new CustomEvent('seasonchange', { detail: { season } }));
 }
 
@@ -1574,17 +1558,13 @@ document.getElementById('seasonToggle')?.querySelectorAll('.season-btn').forEach
   btn.addEventListener('click', () => applySeason(btn.dataset.value));
 });
 
-// ═══ MAP ═══
-// ═══════════════════════════════════════════════════════════
-// CARTE & ITINÉRAIRE (Kakao Maps)
-// ═══════════════════════════════════════════════════════════
 let map = null;
 let mapReady = false;
-let stopOverlays = [];   // pins numérotés des étapes
-let routeLines = [];     // tronçons du trajet
-let placeOverlays = [];  // pastilles des activités / restaurants de l'étape active
-let placePopup = null;   // bulle d'information d'un lieu
-let placesFor = null;    // index de l'étape dont les lieux sont affichés (null = vue d'ensemble)
+let stopOverlays = [];
+let routeLines = [];
+let placeOverlays = [];
+let placePopup = null;
+let placesFor = null;
 const mapFilters = { A: true, R: true };
 
 function setMapMessage(text) {
@@ -1633,7 +1613,7 @@ function fitOverview() {
   map.setBounds(b, 60, 50, 60, 50);
 }
 
-// Tronçons du trajet : tracé routier réel si disponible (ROUTES), sinon segment droit
+
 function routeLegs() {
   const real = ROUTES[currentSeason] || [];
   const legs = [];
@@ -1727,7 +1707,6 @@ function openPlacePopup(item, info) {
   placePopup.setMap(map);
 }
 
-// Recentre la carte sur l'étape et affiche ses activités / restaurants
 function focusStopOnMap(idx) {
   if (!mapReady) return;
   const s = stops[idx];
@@ -1771,8 +1750,6 @@ function getTagHTML(tag, price) {
   return `<span class="activity-tag tag-paid">💳 ${price}</span>`;
 }
 
-// Recalcule uniquement le texte des prix d'activités déjà affichées (sans reconstruire
-// les onglets/panneaux/carte), pour un basculement de devise instantané.
 function refreshActivityPrices() {
   document.querySelectorAll('.city-panel').forEach((panel, i) => {
     const stop = stops[i];
@@ -1792,8 +1769,6 @@ function refreshActivityPrices() {
   });
 }
 
-// Construit (ou reconstruit) tabs, panneaux, marqueurs, tracé et légende
-// à partir des données de la saison active.
 function buildItinerary(stopsData) {
   stops = stopsData;
 
@@ -1802,7 +1777,6 @@ function buildItinerary(stopsData) {
   panelEl.innerHTML = '';
   clearMapLayers();
 
-  // ─ Légende ─
   const meta = SEASON_META[currentSeason];
   if (legendTitleEl) legendTitleEl.textContent = `${meta.emoji} Étapes ${meta.label.toLowerCase()}`;
   if (legendRowsEl) {
@@ -1812,7 +1786,6 @@ function buildItinerary(stopsData) {
   }
 
   stops.forEach((stop, i) => {
-    // ─ Tab ─
     const tab = document.createElement('button');
     tab.className = 'city-tab' + (i === 0 ? ' active' : '');
     tab.style.color = stop.color;
@@ -1821,7 +1794,6 @@ function buildItinerary(stopsData) {
     tab.addEventListener('click', () => selectStop(i));
     tabsEl.appendChild(tab);
 
-    // ─ Panel ─
     const acts = stop.activites.map(a => `
       <div class="activity-card">
         <div class="activity-icon">${a.icon}</div>
@@ -1878,15 +1850,10 @@ function buildItinerary(stopsData) {
 
   });
 
-  // Redessiner la carte (tracé, pins) et revenir à la 1ère étape
   activeIdx = 0;
   drawMap();
 }
 
-// ═══ DONNÉES BUDGET GLOBAL — PAR SAISON ═══
-// ═══════════════════════════════════════════════════════════
-// DONNÉES BUDGET (vols, hébergements, véhicule, par saison)
-// ═══════════════════════════════════════════════════════════
 const BUDGET_DATA = {
   automne: {
     dates: "Dates à définir",
@@ -1982,8 +1949,6 @@ const BUDGET_DATA = {
 };
 
 // ═══════════════════════════════════════════════════════════
-// LOGIQUE BUDGET : parsing, surcharges de prix, totaux calculés
-// ═══════════════════════════════════════════════════════════
 function parseRangeNumbers(str) {
   // Gère les séparateurs de milliers (espace, espace insécable) : "1 000" = 1000
   const matches = (String(str).match(/\d{1,3}(?:[\s\u00a0\u202f]\d{3})+(?:[.,]\d+)?|\d+(?:[.,]\d+)?/g) || [])
@@ -1997,7 +1962,6 @@ function formatEuro(n) {
   return Math.round(n).toLocaleString('fr-FR');
 }
 
-// Option de vol retenue pour le total ('direct' par défaut), mémorisée par saison.
 function getSelectedFlight(season) {
   const v = safeStorage.getItem(`kortripp-flight-choice-${season}`);
   return v === 'layover' || v === 'direct' ? v : 'direct';
@@ -2148,16 +2112,12 @@ function computeAccomStats(season) {
   };
 }
 
-// Dates de départ indicatives par saison (mêmes que l'export .ics), utilisées
-// pour pré-remplir les liens de recherche d'hébergement avec les bonnes dates.
 const TRIP_START_DATES = { automne: '2026-10-25', printemps: '2027-03-25' };
 
 function fmtISODate(date) {
   return `${date.getFullYear()}-${pad2(date.getMonth() + 1)}-${pad2(date.getDate())}`;
 }
 
-// Calcule, pour chaque ville de l'itinéraire, ses dates d'arrivée/départ en
-// enchaînant les nuits depuis la date de départ du voyage.
 function computeAccomDates(season) {
   const cities = BUDGET_DATA[season].accomCities;
   let cursor = new Date(TRIP_START_DATES[season] + 'T00:00:00');
@@ -2279,7 +2239,6 @@ document.getElementById('budgetModalBody').addEventListener('keydown', (e) => {
 
 // ═══════════════════════════════════════════════════════════
 // RENDU DU MODAL BUDGET
-// ═══════════════════════════════════════════════════════════
 function renderBudgetModal(season) {
   const meta = SEASON_META[season];
   const b = BUDGET_DATA[season];
@@ -2419,13 +2378,8 @@ function renderBudgetModal(season) {
   </div>`;
 }
 
-// Construction initiale avec la saison courante (persistée ou par défaut)
 applySeason(currentSeason, { persist: false });
-
-// ═══════════════════════════════════════════════════════════
-// TOGGLE DEVISE (€ / ₩) — s'applique aux activités, hébergements
-// et location de véhicule ; les vols restent toujours en €.
-// ═══════════════════════════════════════════════════════════
+// TOGGLE DEVISE (€ / ₩)
 const currencyToggleBtn = document.getElementById('currencyToggleBtn');
 function updateCurrencyBtnLabel() {
   if (currencyToggleBtn) currencyToggleBtn.textContent = currentCurrency === 'EUR' ? '💱 €' : '💱 ₩';
@@ -2442,7 +2396,6 @@ currencyToggleBtn?.addEventListener('click', () => {
 
 // ═══════════════════════════════════════════════════════════
 // EXPORT CALENDRIER (.ics)
-// ═══════════════════════════════════════════════════════════
 function icsEscape(str) {
   return String(str)
     .replace(/\\/g, '\\\\')
@@ -2506,10 +2459,6 @@ function generateICS(season) {
 document.getElementById('icsExportBtn')?.addEventListener('click', () => {
   generateICS(currentSeason);
 });
-
-// ═══════════════════════════════════════════════════════════
-// VUE RUE — Kakao Maps (Roadview), chargé à la demande au 1er clic
-// ═══════════════════════════════════════════════════════════
 let kakaoReady = null;
 let rvToken = 0;
 
@@ -2598,12 +2547,6 @@ document.addEventListener('click', (e) => {
 document.addEventListener('keydown', (e) => {
   if (e.key === 'Escape' && document.getElementById('rvOverlay').classList.contains('active')) closeRoadview();
 });
-
-// ═══════════════════════════════════════════════════════════
-// AUTO-DIAGNOSTIC KAKAO — ouvrir la page avec  ?kakaotest=1
-// Vérifie le chargement du SDK puis chaque lieu (activités + restaurants) :
-// lieu trouvé ? vue rue disponible ? Résultat copiable.
-// ═══════════════════════════════════════════════════════════
 async function runKakaoSelfTest() {
   const ov = document.createElement('div');
   ov.style.cssText = 'position:fixed;inset:0;z-index:9999;background:#fff;overflow:auto;padding:16px;font:13px/1.5 system-ui,sans-serif;color:#222';
@@ -2659,13 +2602,7 @@ async function runKakaoSelfTest() {
   };
 }
 if (new URLSearchParams(location.search).has('kakaotest')) runKakaoSelfTest();
-
-// Démarrage de la carte Kakao (après la définition du chargeur de SDK)
 initKakaoMap();
-
-// ═══════════════════════════════════════════════════════════
-// TEST — carte saisonnière Kakao Map (단풍 지도 / 벚꽃 지도)
-// ═══════════════════════════════════════════════════════════
 function updateKakaoSeasonBtn(season) {
   const btn = document.getElementById('kakaoSeasonBtn');
   if (btn && KAKAO_SEASON_MAPS[season]) btn.textContent = KAKAO_SEASON_MAPS[season].label;
@@ -2674,10 +2611,6 @@ document.getElementById('kakaoSeasonBtn')?.addEventListener('click', () => {
   const m = KAKAO_SEASON_MAPS[currentSeason];
   window.open('https://map.kakao.com/?q=' + encodeURIComponent(m.q), '_blank', 'noopener');
 });
-
-// ═══════════════════════════════════════════════════════════
-// PARTAGE DE LA PAGE — Web Share API (mobile) avec repli presse-papiers
-// ═══════════════════════════════════════════════════════════
 const shareBtn = document.getElementById('shareBtn');
 
 function flashShareBtnLabel(label, revertAfterMs = 2000) {
@@ -2697,27 +2630,18 @@ async function shareCurrentPage() {
   if (navigator.share) {
     try {
       await navigator.share(shareData);
-    } catch (err) {
-      // L'utilisateur a annulé le partage, ou une erreur est survenue : rien à faire.
-    }
-    return;
-  }
+    } catch (err) { return; }
 
   try {
     await navigator.clipboard.writeText(shareData.url);
     flashShareBtnLabel('✅ Lien copié');
   } catch (err) {
-    // Dernier recours si l'accès au presse-papiers est refusé par le navigateur
     window.prompt('Copiez ce lien pour le partager :', shareData.url);
   }
 }
 
 shareBtn?.addEventListener('click', shareCurrentPage);
 
-
-// ═══════════════════════════════════════════════════════════
-// MODAL BUDGET : ouverture/fermeture, et navigation entre étapes
-// ═══════════════════════════════════════════════════════════
 const budgetFab = document.getElementById('budgetFab');
 const budgetOverlay = document.getElementById('budgetOverlay');
 const budgetClose = document.getElementById('budgetClose');
@@ -2728,27 +2652,21 @@ budgetOverlay.addEventListener('click', (e) => {
   if (e.target === budgetOverlay) budgetOverlay.classList.remove('active');
 });
 
-// ═══ SELECT STOP ═══
 function selectStop(idx) {
-  // Update tabs
   document.querySelectorAll('.city-tab').forEach((t, i) => {
     t.classList.toggle('active', i === idx);
     t.style.borderBottomColor = i === idx ? stops[i].color : 'transparent';
   });
 
-  // Update panels
   document.querySelectorAll('.city-panel').forEach((p, i) => {
     p.classList.toggle('active', i === idx);
   });
 
-  // Pan map
   focusStopOnMap(idx);
 
-  // Scroll tab into view
   const tabs = document.querySelectorAll('.city-tab');
   tabs[idx].scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
 
-  // Scroll panel to top
   document.getElementById('activitiesPanel').scrollTop = 0;
 
   activeIdx = idx;
@@ -2756,9 +2674,7 @@ function selectStop(idx) {
 </script>
 
 <script>
-  // ─── Enregistrement du Service Worker (PWA) ───
   if ('serviceWorker' in navigator) {
-    window.addEventListener('load', () => {
       navigator.serviceWorker.register('./service-worker.js')
         .then((reg) => console.log('[PWA] Service worker enregistré :', reg.scope))
         .catch((err) => console.warn('[PWA] Échec de l\'enregistrement :', err));
