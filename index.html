@@ -923,6 +923,7 @@ html, body {
   cursor: pointer; transition: transform .12s ease;
 }
 .place-pin-R { border-color: #3D6B3A; }
+.place-pin-H { border-color: #3D6B8A; }
 .place-pin:hover { transform: scale(1.18); }
 .place-pop {
   position: relative; min-width: 190px; max-width: 250px;
@@ -1056,6 +1057,7 @@ html, body {
       <div class="map-filters" id="mapFilters">
         <button class="map-chip active" data-filter="A">🎯 Activités</button>
         <button class="map-chip active" data-filter="R">🍽️ Restaurants</button>
+        <button class="map-chip active" data-filter="H" id="chipLodging">🛏️ Hébergements</button>
       </div>
       <button class="budget-fab" id="budgetFab">💰 Budget du voyage</button>
       <div class="map-legend">
@@ -1472,13 +1474,28 @@ const PLACE_ROWS = [["A","Séoul","Palais Gyeongbokgung","경복궁",37.577613,1
 const PLACE_INDEX = (() => {
   const idx = new Map();
   PLACE_ROWS.forEach(([type, city, name, kr, lat, lng, id, kname, pano]) => {
-    idx.set(type === 'R' ? `R|${city}|${kr}` : `A|${kr}`, { lat, lng, id, kname, pano });
+    idx.set(type === 'A' ? `A|${kr}` : `${type}|${city}|${kr}`, { lat, lng, id, kname, pano });
   });
   return idx;
 })();
 function placeInfo(type, city, kr) {
-  return PLACE_INDEX.get(type === 'R' ? `R|${city}|${kr}` : `A|${kr}`) || null;
+  return PLACE_INDEX.get(type === 'A' ? `A|${kr}` : `${type}|${city}|${kr}`) || null;
 }
+// Hébergements suggérés par ville (noms tirés du budget). `kr` = requête de recherche Kakao ;
+// les coordonnées arrivent via le diagnostic ?kakaotest=1 (lignes de type « H »).
+const LODGINGS = {
+  'Séoul':     [{ name: 'Hotel Skypark Myeongdong', kr: '호텔 스카이파크 명동' }, { name: 'Ibis Styles Myeongdong', kr: '이비스 스타일 앰배서더 명동' }, { name: 'Guesthouse hanok à Bukchon', kr: '북촌 한옥 게스트하우스' }],
+  'Daejeon':   [{ name: 'Hotel Interciti Daejeon', kr: '호텔 인터시티 대전' }, { name: 'Hôtel de tourisme de Daejeon', kr: '대전 관광호텔' }],
+  'Jeonju':    [{ name: 'Gung Hanok Stay', kr: '궁 한옥스테이 전주' }, { name: 'Hanok stay du village hanok', kr: '전주한옥마을 한옥스테이' }],
+  'Gwangju':   [{ name: 'Hotel The Style Gwangju', kr: '더스타일호텔 광주' }, { name: 'Ramada Gwangju', kr: '라마다 광주' }],
+  'Mokpo':     [{ name: 'Mokpo Marine Hotel', kr: '목포 마린호텔' }, { name: 'Hotel Oceanvil', kr: '호텔 오션빌 목포' }],
+  'Suncheon':  [{ name: 'Suncheon Bay Eco Hotel', kr: '순천만 에코호텔' }, { name: 'Hôtel de tourisme de Suncheon', kr: '순천 관광호텔' }],
+  'Yeosu':     [{ name: 'Yeosu Ocean Resort Hotel', kr: '여수 오션리조트' }, { name: 'Ramada Yeosu', kr: '라마다 여수' }],
+  'Busan':     [{ name: 'Hotel Skypark Busan', kr: '호텔 스카이파크 부산' }, { name: 'Toyoko Inn Busan Seomyeon', kr: '토요코인 부산서면' }],
+  'Jinhae':    [{ name: 'Commodore Hotel Jinhae', kr: '커머도어호텔 진해' }, { name: 'Hôtel de tourisme de Jinhae', kr: '진해 관광호텔' }],
+  'Tongyeong': [{ name: 'Tongyeong Marina Resort', kr: '통영 마리나리조트' }, { name: 'Hotel The Beach', kr: '더비치호텔 통영' }],
+  'Damyang':   [{ name: 'Damyang Bamboo Forest Pension', kr: '담양 대나무숲 펜션' }, { name: 'Hanok stay de Damyang', kr: '담양 한옥스테이' }],
+};
 // false uniquement pour les lieux dont le diagnostic a confirmé l'absence de vue rue
 function hasPano(type, city, kr) { const p = placeInfo(type, city, kr); return !p || p.pano !== 0; }
 // attributs permettant d'ouvrir la vue rue directement aux coordonnées connues (sans nouvelle recherche)
@@ -1585,7 +1602,7 @@ let routeLines = [];     // tronçons du trajet
 let placeOverlays = [];  // pastilles des activités / restaurants de l'étape active
 let placePopup = null;   // bulle d'information d'un lieu
 let placesFor = null;    // index de l'étape dont les lieux sont affichés (null = vue d'ensemble)
-const mapFilters = { A: true, R: true };
+const mapFilters = { A: true, R: true, H: true };
 
 function setMapMessage(text) {
   const el = document.getElementById('map');
@@ -1685,6 +1702,7 @@ function stopPlaces(stop) {
   const out = [];
   (stop.activites || []).forEach((it) => { const info = placeInfo('A', stop.name, it.kr); if (info) out.push({ type: 'A', item: it, info }); });
   (stop.restaurants || []).forEach((it) => { const info = placeInfo('R', stop.name, it.kr); if (info) out.push({ type: 'R', item: it, info }); });
+  (LODGINGS[stop.name] || []).forEach((it) => { const info = placeInfo('H', stop.name, it.kr); if (info) out.push({ type: 'H', item: { ...it, icon: '🛏️' }, info }); });
   return out;
 }
 
@@ -1698,7 +1716,7 @@ function showPlaceMarkers(idx) {
     el.className = `place-pin place-pin-${type}`;
     el.textContent = item.icon;
     el.title = item.name;
-    el.addEventListener('click', () => openPlacePopup(item, info));
+    el.addEventListener('click', () => openPlacePopup(item, info, type, stops[idx]));
     const ov = new kakao.maps.CustomOverlay({
       position: new kakao.maps.LatLng(info.lat, info.lng),
       content: el, xAnchor: 0.5, yAnchor: 0.5, zIndex: 2, clickable: true,
@@ -1708,7 +1726,20 @@ function showPlaceMarkers(idx) {
   });
 }
 
-function openPlacePopup(item, info) {
+// Liens de réservation d'un hébergement, avec les dates du séjour dans cette ville
+function lodgingLinks(cityName, kname) {
+  const cities = BUDGET_DATA[currentSeason].accomCities;
+  const i = cities.findIndex((c) => c.name === cityName);
+  if (i < 0) return '';
+  const { checkin, checkout } = computeAccomDates(currentSeason)[i];
+  const booking = `https://www.booking.com/searchresults.html?ss=${encodeURIComponent(kname)}&checkin=${checkin}&checkout=${checkout}&lang=fr&selected_currency=EUR`;
+  const key = `${cityName}, Corée du Sud`.replace(/ /g, '-') + `;${checkin};${checkout};1;0`;
+  const slick = `https://slicktrip.com/hotels?key=${encodeURIComponent(key).replace(/%2C/g, ',')}`;
+  return `<a class="budget-link" href="${booking}" target="_blank" rel="noopener">🔍 Booking.com</a>
+      <a class="budget-link budget-link-primary" href="${slick}" target="_blank" rel="noopener">🔍 SlickTrip</a>`;
+}
+
+function openPlacePopup(item, info, type, stop) {
   closePlacePopup();
   const esc = (t) => String(t).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/"/g, '&quot;');
   const el = document.createElement('div');
@@ -1718,6 +1749,7 @@ function openPlacePopup(item, info) {
     <div class="place-pop-sub">${esc(info.kname)}</div>
     <div class="place-pop-actions">
       ${info.pano !== 0 ? `<button class="rv-btn" style="margin-left:0" data-kr="${esc(item.kr)}" data-title="${esc(item.name)}" data-plat="${info.lat}" data-plng="${info.lng}" data-kname="${esc(info.kname)}">👁️ Vue rue</button>` : ''}
+      ${type === 'H' && stop ? lodgingLinks(stop.name, info.kname) : ''}
       <a class="budget-link" href="https://place.map.kakao.com/${info.id}" target="_blank" rel="noopener">🗺️ Fiche Kakao</a>
     </div>`;
   el.querySelector('.place-pop-close').addEventListener('click', closePlacePopup);
@@ -1749,6 +1781,11 @@ function focusStopOnMap(idx) {
   }
 }
 
+// Pas de bouton « Hébergements » tant qu'aucun hébergement n'est géolocalisé
+if (![...PLACE_INDEX.keys()].some((k) => k.startsWith('H|'))) {
+  const chip = document.getElementById('chipLodging');
+  if (chip) chip.style.display = 'none';
+}
 document.querySelectorAll('#mapFilters .map-chip').forEach((btn) => {
   btn.addEventListener('click', () => {
     const t = btn.dataset.filter;
@@ -2629,6 +2666,7 @@ async function runKakaoSelfTest() {
   [['Automne', stopsAutomne], ['Printemps', stopsPrintemps]].forEach(([season, arr]) => arr.forEach(st => {
     st.activites.forEach(a => a.kr && items.push(['Activité', season, st.name, a.name, a.kr]));
     st.restaurants.forEach(r => r.kr && items.push(['Restaurant', season, st.name, r.name, r.kr, st.lat, st.lng]));
+    (LODGINGS[st.name] || []).forEach(l => items.push(['Hébergement', season, st.name, l.name, l.kr, st.lat, st.lng]));
   }));
   const todo = items.filter(it => { const k = it[4] + '|' + (it[5] || ''); if (seen.has(k)) return false; seen.add(k); return true; });
   const places = new kakao.maps.services.Places(), rv = new kakao.maps.RoadviewClient();
@@ -2641,7 +2679,7 @@ async function runKakaoSelfTest() {
     if (res.status === kakao.maps.services.Status.OK && res.data.length) {
       const pl = res.data[0];
       const pano = await new Promise(resolve => rv.getNearestPanoId(new kakao.maps.LatLng(pl.y, pl.x), 300, resolve));
-      coords.push([type === 'Restaurant' ? 'R' : 'A', city, name, kr, +(+pl.y).toFixed(6), +(+pl.x).toFixed(6), pl.id, pl.place_name, pano ? 1 : 0]);
+      coords.push([type === 'Restaurant' ? 'R' : type === 'Hébergement' ? 'H' : 'A', city, name, kr, +(+pl.y).toFixed(6), +(+pl.x).toFixed(6), pl.id, pl.place_name, pano ? 1 : 0]);
       if (pano) { ok++; row('✅', `${type} · ${city}`, `${name} <small>(${kr})</small>`, `${pl.place_name} — ${pl.address_name}`); }
       else { nopano++; row('🟡 pas de vue rue', `${type} · ${city}`, `${name} <small>(${kr})</small>`, `${pl.place_name} — ${pl.address_name}`); }
     } else if (res.status === kakao.maps.services.Status.ZERO_RESULT) { nf++; row('❌ introuvable', `${type} · ${city}`, `${name} <small>(${kr})</small>`, ''); }
