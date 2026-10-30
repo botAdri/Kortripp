@@ -1600,7 +1600,8 @@ let mapReady = false;
 let stopOverlays = [];   // pins numérotés des étapes
 let routeLines = [];     // tronçons du trajet
 let placeOverlays = [];  // pastilles des activités / restaurants de l'étape active
-let placePopup = [];
+let placePopup = null;
+let placesFor = null;
 const mapFilters = { A: true, R: true, H: true };
 
 function setMapMessage(text) {
