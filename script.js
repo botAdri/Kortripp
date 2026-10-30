@@ -187,7 +187,46 @@ document.addEventListener('DOMContentLoaded', () => {
       if (e.target === budgetOverlay) budgetOverlay.classList.remove('active');
     });
   }
+    
+    // ═══════════════════════════════════════════════════════════
+    // CARTE & ITINÉRAIRE (Kakao Maps)
+    // ═══════════════════════════════════════════════════════════
+    let map = null;
+    let mapReady = false;
+    let stopOverlays = [];   // pins numérotés des étapes
+    let routeLines = [];     // tronçons du trajet
+    let placeOverlays = [];  // pastilles des activités / restaurants de l'étape active
+    let placePopup = null;
+    let placesFor = null;
+    const mapFilters = { A: true, R: true, H: true };
 
+    function setMapMessage(text) {
+      const el = document.getElementById('map');
+      if (el) el.innerHTML = `<div class="map-msg">${text}</div>`;
+    }
+
+    async function initKakaoMap() {
+      const mapEl = document.getElementById('map');
+      if (!mapEl) return;
+      if (!KAKAO_JS_KEY) { setMapMessage('Carte indisponible : clé Kakao absente.'); return; }
+      setMapMessage('Chargement de la carte…');
+      try { await loadKakaoMaps(); }
+      catch (e) {
+        console.error('[Carte Kakao]', e);
+        setMapMessage('Carte Kakao indisponible. Vérifiez la connexion, la clé JavaScript et le domaine autorisé dans Kakao Developers. Les étapes restent consultables.');
+        return;
+      }
+      mapEl.innerHTML = '';
+      map = new kakao.maps.Map(mapEl, { center: new kakao.maps.LatLng(35.9, 127.8), level: 12 });
+      // En bas à droite : le haut à droite est occupé par le bouton « Budget du voyage »
+      map.addControl(new kakao.maps.ZoomControl(), kakao.maps.ControlPosition.BOTTOMRIGHT);
+      kakao.maps.event.addListener(map, 'click', closePlacePopup);
+      mapReady = true;
+      drawMap();
+      renderAllPlaceMarkers();
+      window.addEventListener('resize', () => { map.relayout(); });
+      setTimeout(() => { map.relayout(); if (placesFor === null) fitOverview(); }, 300);
+    }
   // Initialisation au chargement de la page
   applySeason(currentSeason);
 });
