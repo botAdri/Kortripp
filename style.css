@@ -14,6 +14,7 @@
   --shadow-md:    0 4px 28px rgba(26,19,14,0.11);
   --shadow-lg:    0 8px 48px rgba(26,19,14,0.15);
 
+  /* couleur par étape */
   --c1: #1E3A5F;
   --c2: #B84A22;
   --c3: #2D6B3A;
@@ -23,6 +24,7 @@
   --c7: #3D6B8A;
   --c8: #1F5C7A;
 
+  /* accent dynamique selon la saison (défaut : automne) */
   --season-a: var(--terra);
   --season-b: var(--gold);
   --season-c: var(--sage);
@@ -44,7 +46,7 @@ html, body {
   overflow: hidden;
 }
 
-/* LAYOUT */
+/* ═══ LAYOUT ═══ */
 .app {
   display: grid;
   grid-template-rows: auto 1fr;
@@ -103,7 +105,7 @@ html, body {
   display: contents;
 }
 
-/* SÉLECTEUR DE SAISON */
+/* ═══ SÉLECTEUR DE SAISON ═══ */
 .season-toggle {
   position: relative;
   display: inline-flex;
@@ -148,7 +150,9 @@ html, body {
 .season-toggle[data-season="printemps"] .season-btn[data-value="printemps"] {
   color: white;
 }
-
+@media (max-width: 720px) {
+  .season-btn { padding: 6px 10px; font-size: 11px; }
+}
 .currency-toggle {
   position: relative;
   display: inline-flex;
@@ -240,7 +244,7 @@ html, body {
   transform: scale(0.96);
 }
 
-/* BODY SPLIT */
+/* ═══ BODY SPLIT ═══ */
 .body {
   display: grid;
   grid-template-columns: 1fr 1250px;
@@ -248,7 +252,7 @@ html, body {
   height: 100%;
 }
 
-/* SIDEBAR */
+/* ═══ SIDEBAR ═══ */
 .sidebar {
   display: flex;
   flex-direction: column;
@@ -365,6 +369,7 @@ html, body {
   background: var(--cream);
 }
 
+/* Deux colonnes : activités à gauche, restaurants à droite */
 .panel-columns {
   display: grid;
   grid-template-columns: 1fr 1fr;
@@ -384,9 +389,10 @@ html, body {
   text-transform: uppercase;
   color: var(--terra);
   font-weight: 700;
-  padding: 12px 14px 4px;
+  padding: 12px 14px;
 }
 
+/* Activity items */
 .activities-list {
   padding: 10px 14px 20px;
 }
@@ -436,6 +442,7 @@ html, body {
 .tag-paid { background: #FDF4EE; color: #8B4A1E; border: 1px solid #E8C4AA; }
 .tag-must { background: #FEF9EE; color: #8B6A1E; border: 1px solid #E8D8AA; }
 
+/* Vue rue (Kakao Roadview) */
 .rv-btn {
   margin-left: 6px;
   padding: 2px 9px;
@@ -480,6 +487,7 @@ html, body {
 }
 .rv-close:hover { background: rgba(0,0,0,.22); }
 
+/* Restaurants */
 .restaurants-list {
   display: flex;
   flex-direction: column;
@@ -512,6 +520,7 @@ html, body {
   flex-shrink: 0;
 }
 
+/* Budget bar */
 .budget-bar {
   margin: 0 14px 14px;
   background: var(--cream);
@@ -553,7 +562,7 @@ html, body {
   color: var(--terra);
 }
 
-/* BUDGET GLOBAL */
+/* ═══ BUDGET GLOBAL ═══ */
 .budget-global-header {
   padding: 16px 18px 12px;
   color: white;
@@ -609,7 +618,7 @@ html, body {
   flex-wrap: wrap;
 }
 .budget-card-row > div:first-child {
-  flex: 1 1 0;
+  flex: 1 1-0;
   min-width: 140px;
 }
 .budget-card-row + .budget-card-row {
@@ -763,12 +772,11 @@ html, body {
   background: var(--cream);
 }
 
-/* BUDGET BAND */
+/* ═══ BUDGET BAND (récap permanent en bas de la sidebar) ═══ */
 .budget-band {
   flex-shrink: 0;
   background: var(--warm);
   border-top: 2px solid var(--border);
-  padding: 14px;
 }
 .budget-band-title {
   font-size: 9px; letter-spacing: .1em; text-transform: uppercase;
@@ -794,7 +802,8 @@ html, body {
 }
 .budget-band-edit:hover { opacity: 1; }
 
-/* ENCART BUDGET (bouton flottant + modale) */
+  
+/* ═══ ENCART BUDGET (bouton flottant + modale) ═══ */
 .budget-fab {
   position: absolute;
   top: 14px;
@@ -865,7 +874,7 @@ html, body {
   .budget-fab { top: 10px; right: 10px; padding: 7px 12px; font-size: 11px; }
 }
 
-/* MAP */
+/* ═══ MAP ═══ */
 .map-wrap {
   position: relative;
   width: 100%;
@@ -873,6 +882,7 @@ html, body {
 }
 #map { width:100%; height:100%; }
 
+/* Map legend */
 .map-legend {
   position: absolute;
   bottom: 14px; left: 14px;
@@ -905,6 +915,7 @@ html, body {
   flex-shrink: 0;
 }
 
+/* Carte Kakao : message, filtres, pastilles de lieux, bulle */
 .map-msg { padding: 24px; text-align: center; color: #888; font-size: 13px; }
 .map-filters {
   position: absolute; top: 14px; left: 14px; z-index: 500;
@@ -930,7 +941,7 @@ html, body {
 .place-pin:hover { transform: scale(1.18); }
 .place-pop {
   position: relative; min-width: 190px; max-width: 250px;
-  background: #fff; border-radius: 10px; padding: 10px 28px 10px 12px;
+  background: #fff; border-radius: 10px; padding: 10px 28px;
   box-shadow: 0 6px 20px rgba(0,0,0,.28); border: 1px solid var(--border);
 }
 .place-pop-title { font-size: 13px; font-weight: 700; color: var(--ink); }
@@ -941,6 +952,7 @@ html, body {
   font-size: 13px; cursor: pointer; color: var(--ink-light);
 }
 
+/* ═══ PINS ═══ */
 .map-pin {
   position: relative;
   width: 36px; height: 44px;
@@ -983,7 +995,7 @@ html, body {
   text-shadow: 0 1px 2px rgba(0,0,0,.25);
 }
 
-/* MOBILE */
+/* ═══ MOBILE ═══ */
 @media (max-width: 720px) {
   html, body { overflow: auto; }
   .app { grid-template-rows: auto auto auto; height: auto; overflow: visible; }
@@ -998,3 +1010,4 @@ html, body {
   .panel-columns { grid-template-columns: 1fr; }
   .panel-col + .panel-col { border-left: none; border-top: 1px solid var(--border); }
 }
+
