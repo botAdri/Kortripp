@@ -331,6 +331,55 @@ html, body {
   scrollbar-color: var(--border) transparent;
 }
 
+      <div class="activities-panel" id="activitiesPanel"></div>
+
+      <!-- BUDGET BAND (récap permanent) -->
+      <div class="budget-band" id="budgetBand">
+        <div class="budget-band-title">💰 Budget du voyage — récapitulatif</div>
+
+        <div class="budget-band-row">
+          <div>
+            <div class="budget-band-label">✈️ Vols (A/R)</div>
+            <div class="budget-band-sub">Vol direct Paris ↔ Séoul</div>
+            <label class="flight-choice-label"><input type="radio" name="band-flight-choice" value="direct"> Direct</label>
+            <label class="flight-choice-label"><input type="radio" name="band-flight-choice" value="layover"> Escale</label>
+          </div>
+          <div class="budget-band-amount" id="band-flights">—</div>
+        </div>
+
+        <div class="budget-band-row" data-band="accom">
+          <div>
+            <div class="budget-band-label">🏨 Hébergements (<span id="band-nights">14</span> nuits)</div>
+            <div class="budget-band-sub">8 étapes · par personne</div>
+          </div>
+          <div class="budget-band-amount" id="band-accom">—</div>
+          <button class="budget-band-edit" data-band="accom" aria-label="Modifier le total hébergements">✏️</button>
+        </div>
+
+        <div class="budget-band-row" data-band="car">
+          <div>
+            <div class="budget-band-label">🚗 Véhicule</div>
+            <div class="budget-band-sub">Part pour 2 personnes</div>
+          </div>
+          <div class="budget-band-amount" id="band-car">—</div>
+          <button class="budget-band-edit" data-band="car" aria-label="Modifier le véhicule">✏️</button>
+        </div>
+
+        <div class="budget-band-row" data-band="food">
+          <div>
+            <div class="budget-band-label">🍽️ Repas &amp; activités</div>
+            <div class="budget-band-sub">1 personne</div>
+          </div>
+          <div class="budget-band-amount" id="band-food">—</div>
+          <button class="budget-band-edit" data-band="food" aria-label="Modifier repas/activités">✏️</button>
+        </div>
+
+        <div class="budget-band-total">
+          <div class="budget-band-total-label">Total estimé</div>
+          <div class="budget-band-total-amount" id="band-total">—</div>
+        </div>
+      </div>
+  
 .city-panel { display: none; }
 .city-panel.active { display: block; }
 
@@ -789,6 +838,37 @@ html, body {
   background: var(--cream);
 }
 
+/* ═══ BUDGET BAND (récap permanent en bas de la sidebar) ═══ */
+.budget-band {
+  flex-shrink: 0;
+  background: var(--warm);
+  border-top: 2px solid var(--border);
+}
+.budget-band-title {
+  font-size: 9px; letter-spacing: .1em; text-transform: uppercase;
+  color: var(--terra); font-weight: 700; margin: 0 0 10px;
+}
+.budget-band-row {
+  display: flex; align-items: baseline; justify-content: space-between; gap: 10px;
+  padding: 5px 0; border-bottom: 1px dashed var(--border);
+}
+.budget-band-row:last-child { border-bottom: none; }
+.budget-band-label { font-size: 12px; font-weight: 600; color: var(--ink); }
+.budget-band-sub { font-size: 10px; color: #999; line-height: 1.4; margin-top: 1px; }
+.budget-band-amount { font-size: 13px; font-weight: 700; color: var(--terra); white-space: nowrap; }
+.budget-band-total {
+  margin-top: 10px; background: var(--ink); border-radius: 10px; padding: 10px 12px;
+  display: flex; justify-content: space-between; align-items: baseline;
+}
+.budget-band-total-label { font-size: 11px; color: var(--warm); opacity: .8; letter-spacing: .06em; text-transform: uppercase; }
+.budget-band-total-amount { font-family: 'Playfair Display', serif; font-size: 24px; font-weight: 700; color: var(--gold-light); white-space: nowrap; }
+.budget-band-edit {
+  margin-left: auto; background: none; border: none; cursor: pointer;
+  font-size: 12px; padding: 2px 4px; opacity: .5; transition: opacity .15s;
+}
+.budget-band-edit:hover { opacity: 1; }
+
+  
 /* ═══ ENCART BUDGET (bouton flottant + modale) ═══ */
 .budget-fab {
   position: absolute;
@@ -1575,6 +1655,8 @@ function applySeason(season, { persist = true } = {}) {
 
   // Reconstruire l'encart budget global avec les tarifs propres à la saison
   if (typeof renderBudgetModal === 'function') renderBudgetModal(season);
+    renderBudgetBand(season);
+
 
   if (persist) {
     safeStorage.setItem('kortripp-season', season);
@@ -2171,8 +2253,114 @@ function saveFlightEdit(key, row) {
   display.style.display = 'inline';
   input.style.display = 'none';
   refreshGrandTotal(currentSeason);
+  renderBudgetBand(currentSeason);
+
 }
 
+// ═══════════════════════════════════════════════════════════
+// BUDGET BAND (récap permanent en bas de la sidebar)
+// ═══════════════════════════════════════════════════════════
+function getBandTotal(season, key) {
+  const v = safeStorage.getItem(`kortripp-band-${key}-${season}`);
+  return v !== null ? parseFloat(v) : null;
+}
+function persistBandTotal(season, key, value) {
+  safeStorage.setItem(`kortripp-band-${key}-${season}`, Math.round(value));
+}
+
+function computeBandTotals(season) {
+  const b = BUDGET_DATA[season];
+  const overrides = getFlightOverrides(season);
+  const chosen = getSelectedFlight(season);
+  const flightStr = overrides[chosen] !== undefined ? overrides[chosen] : b.flights[chosen];
+  const [flightMin, flightMax] = parseRangeNumbers(flightStr);
+  const accom = getBandTotal(season, 'accom') || computeAccomStats(season).total;
+  const car = getBandTotal(season, 'car') || b.car.totalForSplit;
+  const food = getBandTotal(season, 'food') || b.repasActivitesTotal;
+  const line = flightMin + accom + (car / 2) + food;
+  const upper = flightMax + accom + (car / 2) + food;
+  return { accom, car, food, totalMin: Math.round(line), totalMax: Math.round(upper) };
+}
+
+function renderBudgetBand(season) {
+  const meta = SEASON_META[season];
+  const b = BUDGET_DATA[season];
+  const overrides = getFlightOverrides(season);
+  const chosen = getSelectedFlight(season);
+  const flightStr = overrides[chosen] !== undefined ? overrides[chosen] : b.flights[chosen];
+  const { accom, car, food, totalMin, totalMax } = computeBandTotals(season);
+
+  document.getElementById('band-nights').textContent = b.nights;
+  document.getElementById('band-flights').textContent = formatPrice(flightStr);
+  document.getElementById('band-accom').textContent = displayAmount(accom);
+  document.getElementById('band-car').textContent = displayAmount(car);
+  document.getElementById('band-food').textContent = displayAmount(food);
+  document.getElementById('band-total').textContent = `~${formatEuro(totalMin)} – ${formatEuro(totalMax)} €`;
+
+  renderBandInputs(season);
+}
+
+function renderBandInputs(season) {
+  const b = BUDGET_DATA[season];
+  const { accom, car, food } = computeBandTotals(season);
+  const chosen = getSelectedFlight(season);
+
+  const rows = {
+    accom: document.querySelector('#budgetBand [data-band="accom"]'),
+    car: document.querySelector('#budgetBand [data-band="car"]'),
+    food: document.querySelector('#budgetBand [data-band="food"]'),
+  };
+
+  document.querySelectorAll('#budgetBand input[name="band-flight-choice"]').forEach(r => r.checked = (r.value === chosen));
+
+  Object.entries(rows).forEach(([key, row]) => {
+    const value = key === 'accom' ? accom : key === 'car' ? car : food;
+    const display = row.querySelector('.budget-band-amount');
+    const input = row.querySelector('.price-input');
+    display.textContent = displayAmount(value);
+    if (input.style.display === 'none') {
+      display.style.display = 'none';
+      input.style.display = 'inline-block';
+      input.value = Math.round(value);
+      input.focus(); input.select();
+    } else {
+      input.style.display = 'none';
+      display.style.display = 'inline';
+    }
+  });
+}
+
+const budgetBand = document.getElementById('budgetBand');
+if (budgetBand) {
+  budgetBand.addEventListener('click', (e) => {
+    const row = e.target.closest('[data-band]');
+    if (!row) return;
+    const key = row.dataset.band;
+    const display = row.querySelector('.budget-band-amount');
+    const input = row.querySelector('.price-input');
+
+    if (input && input.style.display === 'none') {
+      display.style.display = 'none';
+      input.style.display = 'inline-block';
+      input.focus(); input.select();
+      return;
+    }
+    if (input && input.style.display !== 'none') {
+      const value = Math.max(0, parseFloat(input.value) || 0);
+      display.textContent = displayAmount(value);
+      display.style.display = 'inline';
+      input.style.display = 'none';
+      persistBandTotal(currentSeason, key, value);
+      refreshGrandTotal(currentSeason);
+      renderBudgetBand(currentSeason);
+      return;
+    }
+    if (e.target.matches('input[name="band-flight-choice"]')) {
+      setSelectedFlight(currentSeason, e.target.value);
+      renderBudgetBand(currentSeason);
+    }
+  });
+}
 
 function getPriceOverrides(season) {
   try {
@@ -2297,6 +2485,8 @@ function savePriceEdit(city, row) {
   input.style.display = 'none';
   refreshAccomTotals(currentSeason);
   refreshGrandTotal(currentSeason);
+  renderBudgetBand(currentSeason);
+
 }
 
 function refreshAccomTotals(season) {
@@ -2329,6 +2519,8 @@ document.getElementById('budgetModalBody').addEventListener('change', (e) => {
   if (!e.target.classList || !e.target.classList.contains('flight-choice')) return;
   setSelectedFlight(currentSeason, e.target.value);
   refreshGrandTotal(currentSeason);
+  renderBudgetBand(currentSeason);
+
   const sub = document.getElementById('grand-total-sub');
   if (sub) sub.textContent = grandTotalSubText(currentSeason);
 });
@@ -2507,6 +2699,8 @@ currencyToggleBtn?.addEventListener('click', () => {
   updateCurrencyBtnLabel();
   refreshActivityPrices();
   if (typeof renderBudgetModal === 'function') renderBudgetModal(currentSeason);
+    renderBudgetBand(currentSeason);
+
 });
 
 // ═══════════════════════════════════════════════════════════
