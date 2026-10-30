@@ -1,29 +1,36 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>한국 · Guide de Voyage — Automne</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>한국 · Guide de Voyage — Automne</title>
 
-  <!-- PWA -->
-  <link rel="manifest" href="./manifest.json">
-  <meta name="theme-color" content="#B84A22">
-  <link rel="apple-touch-icon" href="./icons/icon-192.png">
-  <meta name="apple-mobile-web-app-capable" content="yes">
-  <meta name="apple-mobile-web-app-status-bar-style" content="default">
-  <meta name="apple-mobile-web-app-title" content="한국 Voyage">
-  <meta name="format-detection" content="telephone=no, date=no, address=no, email=no">
-  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Noto+Serif+KR:wght@400;600&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
-  
-  <!-- Feuille de style externe -->
-  <link rel="stylesheet" href="style.css">
+<!-- PWA -->
+<link rel="manifest" href="./manifest.json">
+<meta name="theme-color" content="#B84A22">
+<link rel="apple-touch-icon" href="./icons/icon-192.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="한국 Voyage">
+<meta name="format-detection" content="telephone=no, date=no, address=no, email=no">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Noto+Serif+KR:wght@400;600&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+
+    <!-- Lien vers le fichier CSS externe -->
+<link rel="stylesheet" href="style.css">
 </head>
 <body>
-<div id="jsErrorBanner" style="display:none; position:fixed; z-index:99999; top:0; left:0; right:0; background:#B84A22; color:#fff; font:12px/1.5 monospace; padding:10px 14px; white-space:pre-wrap;"></div>
 
+<script>
+  window.addEventListener('error', function (e) {
+    var el = document.getElementById('jsErrorBanner');
+    if (!el) return;
+    el.style.display = 'block';
+    el.textContent = '⚠️ Erreur JS : ' + e.message + ' (' + (e.filename || '').split('/').pop() + ':' + e.lineno + ')';
+  });
+</script>
 <div class="app">
 
-  <!-- HEADER -->
+  <!-- ═══ HEADER ═══ -->
   <header class="header">
     <div>
       <span class="header-korean">한국 로드트립 · 활동 가이드</span>
@@ -50,82 +57,37 @@
     </div>
   </header>
 
-  <!-- BODY SPLIT -->
+  <!-- ═══ BODY ═══ -->
   <div class="body">
 
     <!-- SIDEBAR -->
     <aside class="sidebar">
 
-      <!-- Onglets Villes -->
+      <!-- City tabs -->
       <div class="city-tabs" id="cityTabs"></div>
 
-      <!-- Panneau des Activités -->
+      <!-- Panels -->
       <div class="activities-panel" id="activitiesPanel"></div>
-
-      <!-- BUDGET BAND (Récap permanent) -->
-      <div class="budget-band" id="budgetBand">
-        <div class="budget-band-title">💰 Budget du voyage — récapitulatif</div>
-
-        <div class="budget-band-row">
-          <div>
-            <div class="budget-band-label">✈️ Vols (A/R)</div>
-            <div class="budget-band-sub">Vol direct Paris ↔ Séoul</div>
-            <label class="flight-choice-label"><input type="radio" name="band-flight-choice" value="direct"> Direct</label>
-            <label class="flight-choice-label"><input type="radio" name="band-flight-choice" value="layover"> Escale</label>
-          </div>
-          <div class="budget-band-amount" id="band-flights">—</div>
-        </div>
-
-        <div class="budget-band-row" data-band="accom">
-          <div>
-            <div class="budget-band-label">🏨 Hébergements (<span id="band-nights">14</span> nuits)</div>
-            <div class="budget-band-sub">8 étapes · par personne</div>
-          </div>
-          <div class="budget-band-amount" id="band-accom">—</div>
-          <button class="budget-band-edit" data-band="accom" aria-label="Modifier le total hébergements">✏️</button>
-        </div>
-
-        <div class="budget-band-row" data-band="car">
-          <div>
-            <div class="budget-band-label">🚗 Véhicule</div>
-            <div class="budget-band-sub">Part pour 2 personnes</div>
-          </div>
-          <div class="budget-band-amount" id="band-car">—</div>
-          <button class="budget-band-edit" data-band="car" aria-label="Modifier le véhicule">✏️</button>
-        </div>
-
-        <div class="budget-band-row" data-band="food">
-          <div>
-            <div class="budget-band-label">🍽️ Repas &amp; activités</div>
-            <div class="budget-band-sub">1 personne</div>
-          </div>
-          <div class="budget-band-amount" id="band-food">—</div>
-          <button class="budget-band-edit" data-band="food" aria-label="Modifier repas/activités">✏️</button>
-        </div>
-
-        <div class="budget-band-total">
-          <div class="budget-band-total-label">Total estimé</div>
-          <div class="budget-band-total-amount" id="band-total">—</div>
-        </div>
-      </div>
 
     </aside>
 
-    <!-- CARTE -->
+    <!-- MAP -->
     <div class="map-wrap">
       <div id="map"></div>
-      <div class="map-filters" id="mapFilters"></div>
+      <div class="map-filters" id="mapFilters">
+      </div>
       <button class="budget-fab" id="budgetFab">💰 Budget du voyage</button>
       <div class="map-legend">
         <div class="map-legend-title" id="legendTitle">🍂 Étapes automne</div>
-        <div id="legendRows"></div>
+        <div id="legendRows">
+        </div>
       </div>
     </div>
 
   </div>
 </div>
 
-<!-- ENCART BUDGET -->
+<!-- ═══ ENCART BUDGET ═══ -->
 <div class="budget-overlay" id="budgetOverlay">
   <div class="budget-modal" id="budgetModal">
     <button class="budget-modal-close" id="budgetClose">✕</button>
@@ -133,7 +95,7 @@
   </div>
 </div>
 
-<!-- VUE RUE (Kakao Roadview) -->
+<!-- ═══ VUE RUE (Kakao Roadview) ═══ -->
 <div class="rv-overlay" id="rvOverlay">
   <div class="rv-modal">
     <button class="rv-close" id="rvClose" aria-label="Fermer">✕</button>
@@ -147,7 +109,1775 @@
   </div>
 </div>
 
-<!-- Script externe -->
-<script src="script.js"></script>
+<script>
+// ═══ DONNÉES ═══
+const stopsAutomne = [
+  {
+    id: 1, name: "Séoul", korean: "서울", color: "#1E3A5F",
+    dates: "3 nuits",
+    lat: 37.5665, lng: 126.9780,
+    desc: "Capitale vibrante où tradition et modernité s'entremêlent. En novembre, le feuillage doré des parcs Bukhansan et Namsan offre un spectacle inoubliable. Dernier jour : excursion à Suwon (30 min) avant de reprendre la route vers le sud — pas besoin d'une nuit sur place.",
+    budget: { heberg: "~135 €", repas: "~75 €", activites: "~55 €", total: "~265 €" },
+    activites: [
+      { icon:"🏯", name:"Palais Gyeongbokgung", kr:"경복궁", desc:"Principale résidence royale de la Corée de Joseon. La cérémonie de relève de la garde en costume traditionnel se tient à 10h et 14h. Feuillage exceptionnel dans les jardins en novembre.", tag:"paid", price:"~3 €" },
+      { icon:"🌿", name:"Parc Namsan & Tour N Seoul", kr:"N서울타워", desc:"Le poumon vert de Séoul surplombe la ville à 262 m. Le téléphérique monte jusqu'à la tour emblématique offrant un panorama à 360° sur les 25 arrondissements et les montagnes environnantes.", tag:"paid", price:"~12 €" },
+      { icon:"🛍️", name:"Insadong & Bukchon Hanok Village", kr:"북촌한옥마을", desc:"Insadong est la rue des galeries d'art et des thés traditionnels. Bukchon est un quartier de 900 maisons hanok du XIVe siècle, entièrement préservé — l'un des plus photographiés de Corée.", tag:"free", price:"Gratuit" },
+      { icon:"🌊", name:"Han River au coucher du soleil", kr:"여의도한강공원", desc:"Les parcs de la rivière Han sont le lieu de vie des Séoulites. Louer un vélo (3€) et longer les berges jusqu'au coucher du soleil est l'une des meilleures expériences de la capitale.", tag:"free", price:"~3 € (vélo)" },
+      { icon:"🏯", name:"Excursion à Suwon — Forteresse Hwaseong", kr:"수원화성", desc:"À 30 min de train ou de route de Séoul, chef-d'œuvre de l'architecture militaire coréenne (1796), classé UNESCO, dont les 5,7 km de remparts se parent de rouge et or en novembre. À faire en aller-retour dans la journée, idéalement le dernier jour à Séoul, avant de reprendre la route vers Daejeon le lendemain matin.", tag:"paid", price:"~4 €" },
+      { icon:"🎭", name:"Suwon — Son et lumière nocturne (oct.–nov.)", kr:"수원화성 서장대", desc:"En saison, les remparts de Hwaseong accueillent une projection mapping spectaculaire qui retrace l'histoire de la forteresse. Un bon complément à l'excursion si l'on prolonge jusqu'en fin d'après-midi, avec un retour à Séoul en soirée par le dernier train.", tag:"must", price:"~5 €" },
+    ],
+    restaurants: [
+      { icon:"🍜", name:"Myeongdong Kyoja", kr:"명동교자 본점", desc:"Institution près de Myeongdong depuis 1966, réputée pour ses raviolis (mandu) et sa soupe de nouilles kalguksu au poulet.", price:"~9 €" },
+      { icon:"🐔", name:"Tosokchon Samgyetang", kr:"토속촌삼계탕", desc:"À deux pas du palais Gyeongbokgung, ce restaurant sert depuis des décennies le samgyetang, poulet entier mijoté au ginseng et riz gluant.", price:"~15 €" },
+      { icon:"🍜", name:"Gwangjang Market", kr:"광장시장", desc:"Mecque du street food séoulite depuis 1905 : bindaetteok (galette de haricots mungo) et mayak gimbap à toute heure.", price:"~6 €" },
+      { icon:"☕", name:"Café Onion Anguk", kr:"어니언 안국", desc:"Brunch et pâtisseries dans un hanok rénové du quartier Anguk, incontournable pour les amateurs de café de spécialité.", price:"~10 €" },
+    ]
+  },
+  {
+    id: 2, name: "Daejeon", korean: "대전", color: "#2D6B3A",
+    travel: { km: 169, duration: "2h33" },
+    dates: "1 nuit",
+    lat: 36.3504, lng: 127.3845,
+    desc: "Carrefour de la Corée et porte vers le Jeollanam-do. Le parc Gyeryongsan vire au rouge et or en novembre — l'un des plus beaux feuillages du pays.",
+    budget: { heberg: "~50 €", repas: "~30 €", activites: "~15 €", total: "~95 €" },
+    activites: [
+      { icon:"🌿", name:"Parc national Gyeryongsan", kr:"계룡산국립공원", desc:"Massif montagneux à 30 min de Daejeon, réputé pour son feuillage automnal spectaculaire. Le sentier principal jusqu'au pic Sambulbong (825 m) offre des vues dégagées sur la forêt embrasée. Compter 3h de randonnée.", tag:"free", price:"Gratuit" },
+      { icon:"🔬", name:"Expo Science Park (Daedeok)", kr:"한빛탑", desc:"Parc scientifique construit sur le site de l'Expo Mondiale 1993. Idéal pour une demi-journée avec de nombreux espaces interactifs sur l'espace, l'énergie et les technologies du futur.", tag:"paid", price:"~8 €" },
+      { icon:"🏛️", name:"Musée national de Daejeon", kr:"대전역사박물관", desc:"Collections permanentes d'artefacts historiques de la région Chungcheong. La salle des arts bouddhistes et les poteries Joseon sont particulièrement remarquables. Entrée gratuite.", tag:"free", price:"Gratuit" },
+    ],
+    restaurants: [
+      { icon:"🥐", name:"Sungsimdang", kr:"성심당 본점", desc:"Boulangerie-pâtisserie historique de Daejeon (depuis 1956), célèbre pour son pain fourré à la pâte de haricots rouges (soboro-ppang).", price:"~5 €" },
+      { icon:"🍢", name:"Marché Jung-ang", kr:"대전중앙시장", desc:"Le grand marché couvert de Daejeon regorge d'étals de street food : tteokbokki, sundae et jeon à petit prix.", price:"~8 €" },
+      { icon:"🍲", name:"Gwangcheon Sikdang", kr:"광천식당", desc:"Table de quartier de Daejeon connue pour ses plats de duruchi, mijotés et épicés (calmar ou tofu).", price:"~9 €" },
+    ]
+  },
+  {
+    id: 3, name: "Jeonju", korean: "전주", color: "#7A4F2A",
+    travel: { km: 87, duration: "1h17" },
+    dates: "2 nuits",
+    lat: 35.8242, lng: 127.1480,
+    desc: "Capitale gastronomique et culturelle de Corée, à l'entrée du Jeollanam-do. Le village Hanok de Jeonju est magique à l'automne, avec ses tuiles grises entre les érables rouges — et sert de camp de base pour Naejangsan, l'un des tout meilleurs feuillages du pays.",
+    budget: { heberg: "~100 €", repas: "~60 €", activites: "~37 €", total: "~197 €" },
+    activites: [
+      { icon:"🏘️", name:"Village Hanok de Jeonju", kr:"전주한옥마을", desc:"Le plus grand ensemble de maisons traditionnelles hanok de Corée : 900 maisons datant de la période Joseon, nichées au pied de la montagne Omokdae. En novembre, les érables rouges et gingkos jaunes encadrent les toits incurvés.", tag:"free", price:"Gratuit" },
+      { icon:"🎋", name:"Location de hanbok", kr:"경기전", desc:"Revêtir le costume traditionnel coréen pour se promener dans le village hanok est une expérience incontournable à Jeonju. De nombreuses boutiques proposent des locations incluant coiffure et accessoires.", tag:"paid", price:"~10 €" },
+      { icon:"🏛️", name:"Musée National de Jeonju", kr:"국립전주박물관", desc:"L'une des plus belles collections de céladons coréens au monde, ainsi que d'importantes œuvres de la période Baekje. Le jardin extérieur est particulièrement beau en automne.", tag:"free", price:"Gratuit" },
+      { icon:"🌊", name:"Rivière Jeonju & lanternes", kr:"전주천", desc:"Le long de la rivière Jeonju, la promenade nocturne avec les lanternes flottantes offre une atmosphère féerique et intimiste, loin de l'agitation du village hanok.", tag:"free", price:"Gratuit" },
+      { icon:"🍁", name:"Excursion à Naejangsan", kr:"내장산국립공원", desc:"À environ 40 min de route de Jeonju, ce parc national est unanimement considéré comme l'un des trois plus beaux feuillages d'automne de Corée (avec Seoraksan et Odaesan). Le sentier vers le sommet Naejangsan (763 m) traverse une forêt d'érables et de gingkos incandescents ; le téléphérique permet aussi une vue d'ensemble sans effort. Pic de couleurs généralement entre le 25 octobre et le 5 novembre — à caler avec les dates du séjour.", tag:"paid", price:"~5 €" },
+    ],
+    restaurants: [
+      { icon:"🍚", name:"Gajok Hoegwan", kr:"전주 가족회관", desc:"Bibimbap traditionnel de Jeonju servi dans un bol en bronze, recette familiale transmise depuis trois générations.", price:"~10 €" },
+      { icon:"🍶", name:"Ruelle des makgeolli de Samcheon", kr:"전주 막걸리골목", desc:"Quartier de Jeonju réputé pour ses bars à makgeolli (alcool de riz fermenté), servi avec de nombreux petits plats d'accompagnement.", price:"~12 €" },
+      { icon:"🍛", name:"Hankookjib", kr:"전주 비빔밥 한국집", desc:"Autre haut lieu du bibimbap de Jeonju, reconnu pour sa sauce maison et ses légumes de saison soigneusement préparés.", price:"~11 €" },
+      { icon:"🍪", name:"PNB Pungnyeon Jegwa", kr:"PNB풍년제과", desc:"Institution locale depuis 1951, célèbre pour sa version géante du choco pie coréen.", price:"~4 €" },
+    ]
+  },
+  {
+    id: 4, name: "Gwangju", korean: "광주", color: "#8B3A6A",
+    travel: { km: 99, duration: "1h23" },
+    dates: "1 nuit",
+    lat: 35.1595, lng: 126.8526,
+    desc: "Capitale culturelle du Jeollanam-do, ville d'art et de mémoire. La cuisine de Gwangju est réputée comme la meilleure de Corée.",
+    budget: { heberg: "~50 €", repas: "~35 €", activites: "~15 €", total: "~100 €" },
+    activites: [
+      { icon:"🌿", name:"Parc national Mudeungsan", kr:"무등산국립공원", desc:"Le massif tutélaire de Gwangju explose de couleurs en novembre. Le sentier vers le plateau Seoseokdae (1050 m) traverse des forêts de chênes et d'érables, avec des vues imprenables sur la vallée. Accès en bus depuis le centre.", tag:"free", price:"Gratuit" },
+      { icon:"🏛️", name:"May 18th National Cemetery", kr:"국립5·18민주묘지", desc:"Site de mémoire dédié au soulèvement démocratique de mai 1980, réprimé dans le sang. Un lieu sobre et poignant qui explique pourquoi Gwangju est le symbole de la démocratie coréenne.", tag:"free", price:"Gratuit" },
+      { icon:"🎨", name:"Asian Culture Complex (ACC)", kr:"국립아시아문화전당", desc:"Immense centre culturel de 160 000 m² entièrement souterrain, inauguré en 2015. Musée, cinémathèque, théâtre et galeries d'art contemporain, le tout gratuitement ou pour une modique entrée.", tag:"paid", price:"~5 €" },
+      { icon:"🖼️", name:"Gwangju Biennale Foundation", kr:"광주비엔날레전시관", desc:"La plus ancienne biennale d'art contemporain d'Asie (depuis 1995) a son siège permanent à Gwangju. Même hors biennale, les expositions et archives sont accessibles et souvent surprenantes.", tag:"paid", price:"~3 €" },
+    ],
+    restaurants: [
+      { icon:"🍜", name:"Marché Yangdong", kr:"양동시장", desc:"Nouilles kalguksu maison et galettes de kimchi (kimchi-jeon) dans le plus grand marché couvert de la ville.", price:"~7 €" },
+      { icon:"🥩", name:"Bitgoeul Tteokgalbi", kr:"빛고을떡갈비", desc:"Côtelettes de bœuf hachées et grillées (tteokgalbi), spécialité du quartier de Songjeong à Gwangju.", price:"~14 €" },
+      { icon:"🍜", name:"Marché Daein", kr:"대인시장", desc:"Nouilles et plats mijotés dans ce marché traditionnel reconverti en espace culturel animé.", price:"~7 €" },
+    ]
+  },
+  {
+    id: 5, name: "Mokpo", korean: "목포", color: "#4A7FA5",
+    travel: { km: 72, duration: "0h58" },
+    dates: "1 nuit",
+    lat: 34.8118, lng: 126.3922,
+    desc: "Ville portuaire au bout de la péninsule, porte des îles du Dadohae. En novembre, la lumière sur les îlots et la mer du Sud crée une atmosphère d'une beauté mélancolique.",
+    budget: { heberg: "~48 €", repas: "~30 €", activites: "~25 €", total: "~103 €" },
+    activites: [
+      { icon:"⛵", name:"Ferry vers les îles Dadohae", kr:"목포항여객선터미널", desc:"L'archipel de 1 000 îles au large de Mokpo est l'un des plus beaux de Corée. Des ferries partent régulièrement vers les îles Heuksan, Hongdo (île Rouge) ou Bigeum. Une journée de navigation dans ce dédale d'îlots est inoubliable.", tag:"paid", price:"~20 €" },
+      { icon:"🏯", name:"Parc Yudalsan", kr:"유달산", desc:"Les deux sommets du mont Yudalsan (228 m) offrent la meilleure vue sur le port de Mokpo et l'archipel Dadohae. En novembre, la lumière rasante du coucher de soleil est particulièrement spectaculaire depuis les falaises.", tag:"free", price:"Gratuit" },
+      { icon:"🏛️", name:"Musée maritime national", kr:"국립해양유물전시관", desc:"L'un des seuls musées maritimes de Corée, abritant des trésors sous-marins récupérés dans la mer du Sud : poteries Song, épaves médiévales et lingots d'étain. Une collection étonnamment riche.", tag:"paid", price:"~3 €" },
+      { icon:"🚢", name:"Promenade du port au coucher du soleil", kr:"목포 평화광장", desc:"Le front de mer de Mokpo, bordé de chalutiers colorés et de restaurants de poulpe, est le cadre parfait pour terminer une journée. La lumière dorée de novembre sur les îlots crée des tableaux saisissants.", tag:"free", price:"Gratuit" },
+    ],
+    restaurants: [
+      { icon:"🐙", name:"Songhak Nakji Hoegwan", kr:"송학낙지회관", desc:"Le nakji-tang, ragoût de petit poulpe épicé, est la spécialité incontournable de Mokpo — à goûter dans les restaurants spécialisés de la ville.", price:"~14 €" },
+      { icon:"🐟", name:"Yeongnan Hongeohoe", kr:"영란횟집 목포", desc:"La raie fermentée (hongeo), plat culte et corsé du Jeollanam-do, se déguise ici accompagnée de porc bouilli et de kimchi.", price:"~20 €" },
+      { icon:"🍚", name:"Hyeongje Kkomak Jjamppong", kr:"형제꼬막짬뽕", desc:"Soupe de nouilles épicée (jjamppong) aux kkomak, petites palourdes coréennes, spécialité de la région de Mokpo.", price:"~9 €" },
+      { icon:"🐟", name:"Marché aux poissons de Mokpo", kr:"목포종합수산시장", desc:"Grand marché de produits de la mer de Mokpo, où l'on trouve le hongeo, la raie fermentée, spécialité de la région.", price:"~18 €" },
+    ]
+  },
+  {
+    id: 6, name: "Suncheon", korean: "순천", color: "#C9913A",
+    travel: { km: 130, duration: "1h34" },
+    dates: "1 nuit",
+    lat: 34.9506, lng: 127.4872,
+    desc: "Ville jardin du Jeollanam-do, entre Mokpo et Yeosu. La réserve naturelle de Suncheonman se couvre en novembre de roseaux dorés à perte de vue — l'un des plus beaux spectacles d'automne du pays, et souvent méconnu des visiteurs.",
+    budget: { heberg: "~52 €", repas: "~30 €", activites: "~14 €", total: "~96 €" },
+    activites: [
+      { icon:"🌾", name:"Réserve naturelle de Suncheonman", kr:"순천만습지", desc:"Cette immense zone humide protégée est réputée pour ses roseaux dorés en automne, ondulant à perte de vue le long des pontons en bois. Meilleure lumière en fin d'après-midi ; la tour d'observation de Yongsan offre la vue d'ensemble la plus spectaculaire sur les méandres de la baie.", tag:"paid", price:"~7 €" },
+      { icon:"🏘️", name:"Village folklorique de Nagan", kr:"낙안읍성", desc:"Enceinte fortifiée du XIVe siècle encore habitée, où les toits de chaume se marient aux couleurs d'automne des arbres alentour. L'un des villages les plus authentiques de Corée, loin des foules.", tag:"paid", price:"~3 €" },
+      { icon:"🌷", name:"Jardin national de Suncheon", kr:"순천만국가정원", desc:"Ce parc de 111 hectares, aménagé pour l'Expo florale de 2013, se pare de teintes rouille en automne, avec ses massifs floraux tardifs et son lac aux nénuphars fanés. Une promenade plus tranquille en complément de la baie.", tag:"paid", price:"~4 €" },
+    ],
+    restaurants: [
+      { icon:"🦪", name:"Restaurant du marché de Suncheon", kr:"순천웃장", desc:"Fruits de mer et galettes de fruits de mer (haemul-jeon) face à la réserve naturelle de Suncheonman.", price:"~12 €" },
+      { icon:"🍲", name:"Restaurant du village de Nagan", kr:"낙안읍성 음식점", desc:"Cuisine traditionnelle mijotée dans l'enceinte fortifiée de Nagan, ambiance rustique et authentique.", price:"~9 €" },
+      { icon:"🐡", name:"Wonjo Gunsan Agujjim", kr:"원조군산아구찜", desc:"Poisson-lotte épicé mijoté (agujjim), plat corsé et généreux.", price:"~16 €" },
+      { icon:"🍚", name:"Gaya Milmyeon", kr:"순천맛집가야밀면", desc:"Nouilles froides de blé (milmyeon) à proximité du jardin national, pratique après la visite.", price:"~10 €" },
+    ]
+  },
+  {
+    id: 7, name: "Yeosu", korean: "여수", color: "#3D6B8A",
+    travel: { km: 29, duration: "0h38" },
+    dates: "2 nuits",
+    lat: 34.7604, lng: 127.6622,
+    desc: "Joyau végétal et maritime du Jeollanam-do, Yeosu s'étend sur une presqu'île face à un archipel magnifique. En novembre, la mer scintille et les forêts de camélias bordent les falaises.",
+    budget: { heberg: "~120 €", repas: "~60 €", activites: "~35 €", total: "~215 €" },
+    activites: [
+      { icon:"🛕", name:"Temple Hyangiram", kr:"향일암", desc:"Fondé en 663 apr. J.-C., ce temple bouddhiste est perché sur les falaises de l'île Dolsan, face à la mer. Le chemin de rochers qui mène à l'entrée, à travers les camélias sauvages, est l'un des plus beaux de Corée.", tag:"paid", price:"~2 €" },
+      { icon:"🚡", name:"Téléphérique maritime", kr:"여수해상케이블카", desc:"L'une des rares cabines de téléphérique qui survole la mer en Corée. La traversée de 1,5 km au-dessus de la baie de Yeosu offre une vue à couper le souffle sur les îles, le pont Dolsan et la ville.", tag:"paid", price:"~10 €" },
+      { icon:"⛵", name:"Croisière archipel de Yeosu", kr:"오동도", desc:"Des excursions en bateau partent quotidiennement vers l'île Odongdo (célèbre pour ses camélias) et les îles plus éloignées de Geomundo. En novembre, peu de touristes, les îlots sont pour vous seul.", tag:"paid", price:"~15 €" },
+      { icon:"🌉", name:"Pont Dolsan illuminé", kr:"돌산대교", desc:"Le pont Dolsan, reliant Yeosu au centre, est illuminé chaque soir en novembre de LED multicolores. La promenade depuis le quai jusqu'au pont au crépuscule, face aux îles silhouettées, est un moment de grâce.", tag:"free", price:"Gratuit" },
+    ],
+    restaurants: [
+      { icon:"🦀", name:"Kkot Dolgejang 1-beonga", kr:"꽃돌게장1번가", desc:"Le gejang, crabe mariné cru dans une sauce soja épicée, est une spécialité incontournable du port de Yeosu.", price:"~25 €" },
+      { icon:"🐚", name:"Marché aux poissons de Yeosu", kr:"여수수산시장", desc:"Marché aux poissons de Yeosu : fruits de mer frais, grillés ou en sashimi, près du port.", price:"~15 €" },
+      { icon:"🦀", name:"Yeosu Gejang Golmok", kr:"여수 게장골목", desc:"La \"ruelle du gejang\" : un pâté de maisons entier de restaurants spécialisés dans le crabe mariné cru.", price:"~22 €" },
+      { icon:"🌉", name:"Bada Hoetjip (Dolsan)", kr:"돌산대교 횟집", desc:"Restaurant de poisson cru (hoe) du côté de Dolsan, près du pont, pratique pour un dîner à Yeosu.", price:"~17 €" },
+    ]
+  },
+  {
+    id: 8, name: "Busan", korean: "부산", color: "#1F5C7A",
+    travel: { km: 178, duration: "2h26" },
+    dates: "3 nuits",
+    lat: 35.1796, lng: 129.0756,
+    desc: "Deuxième ville de Corée, terminus de la route de l'ouest. Busan est un kaléidoscope de plages, temples perchés, marchés colorés et cuisine incomparable.",
+    budget: { heberg: "~180 €", repas: "~80 €", activites: "~30 €", total: "~290 €" },
+    activites: [
+      { icon:"🛕", name:"Temple Haedong Yonggungsa", kr:"해동용궁사", desc:"L'un des rares temples bouddhistes construits directement sur les rochers en bord de mer, au nord de Busan. Les vagues s'écrasent sur les falaises en contrebas pendant que l'encens parfume l'air. Arriver tôt le matin pour éviter la foule.", tag:"free", price:"Gratuit" },
+      { icon:"🎨", name:"Village Gamcheon", kr:"감천문화마을", desc:"L'un des quartiers les plus photogéniques de Corée. D'anciens réfugiés de la guerre de Corée ont transformé ce village en galerie d'art à ciel ouvert. Les ruelles colorées et les escaliers muraux s'étagent à flanc de colline.", tag:"free", price:"Gratuit" },
+      { icon:"🏖️", name:"Haeundae & Gwangalli Beach", kr:"해운대해수욕장", desc:"Haeundae est la plage mythique de Corée. En novembre, elle est quasi déserte mais étonnamment belle sous la lumière automnale. Gwangalli, plus petite, offre la vue iconique sur le pont Gwangan illuminé la nuit.", tag:"free", price:"Gratuit" },
+      { icon:"🚡", name:"Songdo Sky Walk", kr:"송도구름산책로", desc:"Cette passerelle vitrée de 365 m surplombe la mer de l'Est depuis les falaises de la baie de Songdo. Entièrement gratuite, elle offre des vues vertigineuses et une brise marine revivifiante.", tag:"free", price:"Gratuit" },
+    ],
+    restaurants: [
+      { icon:"🐟", name:"Marché Jagalchi", kr:"자갈치시장", desc:"Le plus grand marché aux poissons de Corée : sashimi et fruits de mer d'une fraîcheur incomparable, choisis sur l'étal.", price:"~20 €" },
+      { icon:"🍜", name:"Marché Gukje", kr:"국제시장", desc:"Le milmyeon, nouilles froides de blé nées après la guerre de Corée, est une spécialité emblématique de Busan.", price:"~7 €" },
+      { icon:"🥟", name:"BIFF Square", kr:"BIFF광장", desc:"Rue de street food du quartier du festival du film : ssiat hotteok (galette fourrée aux graines) et odeng.", price:"~5 €" },
+      { icon:"🍖", name:"Marché traditionnel de Haeundae", kr:"해운대시장", desc:"Marché traditionnel de Haeundae : street food et petits restaurants à quelques minutes de la plage.", price:"~12 €" },
+    ]
+  }
+];
+
+// ═══ DONNÉES — ITINÉRAIRE DE PRINTEMPS ═══
+const stopsPrintemps = [
+  {
+    id: 1, name: "Busan", korean: "부산", color: "#1F5C7A",
+    dates: "3 nuits",
+    lat: 35.1796, lng: 129.0756,
+    desc: "Deuxième ville de Corée, point de départ au sud pour profiter des toutes premières floraisons. Au printemps, la route des cerisiers de Dalmaji-gil et les lanternes du festival de Bouddha illuminent la ville portuaire.",
+    budget: { heberg: "~210 €", repas: "~80 €", activites: "~30 €", total: "~320 €" },
+    activites: [
+      { icon:"🌸", name:"Route des cerisiers de Dalmaji-gil", kr:"달맞이고개", desc:"Cette route sinueuse surplombant la mer, près de Haeundae, est bordée de cerisiers centenaires. Café en terrasse et vue sur l'océan en font l'une des plus belles balades printanières de Busan.", tag:"free", price:"Gratuit" },
+      { icon:"🏮", name:"Festival des lanternes de Samgwangsa", kr:"삼광사", desc:"À l'approche de l'anniversaire de Bouddha (avril-mai selon le calendrier lunaire), le temple Samgwangsa se pare de dizaines de milliers de lanternes colorées. Un spectacle féerique, surtout à la tombée de la nuit.", tag:"free", price:"Gratuit" },
+      { icon:"🎨", name:"Village Gamcheon", kr:"감천문화마을", desc:"L'un des quartiers les plus photogéniques de Corée. D'anciens réfugiés de la guerre de Corée ont transformé ce village en galerie d'art à ciel ouvert, avec glycines et azalées accrochées aux escaliers muraux.", tag:"free", price:"Gratuit" },
+      { icon:"🏖️", name:"Taejongdae & falaises printanières", kr:"태종대", desc:"Ce parc naturel à la pointe de l'île Yeongdo offre des falaises spectaculaires sur la mer, encadrées de camélias et d'azalées au printemps. Le petit train touristique permet d'en faire le tour sans effort.", tag:"free", price:"~2 € (train)" },
+    ],
+    restaurants: [
+      { icon:"🐟", name:"Marché Jagalchi", kr:"자갈치시장", desc:"Le plus grand marché aux poissons de Corée : sashimi et fruits de mer d'une fraîcheur incomparable, choisis sur l'étal.", price:"~20 €" },
+      { icon:"🍜", name:"Marché Gukje", kr:"국제시장", desc:"Le milmyeon, nouilles froides de blé nées après la guerre de Corée, est une spécialité emblématique de Busan.", price:"~7 €" },
+      { icon:"🥟", name:"BIFF Square", kr:"BIFF광장", desc:"Rue de street food du quartier du festival du film : ssiat hotteok (galette fourrée aux graines) et odeng.", price:"~5 €" },
+      { icon:"🍖", name:"Marché traditionnel de Haeundae", kr:"해운대시장", desc:"Marché traditionnel de Haeundae : street food et petits restaurants à quelques minutes de la plage.", price:"~12 €" },
+    ]
+  },
+  {
+    id: 2, name: "Jinhae", korean: "진해", color: "#3D6B8A",
+    travel: { km: 44, duration: "0h55" },
+    dates: "1 nuit",
+    lat: 35.1500, lng: 128.7000,
+    desc: "Capitale incontestée des cerisiers en Corée. Chaque année début avril, le festival Jinhae Gunhangje attire des millions de visiteurs autour du ruisseau Yeojwacheon et de la voie ferrée historique — l'une des toutes premières villes du pays à fleurir.",
+    budget: { heberg: "~90 €", repas: "~30 €", activites: "~10 €", total: "~130 €" },
+    activites: [
+      { icon:"🌸", name:"Ruisseau Yeojwacheon", kr:"여좌천", desc:"Le tunnel de cerisiers qui surplombe ce petit canal urbain est devenu l'image la plus partagée du printemps coréen. Mieux vaut y aller tôt le matin ou en soirée pour éviter la foule du festival Gunhangje.", tag:"free", price:"Gratuit" },
+      { icon:"🚉", name:"Gare de Gyeonghwa", kr:"경화역", desc:"Cette gare désaffectée, entièrement encerclée de cerisiers centenaires, est un lieu de pèlerinage photographique. D'anciens wagons y sont exposés au milieu des pétales.", tag:"free", price:"Gratuit" },
+      { icon:"⚓", name:"Base navale & Jehwangsan Park", kr:"제황산공원", desc:"Jinhae abrite la principale base de la marine coréenne, ouverte au public lors du festival avec démonstrations de navires. Le parc Jehwangsan, sur les hauteurs, offre une vue d'ensemble sur la ville rose et la baie.", tag:"free", price:"Gratuit" },
+    ],
+    restaurants: [
+      { icon:"🦐", name:"Dongbu Hoe Center", kr:"동부회센타", desc:"Restaurant de poisson cru (hoe) et de fruits de mer à Jinhae ; en période du festival des cerisiers, mieux vaut réserver.", price:"~15 €" },
+      { icon:"🍲", name:"Marché de Jinhae", kr:"진해중앙시장", desc:"Le dwaeji-gukbap, soupe de porc et de riz, est un classique réconfortant à petit prix dans les gargotes du marché.", price:"~7 €" },
+      { icon:"🐟", name:"Seogwang Jangeo-gui", kr:"서광장어구이", desc:"Anguille grillée (jangeo-gui), spécialité revigorante servie près du port de Jinhae.", price:"~19 €" },
+    ]
+  },
+  {
+    id: 3, name: "Tongyeong", korean: "통영", color: "#4A7FA5",
+    travel: { km: 72, duration: "1h05" },
+    dates: "1 nuit",
+    lat: 34.8544, lng: 128.4331,
+    desc: "Surnommée la « Naples de la Corée », cette ville portuaire multiplie les criques et îlots. Le printemps y apporte une lumière douce, des azalées sur les collines et les premiers fruits de mer de saison.",
+    budget: { heberg: "~60 €", repas: "~35 €", activites: "~20 €", total: "~115 €" },
+    activites: [
+      { icon:"🚡", name:"Téléphérique du mont Mireuksan", kr:"통영케이블카", desc:"Le plus long téléphérique de Corée continentale grimpe à 400 m d'altitude. Par temps clair, la vue embrasse l'archipel de Hallyeohaesang, ourlé d'azalées roses au printemps.", tag:"paid", price:"~12 €" },
+      { icon:"🎨", name:"Village de fresques Dongpirang", kr:"동피랑벽화마을", desc:"Ce quartier de pêcheurs à flanc de colline a été transformé en galerie de street art colorée. Les ruelles en escalier, bordées de pruniers en fleurs, offrent des vues sur le port à chaque tournant.", tag:"free", price:"Gratuit" },
+      { icon:"🦑", name:"Marché aux poissons de Jungang", kr:"통영중앙시장", desc:"Le marché couvert le plus animé de la côte sud propose les meilleurs fruits de mer de printemps : anguilles, huîtres et le fameux poisson-globe (bok-uh). Idéal pour un déjeuner mémorable.", tag:"paid", price:"~15 €" },
+    ],
+    restaurants: [
+      { icon:"🍙", name:"Ttungbo Halmae Gimbap", kr:"뚱보할매김밥집", desc:"Le kimbap sans garniture terrestre, servi avec calamars et anguille de mer épicés, est une spécialité unique à Tongyeong.", price:"~6 €" },
+      { icon:"🍙", name:"Hanil Gimbap", kr:"한일김밥 본점", desc:"Le fameux kimbap minimaliste de Tongyeong, accompagné d'une soupe de poisson épicée.", price:"~7 €" },
+      { icon:"🦑", name:"Restaurant du marché Seodang", kr:"통영 서호시장", desc:"Calamars et fruits de mer frits, spécialité de rue très populaire à Tongyeong.", price:"~9 €" },
+    ]
+  },
+  {
+    id: 4, name: "Suncheon", korean: "순천", color: "#8B3A6A",
+    travel: { km: 124, duration: "1h34" },
+    dates: "1 nuit",
+    lat: 34.9506, lng: 127.4872,
+    desc: "Ville jardin du Jeollanam-do, célèbre pour sa baie protégée et son gigantesque jardin national. Le festival des fleurs de printemps y transforme des hectares entiers en mosaïque de tulipes et de pensées.",
+    budget: { heberg: "~55 €", repas: "~30 €", activites: "~15 €", total: "~100 €" },
+    activites: [
+      { icon:"🌷", name:"Jardin national de Suncheon", kr:"순천만국가정원", desc:"Ce parc de 111 hectares, aménagé pour l'Expo florale de 2013, se réinvente chaque printemps avec des massifs de tulipes multicolores et un lac aux nénuphars. Le jardin français et le jardin coréen s'y répondent avec élégance.", tag:"paid", price:"~7 €" },
+      { icon:"🌾", name:"Réserve naturelle de Suncheonman", kr:"순천만습지", desc:"Cette immense zone humide protégée, réputée pour ses roseaux dorés en automne, s'éveille au printemps avec le retour des oiseaux migrateurs. Une promenade sur les pontons en bois offre une vue apaisante sur les marais.", tag:"paid", price:"~4 €" },
+      { icon:"🏘️", name:"Village folklorique de Nagan", kr:"낙안읍성", desc:"Enceinte fortifiée du XIVe siècle encore habitée, où les maisons de chaume traditionnelles sont entourées de vergers en fleurs au printemps. L'un des villages les plus authentiques de Corée, loin des foules.", tag:"paid", price:"~3 €" },
+    ],
+    restaurants: [
+      { icon:"🦪", name:"Restaurant du marché de Suncheon", kr:"순천웃장", desc:"Fruits de mer et galettes de fruits de mer (haemul-jeon) face à la réserve naturelle de Suncheonman.", price:"~12 €" },
+      { icon:"🍲", name:"Restaurant du village de Nagan", kr:"낙안읍성 음식점", desc:"Cuisine traditionnelle mijotée dans l'enceinte fortifiée de Nagan, ambiance rustique et authentique.", price:"~9 €" },
+      { icon:"🐡", name:"Wonjo Gunsan Agujjim", kr:"원조군산아구찜", desc:"Poisson-lotte épicé mijoté (agujjim), plat corsé et généreux.", price:"~16 €" },
+      { icon:"🍚", name:"Gaya Milmyeon", kr:"순천맛집가야밀면", desc:"Nouilles froides de blé (milmyeon) à proximité du jardin national, pratique après la visite.", price:"~10 €" },
+    ]
+  },
+  {
+    id: 5, name: "Damyang", korean: "담양", color: "#7A4F2A",
+    travel: { km: 83, duration: "1h14" },
+    dates: "1 nuit",
+    lat: 35.3212, lng: 126.9882,
+    desc: "Petite ville rurale du Jeollanam-do, réputée pour ses forêts de bambous et ses paysages verdoyants. Au printemps, la nouvelle pousse de bambou et les métaséquoias en jeunes feuilles créent une palette de verts éclatants.",
+    budget: { heberg: "~50 €", repas: "~28 €", activites: "~12 €", total: "~90 €" },
+    activites: [
+      { icon:"🎍", name:"Forêt de bambous Juknokwon", kr:"죽녹원", desc:"Cette forêt de bambous de 16 hectares, l'une des plus belles de Corée, offre une fraîcheur bienvenue et une lumière filtrée particulièrement photogénique au printemps. Plusieurs sentiers serpentent entre les bambous géants.", tag:"paid", price:"~3 €" },
+      { icon:"🌳", name:"Route des métaséquoias", kr:"메타세쿼이아가로수길", desc:"Cette allée bordée de métaséquoias centenaires, aux jeunes feuilles vert tendre au printemps, est l'un des tunnels végétaux les plus photographiés de Corée. Fermée à la circulation, elle se parcourt à pied ou à vélo.", tag:"free", price:"Gratuit" },
+      { icon:"🚣", name:"Radeau de bambou sur la Gwanbangnimok", kr:"관방제림", desc:"Descente tranquille en radeau de bambou traditionnel (daetongbae) le long de la rivière, entre rizières naissantes et roselières printanières. Une activité paisible et authentique, loin des foules.", tag:"paid", price:"~9 €" },
+    ],
+    restaurants: [
+      { icon:"🎍", name:"Hansanggeun Daetongbap", kr:"한상근대통밥집", desc:"Le daetongbap, riz cuit et servi directement dans une tige de bambou, est la spécialité signature de Damyang.", price:"~11 €" },
+      { icon:"🍚", name:"Damyang Aekkot", kr:"담양애꽃", desc:"Restaurant traditionnel de Damyang, cuisine coréenne de saison.", price:"~13 €" },
+      { icon:"🎋", name:"Damyang Juksun Gejang", kr:"담양죽순게장", desc:"Spécialité locale autour des pousses de bambou (juksun) et du crabe mariné (gejang).", price:"~12 €" },
+    ]
+  },
+  {
+    id: 6, name: "Jeonju", korean: "전주", color: "#2D6B3A",
+    travel: { km: 70, duration: "1h10" },
+    dates: "2 nuits",
+    lat: 35.8242, lng: 127.1480,
+    desc: "Capitale gastronomique et culturelle de Corée. Au printemps, le village Hanok se pare de magnolias et de cerisiers entre les toits de tuiles grises, pour une atmosphère particulièrement romantique.",
+    budget: { heberg: "~120 €", repas: "~55 €", activites: "~20 €", total: "~195 €" },
+    activites: [
+      { icon:"🏘️", name:"Village Hanok au printemps", kr:"전주한옥마을", desc:"Le plus grand ensemble de maisons traditionnelles hanok de Corée se réveille au printemps sous les magnolias et cerisiers en fleurs. La lumière douce d'avril sublime les toits incurvés du quartier historique.", tag:"free", price:"Gratuit" },
+      { icon:"🎋", name:"Location de hanbok", kr:"경기전", desc:"Revêtir le costume traditionnel coréen pour se promener parmi les cerisiers du village hanok est une expérience incontournable au printemps. De nombreuses boutiques proposent location, coiffure et accessoires assortis aux couleurs pastel de saison.", tag:"paid", price:"~10 €" },
+      { icon:"🌸", name:"Cerisiers de la rivière Jeonjucheon", kr:"전주천", desc:"La promenade qui longe le ruisseau Jeonjucheon se couvre de cerisiers début avril, offrant une alternative plus paisible et moins fréquentée que le village hanok pour profiter de la floraison.", tag:"free", price:"Gratuit" },
+      { icon:"🍚", name:"Marché Nambu & bibimbap printanier", kr:"전주남부시장", desc:"Le marché couvert de Nambu est le repaire des locaux pour déguster l'authentique bibimbap de Jeonju, agrémenté au printemps de pousses et légumes sauvages (namul) fraîchement cueillis en montagne.", tag:"paid", price:"~8 €" },
+    ],
+    restaurants: [
+      { icon:"🍚", name:"Gajok Hoegwan", kr:"전주 가족회관", desc:"Bibimbap traditionnel de Jeonju servi dans un bol en bronze, recette familiale transmise depuis trois générations.", price:"~10 €" },
+      { icon:"🍶", name:"Ruelle des makgeolli de Samcheon", kr:"전주 막걸리골목", desc:"Quartier de Jeonju réputé pour ses bars à makgeolli (alcool de riz fermenté), servi avec de nombreux petits plats d'accompagnement.", price:"~12 €" },
+      { icon:"🍛", name:"Hankookjib", kr:"전주 비빔밥 한국집", desc:"Autre haut lieu du bibimbap de Jeonju, reconnu pour sa sauce maison et ses légumes de saison soigneusement préparés.", price:"~11 €" },
+      { icon:"🍪", name:"PNB Pungnyeon Jegwa", kr:"PNB풍년제과", desc:"Institution locale depuis 1951, célèbre pour sa version géante du choco pie coréen.", price:"~4 €" },
+    ]
+  },
+  {
+    id: 7, name: "Daejeon", korean: "대전", color: "#B84A22",
+    travel: { km: 87, duration: "1h17" },
+    dates: "1 nuit",
+    lat: 36.3504, lng: 127.3845,
+    desc: "Étape intermédiaire incontournable entre le Sud-Est et Séoul. Au printemps, l'arboretum Hanbat et les rives du Gap Cheon se couvrent de cerisiers et de forsythias jaunes.",
+    budget: { heberg: "~55 €", repas: "~30 €", activites: "~15 €", total: "~100 €" },
+    activites: [
+      { icon:"🌳", name:"Arboretum Hanbat", kr:"한밭수목원", desc:"Immense parc botanique en plein cœur de la ville, avec serres tropicales et jardins thématiques. Au printemps, les massifs de tulipes et les cerisiers offrent une parenthèse verdoyante entre deux trajets.", tag:"free", price:"Gratuit" },
+      { icon:"♨️", name:"Sources chaudes de Yuseong", kr:"유성온천공원", desc:"Le quartier thermal de Yuseong exploite des sources chaudes naturelles depuis des siècles. Plusieurs spas publics et hôtels proposent bains extérieurs et jjimjilbang pour se délasser après la route.", tag:"paid", price:"~10 €" },
+      { icon:"🌷", name:"Rives du Gap Cheon", kr:"갑천", desc:"La rivière qui traverse Daejeon est bordée de pistes cyclables et de massifs fleuris au printemps. Une courte promenade au coucher du soleil offre un aperçu paisible de la vie locale.", tag:"free", price:"Gratuit" },
+    ],
+    restaurants: [
+      { icon:"🥐", name:"Sungsimdang", kr:"성심당 본점", desc:"Boulangerie-pâtisserie historique de Daejeon (depuis 1956), célèbre pour son pain fourré à la pâte de haricots rouges (soboro-ppang).", price:"~5 €" },
+      { icon:"🍢", name:"Marché Jung-ang", kr:"대전중앙시장", desc:"Le grand marché couvert de Daejeon regorge d'étals de street food : tteokbokki, sundae et jeon à petit prix.", price:"~8 €" },
+      { icon:"🍲", name:"Gwangcheon Sikdang", kr:"광천식당", desc:"Table de quartier de Daejeon connue pour ses plats de duruchi, mijotés et épicés (calmar ou tofu).", price:"~9 €" },
+    ]
+  },
+  {
+    id: 8, name: "Séoul", korean: "서울", color: "#1E3A5F",
+    travel: { km: 161, duration: "2h46" },
+    dates: "3 nuits",
+    lat: 37.5665, lng: 126.9780,
+    desc: "Capitale vibrante où tradition et modernité s'entremêlent. Dernière étape du séjour : les cerisiers y fleurissent 1 à 2 semaines après le sud, ce qui les met pile en pleine floraison à la toute fin du voyage — Yeouido et les douves du palais offrent alors un spectacle rose et blanc.",
+    budget: { heberg: "~165 €", repas: "~75 €", activites: "~40 €", total: "~280 €" },
+    activites: [
+      { icon:"🌸", name:"Festival des cerisiers de Yeouido", kr:"여의도 윤중로", desc:"L'avenue Yunjungno, bordée de 1 600 cerisiers, est LE rendez-vous printanier de Séoul. Le festival Yeouido Spring Flower s'y tient chaque année début avril, avec stands, concerts et une marée de pétales roses.", tag:"free", price:"Gratuit" },
+      { icon:"🏯", name:"Palais Gyeongbokgung en fleurs", kr:"경복궁", desc:"Les jardins du palais royal se parent de cerisiers et d'azalées au printemps. La cérémonie de relève de la garde en costume traditionnel a toujours lieu à 10h et 14h.", tag:"paid", price:"~3 €" },
+      { icon:"🛍️", name:"Insadong & Bukchon Hanok Village", kr:"북촌한옥마을", desc:"Insadong est la rue des galeries d'art et des thés traditionnels. Bukchon, ses 900 maisons hanok du XIVe siècle, est particulièrement photogénique avec les magnolias en fleurs entre les toits.", tag:"free", price:"Gratuit" },
+      { icon:"🌊", name:"Pique-nique au bord de la Han River", kr:"여의도한강공원", desc:"Dès les beaux jours, les parcs de la rivière Han se couvrent de tentes de pique-nique. Location de vélo (3€) et fraises coréennes achetées en supérette font partie du rituel printanier local.", tag:"free", price:"~3 € (vélo)" },
+    ],
+    restaurants: [
+      { icon:"🍜", name:"Myeongdong Kyoja", kr:"명동교자 본점", desc:"Institution près de Myeongdong depuis 1966, réputée pour ses raviolis (mandu) et sa soupe de nouilles kalguksu au poulet.", price:"~9 €" },
+      { icon:"🐔", name:"Tosokchon Samgyetang", kr:"토속촌삼계탕", desc:"À deux pas du palais Gyeongbokgung, ce restaurant sert depuis des décennies le samgyetang, poulet entier mijoté au ginseng et riz gluant.", price:"~15 €" },
+      { icon:"🍜", name:"Gwangjang Market", kr:"광장시장", desc:"Mecque du street food séoulite depuis 1905 : bindaetteok (galette de haricots mungo) et mayak gimbap à toute heure.", price:"~6 €" },
+      { icon:"☕", name:"Café Onion Anguk", kr:"어니언 안국", desc:"Brunch et pâtisseries dans un hanok rénové du quartier Anguk, incontournable pour les amateurs de café de spécialité.", price:"~10 €" },
+    ]
+  }
+];
+
+// ═══ REGISTRE DES ITINÉRAIRES PAR SAISON ═══
+const SEASON_STOPS = {
+  automne: stopsAutomne,
+  printemps: stopsPrintemps,
+};
+
+const SEASON_META = {
+  automne: {
+    emoji: "🍂",
+    label: "Automne",
+    headerSub: "🍂 Dates à définir · Route de l'Ouest · 8 étapes",
+    titleSuffix: "Automne",
+  },
+  printemps: {
+    emoji: "🌸",
+    label: "Printemps",
+    headerSub: "🌸 Dates à définir · Route Sud-Est · 8 étapes",
+    titleSuffix: "Printemps",
+  },
+};
+
+// ═══════════════════════════════════════════════════════════
+// ÉTAT GLOBAL & UTILITAIRES (saison, devise, formatage prix)
+// ═══════════════════════════════════════════════════════════
+const memoryFallback = {};
+const safeStorage = {
+  getItem(key) {
+    try { return localStorage.getItem(key); } catch (e) { return key in memoryFallback ? memoryFallback[key] : null; }
+  },
+  setItem(key, value) {
+    try { localStorage.setItem(key, value); } catch (e) { memoryFallback[key] = value; }
+  },
+  removeItem(key) {
+    try { localStorage.removeItem(key); } catch (e) { delete memoryFallback[key]; }
+  },
+};
+
+let currentSeason = safeStorage.getItem('kortripp-season') || 'automne';
+let currentCurrency = safeStorage.getItem('kortripp-currency') || 'EUR';
+
+const KAKAO_JS_KEY = '971e575e5286264f78dffb158c453262';
+
+const KAKAO_SEASON_MAPS = {
+  automne:   { label: '🍁 Feuillages', q: '단풍 지도' },
+  printemps: { label: '🌸 Cerisiers',  q: '벚꽃 지도' },
+};
+const KRW_RATE = 1450;
+
+// ═══ LIEUX GÉOLOCALISÉS ═══
+const PLACE_ROWS = [["A","Séoul","Palais Gyeongbokgung","경복궁",37.577613,126.976898,"18619553","경복궁",1],["A","Séoul","Parc Namsan & Tour N Seoul","N서울타워",37.551305,126.988231,"1629378951","N서울타워",1],["A","Séoul","Insadong & Bukchon Hanok Village","북촌한옥마을",37.581768,126.984812,"781129546","북촌한옥마을",1],["A","Séoul","Han River au coucher du soleil","여의도한강공원",37.526389,126.935129,"10952963","여의도한강공원",1],["A","Séoul","Excursion à Suwon — Forteresse Hwaseong","수원화성",37.286957,127.011796,"17985162","수원화성",1],["A","Séoul","Suwon — Son et lumière nocturne (oct.–nov.)","수원화성 서장대",37.280754,127.010261,"7942204","수원화성 서장대",1],["R","Séoul","Myeongdong Kyoja","명동교자 본점",37.561181,126.986083,"1479300828","명동교자 명동역점 신관 본점",1],["R","Séoul","Tosokchon Samgyetang","토속촌삼계탕",37.577723,126.971494,"26545925","토속촌삼계탕",1],["R","Séoul","Gwangjang Market","광장시장",37.570055,126.998947,"27383851","광장시장",1],["R","Séoul","Café Onion Anguk","어니언 안국",37.577632,126.986574,"853028118","어니언 안국",1],["H","Séoul","Hotel Skypark Myeongdong","호텔 스카이파크 명동",37.564582,126.985261,"18282609","호텔스카이파크 센트럴명동점",1],["H","Séoul","Ibis Styles Myeongdong","이비스 스타일 앰배서더 명동",37.561683,126.98938,"26475078","이비스 스타일 앰배서더 서울 명동",1],["H","Séoul","Guesthouse hanok à Bukchon","북촌 한옥 게스트하우스",37.583217,126.980957,"18996053","스테이256",1],["A","Daejeon","Parc national Gyeryongsan","계룡산국립공원",36.354196,127.227503,"1857434965","계룡산국립공원",1],["A","Daejeon","Expo Science Park (Daedeok)","한빛탑",36.376629,127.388084,"26363151","엑스포과학공원 한빛탑",1],["A","Daejeon","Musée national de Daejeon","대전역사박물관",36.336864,127.335324,"23418824","대전시립박물관",1],["R","Daejeon","Sungsimdang","성심당 본점",36.327744,127.427245,"17733090","성심당 본점",1],["R","Daejeon","Marché Jung-ang","대전중앙시장",36.329552,127.433199,"1408703362","대전중앙시장",1],["R","Daejeon","Gwangcheon Sikdang","광천식당",36.328671,127.423596,"8209640","광천식당",1],["H","Daejeon","Hotel Interciti Daejeon","호텔 인터시티 대전",36.354297,127.347865,"7967564","호텔인터시티",1],["H","Daejeon","Hôtel de tourisme de Daejeon","대전 관광호텔",36.328513,127.422437,"17158905","베니키아호텔 대림",1],["A","Jeonju","Village Hanok de Jeonju","전주한옥마을",35.814777,127.152557,"10731896","전주한옥마을",1],["A","Jeonju","Location de hanbok","경기전",35.815379,127.149723,"10170551","경기전",1],["A","Jeonju","Musée National de Jeonju","국립전주박물관",35.801286,127.089657,"8217828","국립전주박물관",1],["A","Jeonju","Rivière Jeonju & lanternes","전주천",35.851657,127.112956,"19264996","전주천",1],["A","Jeonju","Excursion à Naejangsan","내장산국립공원",35.471054,126.86703,"166795152","내장산국립공원",0],["R","Jeonju","Gajok Hoegwan","전주 가족회관",35.817087,127.145966,"8676321","가족회관",1],["R","Jeonju","Ruelle des makgeolli de Samcheon","전주 막걸리골목",35.79772,127.122982,"1443996788","삼천2동막걸리골목",1],["R","Jeonju","Hankookjib","전주 비빔밥 한국집",35.816517,127.148227,"8629568","한국집",1],["R","Jeonju","PNB Pungnyeon Jegwa","PNB풍년제과",35.818429,127.147191,"21292200","PNB풍년제과 전주본점",1],["H","Jeonju","Hanok stay du village hanok","전주한옥마을 한옥스테이",35.816956,127.151291,"1154195534","선물 한옥스테이",1],["A","Gwangju","Parc national Mudeungsan","무등산국립공원",35.133137,126.990462,"18862213","무등산국립공원",0],["A","Gwangju","May 18th National Cemetery","국립5·18민주묘지",35.236084,126.939696,"25042994","국립5.18민주묘지",1],["A","Gwangju","Asian Culture Complex (ACC)","국립아시아문화전당",35.147334,126.921354,"27233966","국립아시아문화전당",1],["A","Gwangju","Gwangju Biennale Foundation","광주비엔날레전시관",35.182469,126.889126,"15871855","광주비엔날레",1],["R","Gwangju","Marché Yangdong","양동시장",35.154538,126.90196,"1127219101","광주양동시장",1],["R","Gwangju","Bitgoeul Tteokgalbi","빛고을떡갈비",35.139898,126.794379,"10456191","빛고을떡갈비",1],["R","Gwangju","Marché Daein","대인시장",35.153891,126.916808,"17496420","대인시장",1],["H","Gwangju","Ramada Gwangju","라마다 광주",35.152005,126.850525,"23996334","브리브 광주 바이 롯데호텔",1],["A","Mokpo","Ferry vers les îles Dadohae","목포항여객선터미널",34.782018,126.384279,"18377073","목포연안여객선터미널",1],["A","Mokpo","Parc Yudalsan","유달산",34.789909,126.372633,"25338826","유달산",0],["A","Mokpo","Musée maritime national","국립해양유물전시관",34.791939,126.421778,"27581934","목포해양유산연구소 목포해양유물전시관",1],["A","Mokpo","Promenade du port au coucher du soleil","목포 평화광장",34.796645,126.433802,"23003270","평화광장",1],["R","Mokpo","Songhak Nakji Hoegwan","송학낙지회관",34.798495,126.422148,"10552993","송학낙지회관",1],["R","Mokpo","Yeongnan Hongeohoe","영란횟집 목포",34.786127,126.384064,"10649722","영란횟집",1],["R","Mokpo","Hyeongje Kkomak Jjamppong","형제꼬막짬뽕",34.810118,126.377943,"327095738","형제꼬막짬뽕",1],["R","Mokpo","Marché aux poissons de Mokpo","목포종합수산시장",34.787919,126.390173,"11071825","목포종합수산시장",1],["A","Suncheon","Réserve naturelle de Suncheonman","순천만습지",34.885612,127.509555,"1191246407","순천만습지",1],["A","Suncheon","Village folklorique de Nagan","낙안읍성",34.90631,127.341777,"8234854","순천 낙안읍성",1],["A","Suncheon","Jardin national de Suncheon","순천만국가정원",34.929218,127.498902,"25052480","순천만국가정원",1],["R","Suncheon","Restaurant du marché de Suncheon","순천웃장",34.958943,127.485339,"21364484","순천웃장",1],["R","Suncheon","Restaurant du village de Nagan","낙안읍성 음식점",34.906559,127.340813,"9617176","향토음식점",1],["R","Suncheon","Wonjo Gunsan Agujjim","원조군산아구찜",34.959149,127.529715,"10217130","원조군산아구찜",1],["R","Suncheon","Gaya Milmyeon","순천맛집가야밀면",34.930708,127.496183,"1447495479","순천맛집가야밀면",1],["H","Suncheon","Hôtel de tourisme de Suncheon","순천 관광호텔",34.933595,127.518946,"18167036","베네치아관광호텔",1],["A","Yeosu","Temple Hyangiram","향일암",34.591582,127.803822,"8161244","향일암",1],["A","Yeosu","Téléphérique maritime","여수해상케이블카",34.730591,127.741531,"387675092","여수해상케이블카",1],["A","Yeosu","Croisière archipel de Yeosu","오동도",34.744598,127.766289,"8483282","오동도",1],["A","Yeosu","Pont Dolsan illuminé","돌산대교",34.730743,127.734697,"334072503","돌산대교",1],["R","Yeosu","Kkot Dolgejang 1-beonga","꽃돌게장1번가",34.733023,127.726113,"26577684","꽃돌게장1번가",1],["R","Yeosu","Marché aux poissons de Yeosu","여수수산시장",34.738099,127.73181,"8002786","여수수산시장",1],["R","Yeosu","Yeosu Gejang Golmok","여수 게장골목",34.733542,127.721506,"1507847746","여수게장골목",1],["R","Yeosu","Bada Hoetjip (Dolsan)","돌산대교 횟집",34.733243,127.740198,"18486156","명품나루터",1],["H","Yeosu","Yeosu Ocean Resort Hotel","여수 오션리조트",34.733389,127.643423,"15943407","디오션리조트",1],["H","Yeosu","Ramada Yeosu","라마다 여수",34.717006,127.748278,"1283685448","라마다프라자바이윈덤 여수",1],["A","Busan","Temple Haedong Yonggungsa","해동용궁사",35.188403,129.223143,"8606230","해동용궁사",1],["A","Busan","Village Gamcheon","감천문화마을",35.097409,129.010561,"21362956","감천문화마을",1],["A","Busan","Haeundae & Gwangalli Beach","해운대해수욕장",35.158523,129.159855,"7913306","해운대해수욕장",1],["A","Busan","Songdo Sky Walk","송도구름산책로",35.075181,129.023051,"1038801092","송도구름산책로",1],["R","Busan","Marché Jagalchi","자갈치시장",35.09662,129.03058,"11168886","자갈치시장",1],["R","Busan","Marché Gukje","국제시장",35.101319,129.028185,"20543715","국제시장",1],["R","Busan","BIFF Square","BIFF광장",35.098868,129.029046,"9650856","BIFF광장",1],["R","Busan","Marché traditionnel de Haeundae","해운대시장",35.161399,129.162336,"18525086","해운대전통시장",1],["H","Busan","Toyoko Inn Busan Seomyeon","토요코인 부산서면",35.157938,129.064024,"25052160","토요코인 부산서면",1],["A","Busan","Route des cerisiers de Dalmaji-gil","달맞이고개",35.164702,129.18675,"7813541","해운대달맞이길",1],["A","Busan","Festival des lanternes de Samgwangsa","삼광사",35.175706,129.043369,"7912869","삼광사",1],["A","Busan","Taejongdae & falaises printanières","태종대",35.052527,129.087778,"8111808","태종대유원지",1],["A","Jinhae","Ruisseau Yeojwacheon","여좌천",35.16223,128.660414,"19522891","여좌천",1],["A","Jinhae","Gare de Gyeonghwa","경화역",35.159056,128.686622,"8199607","경화역 (폐역)",1],["A","Jinhae","Base navale & Jehwangsan Park","제황산공원",35.148351,128.665425,"10806199","제황산공원",1],["R","Jinhae","Dongbu Hoe Center","동부회센타",35.15227,128.693937,"1492586965","동부회센타",1],["R","Jinhae","Marché de Jinhae","진해중앙시장",35.151417,128.664979,"18525658","진해중앙시장",1],["R","Jinhae","Seogwang Jangeo-gui","서광장어구이",35.142663,128.669044,"21462215","서광장어구이",1],["H","Jinhae","Hôtel de tourisme de Jinhae","진해 관광호텔",35.143898,128.672014,"1722530059","아몬드호텔",1],["A","Tongyeong","Téléphérique du mont Mireuksan","통영케이블카",34.826881,128.425274,"11657791","통영케이블카",1],["A","Tongyeong","Village de fresques Dongpirang","동피랑벽화마을",34.845306,128.427625,"10290301","동피랑벽화마을",1],["A","Tongyeong","Marché aux poissons de Jungang","통영중앙시장",34.845218,128.424477,"18468572","통영중앙전통시장",1],["R","Tongyeong","Ttungbo Halmae Gimbap","뚱보할매김밥집",34.843867,128.423678,"24199598","뚱보할매김밥집",1],["R","Tongyeong","Hanil Gimbap","한일김밥 본점",34.843304,128.423349,"8608591","한일김밥 본점",1],["R","Tongyeong","Restaurant du marché Seodang","통영 서호시장",34.841285,128.419413,"7953303","서호시장",1],["H","Tongyeong","Tongyeong Marina Resort","통영 마리나리조트",34.827445,128.440162,"12068239","금호리조트 통영마리나",1],["A","Damyang","Forêt de bambous Juknokwon","죽녹원",35.327837,126.985931,"8070994","죽녹원",1],["A","Damyang","Route des métaséquoias","메타세쿼이아가로수길",35.323405,127.003188,"25033443","메타세쿼이아 가로수길",1],["A","Damyang","Radeau de bambou sur la Gwanbangnimok","관방제림",35.323871,126.986002,"7814251","담양관방제림",1],["R","Damyang","Hansanggeun Daetongbap","한상근대통밥집",35.333582,126.964825,"8633864","한상근대통밥집",1],["R","Damyang","Damyang Aekkot","담양애꽃",35.27294,126.97254,"7814183","담양애꽃",1],["R","Damyang","Damyang Juksun Gejang","담양죽순게장",35.323804,126.982599,"1348832833","담양죽순게장",1],["H","Damyang","Damyang Bamboo Forest Pension","담양 대나무숲 펜션",35.333426,126.986753,"2839761","조아당",1],["H","Damyang","Hanok stay de Damyang","담양 한옥스테이",35.425834,127.028151,"1086363472","담빛한옥스테이",1],["A","Jeonju","Marché Nambu & bibimbap printanier","전주남부시장",35.812982,127.147012,"27230960","전주남부시장 한옥마을야시장",1],["A","Daejeon","Arboretum Hanbat","한밭수목원",36.369949,127.388017,"8130712","한밭수목원",1],["A","Daejeon","Sources chaudes de Yuseong","유성온천공원",36.355275,127.343654,"72509130","유성온천공원",1],["A","Daejeon","Rives du Gap Cheon","갑천",36.334863,127.351265,"1891407241","갑천생태호수공원",1],["A","Séoul","Festival des cerisiers de Yeouido","여의도 윤중로",37.533511,126.914932,"8003939","여의서로",1]];
+const PLACE_INDEX = (() => {
+  const idx = new Map();
+  PLACE_ROWS.forEach(([type, city, name, kr, lat, lng, id, kname, pano]) => {
+    idx.set(type === 'A' ? `A|${kr}` : `${type}|${city}|${kr}`, { lat, lng, id, kname, pano });
+  });
+  return idx;
+})();
+function placeInfo(type, city, kr) {
+  return PLACE_INDEX.get(type === 'A' ? `A|${kr}` : `${type}|${city}|${kr}`) || null;
+}
+
+const LODGINGS = {
+  'Séoul':     [{ name: 'Hotel Skypark Central Myeongdong', kr: '호텔 스카이파크 명동' }, { name: 'Ibis Styles Ambassador Seoul Myeongdong', kr: '이비스 스타일 앰배서더 명동' }, { name: 'Stay256 (Bukchon)', kr: '북촌 한옥 게스트하우스' }],
+  'Daejeon':   [{ name: 'Hotel Interciti', kr: '호텔 인터시티 대전' }, { name: 'Benikea Hotel Daerim', kr: '대전 관광호텔' }],
+  'Jeonju':    [{ name: 'Seonmul Hanok Stay', kr: '전주한옥마을 한옥스테이' }, { name: 'Guesthouse du village hanok', kr: '전주한옥마을 게스트하우스' }],
+  'Gwangju':   [{ name: 'Brive Gwangju by Lotte Hotel', kr: '라마다 광주' }, { name: 'Hôtel du centre de Gwangju', kr: '광주 충장로 호텔' }],
+  'Mokpo':     [{ name: 'Shinan Beach Hotel', kr: '신안비치호텔' }, { name: 'Hôtel à Mokpo', kr: '목포 호텔' }],
+  'Suncheon':  [{ name: 'Venezia Tourist Hotel', kr: '순천 관광호텔' }, { name: 'Hôtel à Suncheon', kr: '순천 호텔' }],
+  'Yeosu':     [{ name: 'The Ocean Resort', kr: '여수 오션리조트' }, { name: 'Ramada Plaza by Wyndham Yeosu', kr: '라마다 여수' }],
+  'Busan':     [{ name: 'Toyoko Inn Busan Seomyeon', kr: '토요코인 부산서면' }, { name: 'Hôtel à Seomyeon', kr: '서면 호텔' }],
+  'Jinhae':    [{ name: 'Almond Hotel', kr: '진해 관광호텔' }, { name: 'Hôtel à Jinhae', kr: '진해 호텔' }],
+  'Tongyeong': [{ name: 'Kumho Resort Tongyeong Marina', kr: '통영 마리나리조트' }, { name: 'Hôtel à Tongyeong', kr: '통영 호텔' }],
+  'Damyang':   [{ name: 'Joadang', kr: '담양 대나무숲 펜션' }, { name: 'Dambit Hanok Stay', kr: '담양 한옥스테이' }],
+};
+
+function hasPano(type, city, kr) { const p = placeInfo(type, city, kr); return !p || p.pano !== 0; }
+
+function placeAttrs(type, city, kr) {
+  const p = placeInfo(type, city, kr);
+  return p ? ` data-plat="${p.lat}" data-plng="${p.lng}" data-kname="${String(p.kname).replace(/"/g, '&quot;')}"` : '';
+}
+
+const ROUTES = {"automne":[{"from":"Séoul","to":"Daejeon","km":168.7,"duration":"2h33","poly":"uehdF}i_fWkUr@Ck~@fa@PxW{HrJuPjXsG|jAyo@xJeN`Z_JjxAgkAxy@gQhr@uWrGj]aBfM[sDduD_fAnqDcdD~r@{f@jmFikF`aBaQfwYyCf|AeSvNlDfgAhs@nZtJvbFZbdDvgAl[dC||@cRpQcKl}As`C~UoRrzEkcB`{@}c@pcDoPf|C_g@nfA{c@bxB{l@fuFgbEnQsGxwJh@`dCdSfWdFd~Ant@z`AvLddA`m@|hBjIp{@iP|eA_e@dhBme@fNxHp\\|{@xLvMjiAdTfx@`c@`nAzpArO`]fQp{@dM`XdPnLf{@bYlrBhEreFvs@ne@{Gnp@mm@~^aJrrAz@xvAf^daEfFjx@dOtSc@~fA_WzxA~\\peC_@`WfN~b@hf@rLz@pIqJj_@ewArOyTyR{WyLkk@}@wh@vGaiAsb@qfD_Awb@hIgd@re@uv@jRmi@lR_eCpUe_AxZcg@|^gX|_@_LxfAeGn[gMphB{dCvq@u}A|XyPbpAi[lXkO~kA}dCbP_aB|FwKbL}@|aB`m@rg@`BrC|DmBhOcEa@wDgT`i@e{BxLemBHwqBhn@fA"},{"from":"Daejeon","to":"Jeonju","km":86.8,"duration":"1h17","poly":"ksz|EcdohW~E{@?rVgu@KKbzAaN`lBqh@pxB_@fZvNt@jAsThL_@lhBbw@~fBz_AxiAdZreAkLzXsWdx@iXpb@v@ff@`PvQbOnK``@aAzg@jDbSty@nb@hl@~z@f~@vHjgBhe@|g@wSpUE|eAtr@vjAja@vvAxdBrz@`VfQ`Mf{@fjBvKpf@`@zc@k_@huBHdd@rSdq@fbAzzBt_@x_@ls@h]|bA|q@|x@plBph@|Qhs@rm@xq@rSzx@db@nZxGz^KttAe^`|B|Yh{CcBtYgIxr@ij@ruAmLrZ~Fpr@~f@pgB~Sly@vb@tW~Vpd@rFnWaVvs@e`@nTwUhk@s_Ana@wgApp@m_A|o@ywBzx@o~@nVic@lr@oRrt@{u@rm@}QvkA_GeFvi@vSxGda@dsAbQncBlGzRr\\lc@dc@ie@"},{"from":"Jeonju","to":"Gwangju","km":98.7,"duration":"1h23","poly":"_}syE_q`gWec@he@j]dfBn@hzDhLxh@rHtLgOzf@uF`e@g@~aBzId{AsMj\\eGpf@zfEr}@~WvPhfBjoBnYhPhZtCvnAkHxUrFtiAdr@vlAtiAxkBjx@tYza@t]jbA~Xv[n]zKvnAnFjf@xSlb@|f@dp@fnBjO|UnZ`SvbArXhzBh{C`hAln@z_An_Bx_@~qA~`@hn@d\\~TdfBnq@~{AhTtn@fb@tw@b]jo@hh@r`AxCnjChk@riAza@bRyEf_@oXrnAqDhoAoq@t]eKpb@hBntAf_@joArE`t@cb@tiAxA~p@cN|}@rAftAo]fUaPpPwCfgBzj@ryA|yAvk@tKhi@pW~p@dBr\\pXzSxCfjAqp@ry@}@rXqJpt@_|@fyA{nAzi@}n@vTqHphB_Qt_@uRhaBmuBjIw]Noe@hGuJxQ`@|p@r[lmAzPju@NCdP_CE"},{"from":"Gwangju","to":"Mokpo","km":72.5,"duration":"0h58","poly":"waruEs~feW~BDBePcIEMpm@iOFMlJtGxz@pDfpB}FxzB`WzdDjP~]zl@lk@hi@``AvnBjiAjoAreBbJreAju@fnBx[ptAdsAblCla@`tBz@`rA`Er_@~m@njBlIpaC~n@vuCxrAjyBlLd\\hZf~Brh@l`BjFda@mCj]pBjIlNbFtSeWtw@qSlrFe[lvD}z@|eC~h@rfE_GxaD`s@~s@np@hxA|bB`MtWtY~qCsS`mCnB|lAbGfVtf@xp@vlBp{@jGnIt[yg@}FaZ"},{"from":"Mokpo","to":"Suncheon","km":129.6,"duration":"1h34","poly":"ednsEi~lbW|F`Zu[xg@kGoIymBa}@mi@iy@yEazAhSymC_\\yaDhKoGj[OtKkFvk@mzAlx@iq@n\\oeAx~@_u@xVmK|}@kFflA{x@x|@yC~|Amf@xZiVbw@mqAjIqj@~@{kBxs@a`DdRi{B`Y{i@xv@}^|Wa`@f[q}CzS{u@tMynAnKod@uGy~ChLmkAsLq`Aw@gl@rJ_o@zk@mwAlMyp@`NadFtVcpAhAes@{UmwAcu@akCeMiiAqwAsnDue@oyB{QcXyi@s]iXm[_Tmh@mc@wdCuxCi~D_N_^yUktAceA_cCkUwS}r@{Yse@_g@oaAonAk_@oiAoF}}@rGq{Epa@cfDjOgdCwOq|@irA}kBuc@uuAiEal@Y}pE}g@wlEjAcxBzCyXzs@e|AlKgl@Aqi@qJ}xAhKa~C{G}k@m\\sg@wdDsoBaYoWszB}rDek@meB_u@ihBgJm`@yXuOa]}@sfCqi@gx@nN}z@`AcX`Yd@}P"},{"from":"Suncheon","to":"Yeosu","km":29.3,"duration":"0h38","poly":"ihitEcxbiWkAgU|[uV|Dur@vTqa@f[aTnX_aAf]iS~[vJzM{An[e]~MgmAzJyN|v@L~T_Hzh@mr@~kA}h@`aAe}@ldA{iBzP_RfbBeg@`vA_dAv_AokAjw@_t@la@egAvHor@`GmMju@eWff@_s@~kCEvDiCfAtE"},{"from":"Yeosu","to":"Busan","km":178.2,"duration":"2h26","poly":"ibdsE{_ejWgAuEe~BjDiu@iIkXzKoc@qAuw@cn@u]uFmr@qaAke@mEsQc]aMcHmUy[um@kOsaA}j@eJm`@_KucAs|ArCeuAfhAe[dLw_FJe_@tM}Qel@wu@go@e{@ibAiw@ieDlAtUym@n^mSi@iEhGc^aT}@wqA}f@u_AwJub@AwcAqH_fAwI_Qcf@aZgb@qw@sFch@zF{l@mCi[kKiPchAio@eLiNwe@kdBaoA{tByH}g@VchA}DuX{x@qy@iIkRyKkcAq@gm@~JslAI{_@aHog@aVqv@e@ch@u]sn@oJyd@oj@ar@qNw\\iBaQ`Col@aHqz@}Toc@uKu|@ma@oc@{I_gAq`@q\\uMwi@_p@q\\}b@qe@ut@{|Aek@iXo|@s@mx@}Qsq@wt@g`@uXqh@ahBoGgs@iYwlAaRwuAKiwAqj@m{AcJ_nC_GsXaMgMka@kMe`@wc@mI{TaEmn@kGkVuw@atAogAogA{U_Hgu@Ecj@kPsiB_F_}@mZ{NaLyz@ohCuAupAqFab@ahAuhBaAeWvDy`@}D_jB|Imj@tXa|Dn`@axBhs@khBpKiz@kBcwD_z@eqB}LewAKy{AkNsaAyYuq@yEy\\pZooIrTcmAxl@uuBlHoxA|WwoAuDyd@iW}fAsDmu@kOufAv@ygDlH}c@`e@giAlk@{s@dv@m[~fBaVn`@aX`S_c@nQicA~`@}z@~HalBiXoiAwAmb@~Wa`CbBykAoCk{@a\\mnC`FayDpB_e@bOmw@}HecBtRqyAhAugAxXsjDWo_@`EmQoD}q@`M__@iA{^bUe{DvVycAjTaSvdB}Wdb@~[{ChKnBdARsGjDbC"}],"printemps":[{"from":"Busan","to":"Jinhae","km":43.8,"duration":"0h55","poly":"}_vuEs`yrWkAhFze@~]iDvHQv_@~RhUxKzk@vGvFr_@bBpA`EaAtX~Jvq@tp@zrCpAd|@xLvUrCz_Ai`BbsPuAlpA_oAh`Du@xYfQpiDmQvb@qRbKon@dMsb@bm@cVxMlAhOjNjBpFbHnRrx@x|@|xAzCrNgFtk@t@t_AkOtk@a]lyC{YhbAeH|h@hcAdp@dyBx]xt@dE|QfRlTwTeB}J"},{"from":"Jinhae","to":"Tongyeong","km":72.0,"duration":"1h05","poly":"sfpuEyuopWhDdIaU|SkEbMr@zf@}_@~@pO`~@uEjYgb@b^yPj`@}^v[cXxp@gSbZ_h@z`@}ZhI}FxNfuA`u@~J~Kdk@|}A|Hfx@db@vgA|BhWkCb{@oLxzBaIj^zDlD|YeAnx@tHpLvHpHvSeA|VmW~RiThd@s@l_Axr@xy@vkArfA`RvYxYr_AzFv`A~G|Xzu@r_Azw@huBjYdSbH|N_BbcD{N|}A|DrX`H~LfgApw@pvBps@dwBjpAj_@nBjcAaYdVzAbk@pgAr}@|_@dZpDzPdMOdFy@keAtEiN|i@cl@vfAyc@rs@gqAvt@yn@|aAitA~_@e]~e@aNrfCxFvv@_a@xUcFd~@tMhvAuRdiAwBrSuKzMmUhH}{@pZ}lA`n@mAxL|CvJzTbCzQwBvF"},{"from":"Tongyeong","to":"Suncheon","km":123.9,"duration":"1h34","poly":"}ovsEcq{nWvBl@f@sFcPii@mu@cEuK_Ic@}JbElDaBtZsWrgAiEbs@oMxXyR`MopAfDcnAlPqhAeKwiAbg@c{BoHyf@vIw\\tUonAjcB_v@lp@sq@tnAmfAnc@cu@zx@e`@xi@ou@`wAgDn`@bDnn@oGfe@yw@dcA{kA`{Bkj@xjAi]t}AssApyB_Vdk@yPvwC_oAbnByx@vdDeUnc@gVlXelB|hAsa@dc@uOxc@sm@vaDgC~C}BcDnBkCh]`E|m@qA|s@jY|u@v}A~\\da@nt@t_@`Ozj@l`@p\\jJpgAla@lc@lKl|@bUvc@zGbx@]~_AdQr`@|i@zq@dHdc@tWxc@fF`o@|ZngAbDtw@gKroAhEdoAfO|p@lr@lo@nIdPbCzRa@xfA|Fpe@fOd`@``AtwAfh@lhB||AlgArFf_@yFnn@nItp@p_@ro@la@hVhM~T~HzeAu@rn@`Dz_@vJx[ra@|s@dDlVgBzaCck@|cAcF|RPzTtK``@tAdXeFxh@d@jl@qWd_AWzP~Qvk@vJ~Fvb@vExb@r`Ajc@zTbXh\\pD|]eKbd@oBhbAdUdw@lAdn@sK`a@it@xr@ei@j\\kQdl@cX|h@uExiCkX~{AbHdgCfRjh@]jZaDdCc@cIxPQdSeVjNlCfA{JdHqHv{BrIeBrhAjGdeAbL~o@rV}Ej@z`@vAiD"},{"from":"Suncheon","to":"Damyang","km":82.9,"duration":"1h14","poly":"ihitEcxbiWkAgUuWnSU{Ryc@pMe[cIud@`IaVpWyQ|Bst@_]a`@{b@c\\fh@iL|D}ElQsXhCdCvX}Itg@qAngAwf@~aDuAliCjDzgCoc@xpD{\\|fA}z@fgGcQ~q@qs@l`Aoz@fp@{d@|o@eUnL{b@`Hih@|[}{@pQgq@z^_g@pL}m@dr@_WlLo|@pCqjAuZwfAcv@}XgGwb@V_d@rOwiAdw@uw@r`@q|Anf@yx@sAqq@`Foy@ba@cStWwa@fbAmIto@ym@j_AkNbx@k]v^_Svd@cIpc@m\\~e@kE|v@i`@l~BbBbVvWxf@dC~VyRhjC}SxaAbDr`AhR|sA`mAteB|FfXcBrdAs]lw@_FnW|PfgCaKzxAf@zv@aCxM_JpIgQZof@uOsp@{H{b@yV}H}M{T|Lco@MyfAsNet@cBsYeO_I_OkVlFu@{QwDH"},{"from":"Damyang","to":"Jeonju","km":69.7,"duration":"1h10","poly":"ssqvE{jafWvDIUiTcUgiAkr@kaAsAkWdE}u@qBmSe`@gg@az@mzAuF}^mEqgB}k@}|@yOee@ws@qlAo]}_Bsn@ezAuBc|@ecAnC{nD}Lc}Bmh@gq@|Cmm@oQ{gAdU_g@oTwRwAqrAx`@eUhB{S_Fch@w]qq@_Cyx@}S{V{@{y@|Uo}@iA{O|L}Rpe@sf@bVux@G}n@d_@wjAjQweDl~AyjAjoA_{@|LykC}\\ua@xImUIoReKif@gm@kXoKqaA~AshAqPcb@@o`@hIur@b]iQ~@cnBaR_h@uX}tAaRc|AcDs_Ayf@mt@kOa^ukAc`@u\\}b@e@mdA|XqFgHmFPcBqCzC]"},{"from":"Jeonju","to":"Daejeon","km":86.7,"duration":"1h17","poly":"_}syE_q`gWkc@fc@m\\ka@mG{RcQocB}^_oAcPcVxC{e@uEmF}MjJe{A|R_{@~x@}QbIiZbBoRtL}O|`@kv@n{@ir@d|Bsp@l_Asa@zgAii@n|@cYrZgkAhp@oVsAkcBo~@omBcWof@qb@iTkFe}AbMgr@|i@sYbIw{CxAc`CyYsrAj_@kt@iFicAug@qj@}Owu@go@kd@ePu~@aqBcsBskAe_@o_@i`AgwBkUqt@Asd@`_@muBk@}c@sGc]m|@{oBgQeO{_AkYqtA}bByjAsa@afAur@qTE}h@jSogBod@_aAqJmh@kx@oy@qb@gD}PrB}i@kMca@cNiLyj@eSac@a@yt@~U}[nYwdAzLapAe]{~Ay{@iiBmw@uHqJ}DzAg@|VuGxBuDiWdj@mcChKkbBHwqBhn@fA"},{"from":"Daejeon","to":"Séoul","km":161.4,"duration":"2h46","poly":"ksz|EcdohW~E{@?rVgu@KKbzAaN`lBqi@reCqbBnn@q}CpvBaqAl\\yw@daA{SdFcdBdAqa@nNux@dp@oJlu@e`@n|AeXp]a{@jIol@`]iRjCggCoKuc@qa@oWeIsd@|i@sv@lbC}Iba@eCj~@qMdc@sr@lj@gz@pnAoRbQ_\\rHw_AR}SjKadAdcB_kAfpAuZjpAgB`j@}GlKoNfDi`@}E{JzJym@hFon@`k@yVlLkf@z@}_Far@ugBqCkcA{[cWeZi[irAyZyc@k~@a~@e_@iVodBob@gg@cjAuMaKwOp@a~CvlAg}@xPolBwJ_`Aok@o`AsLe_B{t@cVsE{gCmScsJe@_TzHqtFhaEqvB`l@ilA|e@msCvd@khDtQc_A`f@{oEr}Aq\\~Uw~A|aCanAt\\_[mCaeDwgAkfFkAslBubA_yAbSegVZesBjBibBzQulF~jFcs@zf@cpBxgB_BqFf[de@cC`wAszAfn@wa@OabC~y@siB~w@ucAxRc_@lYaz@gHcaAn^k_@nG{[pUiKuC|A~G"}]};
+
+function decodePolyline(str, precision = 5) {
+  const out = []; let i = 0, lat = 0, lng = 0; const f = Math.pow(10, precision);
+  while (i < str.length) {
+    for (let k = 0; k < 2; k++) {
+      let r = 0, sh = 0, b;
+      do { b = str.charCodeAt(i++) - 63; r |= (b & 31) << sh; sh += 5; } while (b >= 32);
+      const v = (r & 1) ? ~(r >> 1) : (r >> 1);
+      if (k === 0) lat += v; else lng += v;
+    }
+    out.push([lat / f, lng / f]);
+  }
+  return out;
+}
+
+function distKm(lat1, lng1, lat2, lng2) {
+  const R = 6371, rad = Math.PI / 180;
+  const dLat = (lat2 - lat1) * rad, dLng = (lng2 - lng1) * rad;
+  const a = Math.sin(dLat / 2) ** 2 + Math.cos(lat1 * rad) * Math.cos(lat2 * rad) * Math.sin(dLng / 2) ** 2;
+  return 2 * R * Math.asin(Math.sqrt(a));
+}
+
+function formatPrice(str) {
+  if (currentCurrency === 'EUR' || !/€/.test(str)) return str;
+  const converted = str.replace(/\d[\d\s.,]*\d|\d/g, (match) => {
+    const clean = match.replace(/\s/g, '').replace(',', '.');
+    const num = parseFloat(clean);
+    if (isNaN(num)) return match;
+    const krw = Math.round((num * KRW_RATE) / 50) * 50;
+    return krw.toLocaleString('fr-FR');
+  });
+  return converted.replace(/€/g, '₩');
+}
+
+function displayAmount(eur, suffix = '') {
+  if (currentCurrency === 'EUR') return `${Math.round(eur)} €${suffix}`;
+  const krw = Math.round((eur * KRW_RATE) / 50) * 50;
+  return `${krw.toLocaleString('fr-FR')} ₩${suffix}`;
+}
+
+function applySeason(season, { persist = true } = {}) {
+  if (!SEASON_META[season]) return;
+  currentSeason = season;
+  const meta = SEASON_META[season];
+
+  document.documentElement.setAttribute('data-season', season);
+
+  const toggleEl = document.getElementById('seasonToggle');
+  if (toggleEl) toggleEl.setAttribute('data-season', season);
+
+  const headerSubEl = document.getElementById('headerSub');
+  if (headerSubEl) headerSubEl.textContent = meta.headerSub;
+  updateKakaoSeasonBtn(season);
+
+  document.title = `한국 · Guide de Voyage — ${meta.titleSuffix}`;
+
+  buildItinerary(SEASON_STOPS[season]);
+  const actsEl = document.getElementById('statActs');
+  if (actsEl) actsEl.textContent = `🎯 ${SEASON_STOPS[season].reduce((n, st) => n + st.activites.length, 0)} activités`;
+
+  if (typeof renderBudgetModal === 'function') renderBudgetModal(season);
+  renderBudgetBand(season);
+
+  if (persist) {
+    safeStorage.setItem('kortripp-season', season);
+  }
+
+  document.dispatchEvent(new CustomEvent('seasonchange', { detail: { season } }));
+}
+
+document.getElementById('seasonToggle')?.querySelectorAll('.season-btn').forEach((btn) => {
+  btn.addEventListener('click', () => applySeason(btn.dataset.value));
+});
+
+// ═══ MAP ═══
+let map = null;
+let mapReady = false;
+let stopOverlays = [];
+let routeLines = [];
+let placeOverlays = [];
+let placePopup = null;
+let placesFor = null;
+const mapFilters = { A: true, R: true, H: true };
+
+function setMapMessage(text) {
+  const el = document.getElementById('map');
+  if (el) el.innerHTML = `<div class="map-msg">${text}</div>`;
+}
+
+async function initKakaoMap() {
+  const mapEl = document.getElementById('map');
+  if (!mapEl) return;
+  if (!KAKAO_JS_KEY) { setMapMessage('Carte indisponible : clé Kakao absente.'); return; }
+  setMapMessage('Chargement de la carte…');
+  try { await loadKakaoMaps(); }
+  catch (e) {
+    console.error('[Carte Kakao]', e);
+    setMapMessage('Carte Kakao indisponible. Vérifiez la connexion, la clé JavaScript et le domaine autorisé dans Kakao Developers. Les étapes restent consultables.');
+    return;
+  }
+  mapEl.innerHTML = '';
+  map = new kakao.maps.Map(mapEl, { center: new kakao.maps.LatLng(35.9, 127.8), level: 12 });
+  map.addControl(new kakao.maps.ZoomControl(), kakao.maps.ControlPosition.BOTTOMRIGHT);
+  kakao.maps.event.addListener(map, 'click', closePlacePopup);
+  mapReady = true;
+  drawMap();
+  renderAllPlaceMarkers();
+  window.addEventListener('resize', () => { map.relayout(); });
+  setTimeout(() => { map.relayout(); if (placesFor === null) fitOverview(); }, 300);
+}
+
+function closePlacePopup() {
+  if (placePopup) { placePopup.setMap(null); placePopup = null; }
+}
+
+function clearMapLayers() {
+  stopOverlays.forEach((o) => o.overlay.setMap(null)); stopOverlays = [];
+  routeLines.forEach((l) => l.setMap(null)); routeLines = [];
+  placeOverlays.forEach((o) => o.setMap(null)); placeOverlays = [];
+  closePlacePopup();
+  placesFor = null;
+}
+
+function fitOverview() {
+  if (!mapReady || !stops.length) return;
+  const b = new kakao.maps.LatLngBounds();
+  stops.forEach((s) => b.extend(new kakao.maps.LatLng(s.lat, s.lng)));
+  routeLegs().forEach((leg) => leg.pts.forEach(([la, ln]) => b.extend(new kakao.maps.LatLng(la, ln))));
+  map.setBounds(b, 60, 50, 60, 50);
+}
+
+function routeLegs() {
+  const real = ROUTES[currentSeason] || [];
+  const legs = [];
+  for (let i = 0; i < stops.length - 1; i++) {
+    const a = stops[i], b = stops[i + 1];
+    const leg = real.find((l) => l.from === a.name && l.to === b.name);
+    legs.push(leg
+      ? { pts: decodePolyline(leg.poly), real: true }
+      : { pts: [[a.lat, a.lng], [b.lat, b.lng]], real: false });
+  }
+  return legs;
+}
+
+function drawMap() {
+  if (!mapReady) return;
+  clearMapLayers();
+
+  routeLegs().forEach((leg) => {
+    const line = new kakao.maps.Polyline({
+      path: leg.pts.map(([la, ln]) => new kakao.maps.LatLng(la, ln)),
+      strokeWeight: leg.real ? 4 : 3,
+      strokeColor: '#C4562A',
+      strokeOpacity: leg.real ? 0.8 : 0.6,
+      strokeStyle: leg.real ? 'solid' : 'shortdash',
+    });
+    line.setMap(map);
+    routeLines.push(line);
+  });
+
+  stops.forEach((stop, i) => {
+    const el = document.createElement('div');
+    el.className = 'map-pin';
+    el.id = `pin-${i}`;
+    el.innerHTML = `<div class="map-pin-body" style="background:${stop.color}"><span class="map-pin-number">${stop.id}</span></div>`;
+    el.addEventListener('click', () => selectStop(i));
+    const overlay = new kakao.maps.CustomOverlay({
+      position: new kakao.maps.LatLng(stop.lat, stop.lng),
+      content: el, xAnchor: 0.5, yAnchor: 1, zIndex: 3, clickable: true,
+    });
+    overlay.setMap(map);
+    stopOverlays.push({ overlay, el });
+  });
+
+  fitOverview();
+}
+
+function stopPlaces(stop) {
+  const out = [];
+  (stop.activites || []).forEach((it) => { const info = placeInfo('A', stop.name, it.kr); if (info) out.push({ type: 'A', item: it, info }); });
+  (stop.restaurants || []).forEach((it) => { const info = placeInfo('R', stop.name, it.kr); if (info) out.push({ type: 'R', item: it, info }); });
+  (LODGINGS[stop.name] || []).forEach((it) => { const info = placeInfo('H', stop.name, it.kr); if (info) out.push({ type: 'H', item: { ...it, icon: '🛏️' }, info }); });
+  return out;
+}
+
+function renderAllPlaceMarkers() {
+  if (!mapReady) return;
+  placeOverlays.forEach((o) => o.setMap(null));
+  placeOverlays = [];
+  const list = [];
+
+  stops.forEach((stop) => {
+    stopPlaces(stop).forEach(({ type, item, info }) => {
+      if (!mapFilters[type]) return;
+      const el = document.createElement('div');
+      el.className = `place-pin place-pin-${type}`;
+      el.textContent = item.icon;
+      el.title = item.name;
+      el.addEventListener('click', (e) => { e.stopPropagation(); openPlacePopup(item, info, type, stop); });
+      const ov = new kakao.maps.CustomOverlay({
+        position: new kakao.maps.LatLng(info.lat, info.lng),
+        content: el, xAnchor: 0.5, yAnchor: 0.5, zIndex: 2, clickable: true,
+      });
+      ov.setMap(map);
+      list.push({ type, item, info, el, ov });
+    });
+  });
+
+  resolveCollisions(list);
+  placeOverlays = list;
+}
+
+function resolveCollisions(overlays) {
+  if (overlays.length < 2) return;
+  for (let iter = 0; iter < 10; iter++) {
+    for (let i = 0; i < overlays.length; i++) {
+      for (let j = i + 1; j < overlays.length; j++) {
+        const a = overlays[i], b = overlays[j];
+        const dLat = a.info.lat - b.info.lat, dLng = a.info.lng - b.info.lng;
+        const dist = Math.hypot(dLat, dLng);
+        if (dist <= 0 || dist >= 0.006) continue;
+        const factor = (0.006 - dist) / 2 / dist;
+        const cosA = Math.cos(a.info.lat * Math.PI / 180);
+        const cosB = Math.cos(b.info.lat * Math.PI / 180);
+        a.info.lng += (dLng * factor) / cosA; a.info.lat += dLat * factor;
+        b.info.lng -= (dLng * factor) / cosB; b.info.lat -= dLat * factor;
+        a.ov.setPosition(new kakao.maps.LatLng(a.info.lat, a.info.lng));
+        b.ov.setPosition(new kakao.maps.LatLng(b.info.lat, b.info.lng));
+      }
+    }
+  }
+}
+
+function lodgingLinks(cityName, kname) {
+  const cities = BUDGET_DATA[currentSeason].accomCities;
+  const i = cities.findIndex((c) => c.name === cityName);
+  if (i < 0) return '';
+  const { checkin, checkout } = computeAccomDates(currentSeason)[i];
+  const booking = `https://www.booking.com/searchresults.html?ss=${encodeURIComponent(kname)}&checkin=${checkin}&checkout=${checkout}&lang=fr&selected_currency=EUR`;
+  const key = `${cityName}, Corée du Sud`.replace(/ /g, '-') + `;${checkin};${checkout};1;0`;
+  const slick = `https://slicktrip.com/hotels?key=${encodeURIComponent(key).replace(/%2C/g, ',')}`;
+  return `<a class="budget-link" href="${booking}" target="_blank" rel="noopener">🔍 Booking.com</a>
+      <a class="budget-link budget-link-primary" href="${slick}" target="_blank" rel="noopener">🔍 SlickTrip</a>`;
+}
+
+function openPlacePopup(item, info, type, stop) {
+  closePlacePopup();
+  const esc = (t) => String(t).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/"/g, '&quot;');
+  const el = document.createElement('div');
+  el.className = 'place-pop';
+  el.innerHTML = `<button class="place-pop-close" aria-label="Fermer">✕</button>
+    <div class="place-pop-title">${esc(item.name)}</div>
+    <div class="place-pop-sub">${esc(info.kname)}</div>
+    <div class="place-pop-actions">
+      ${info.pano !== 0 ? `<button class="rv-btn" style="margin-left:0" data-kr="${esc(item.kr)}" data-title="${esc(item.name)}" data-plat="${info.lat}" data-plng="${info.lng}" data-kname="${esc(info.kname)}">👁️ Vue rue</button>` : ''}
+      ${type === 'H' && stop ? lodgingLinks(stop.name, info.kname) : ''}
+      <a class="budget-link" href="https://place.map.kakao.com/${info.id}" target="_blank" rel="noopener">🗺️ Fiche Kakao</a>
+    </div>`;
+  el.querySelector('.place-pop-close').addEventListener('click', closePlacePopup);
+  placePopup = new kakao.maps.CustomOverlay({
+    position: new kakao.maps.LatLng(info.lat, info.lng),
+    content: el, xAnchor: 0.5, yAnchor: 1.3, zIndex: 10, clickable: true,
+  });
+  placePopup.setMap(map);
+}
+
+function focusStopOnMap(idx) {
+  if (!mapReady) return;
+  const s = stops[idx];
+  stopOverlays.forEach((o, i) => o.el.classList.toggle('active', i === idx));
+  const b = new kakao.maps.LatLngBounds();
+  b.extend(new kakao.maps.LatLng(s.lat, s.lng));
+  let n = 0;
+  stopPlaces(s).forEach(({ info }) => {
+    if (distKm(s.lat, s.lng, info.lat, info.lng) <= 30) { b.extend(new kakao.maps.LatLng(info.lat, info.lng)); n++; }
+  });
+  if (n) {
+    map.setBounds(b, 70, 50, 50, 50);
+    if (map.getLevel() < 5) map.setLevel(5);
+  } else {
+    map.setLevel(8);
+    map.setCenter(new kakao.maps.LatLng(s.lat, s.lng));
+  }
+}
+
+if (![...PLACE_INDEX.keys()].some((k) => k.startsWith('H|'))) {
+  const chip = document.getElementById('chipLodging');
+  if (chip) chip.style.display = 'none';
+}
+document.querySelectorAll('#mapFilters .map-chip').forEach((btn) => {
+  btn.addEventListener('click', () => {
+    const t = btn.dataset.filter;
+    mapFilters[t] = !mapFilters[t];
+    btn.classList.toggle('active', mapFilters[t]);
+    if (mapReady) renderAllPlaceMarkers();
+  });
+});
+
+// ═══ BUILD UI ═══
+const tabsEl   = document.getElementById('cityTabs');
+const panelEl  = document.getElementById('activitiesPanel');
+const legendTitleEl = document.getElementById('legendTitle');
+const legendRowsEl  = document.getElementById('legendRows');
+let stops      = [];
+let activeIdx  = 0;
+
+function getTagHTML(tag, price) {
+  if (tag === 'free') return `<span class="activity-tag tag-free">✓ ${price}</span>`;
+  if (tag === 'must') return `<span class="activity-tag tag-must">⭐ Incontournable · ${price}</span>`;
+  return `<span class="activity-tag tag-paid">💳 ${price}</span>`;
+}
+
+function refreshActivityPrices() {
+  document.querySelectorAll('.city-panel').forEach((panel, i) => {
+    const stop = stops[i];
+    if (!stop) return;
+    const tagEls = panel.querySelectorAll('.activity-tag');
+    stop.activites.forEach((a, j) => {
+      const el = tagEls[j];
+      if (!el) return;
+      el.outerHTML = getTagHTML(a.tag, formatPrice(a.price));
+    });
+    const priceEls = panel.querySelectorAll('.restaurant-price');
+    (stop.restaurants || []).forEach((r, j) => {
+      const el = priceEls[j];
+      if (!el) return;
+      el.textContent = formatPrice(r.price);
+    });
+  });
+}
+
+function buildItinerary(stopsData) {
+  stops = stopsData;
+
+  tabsEl.innerHTML = '';
+  panelEl.innerHTML = '';
+  clearMapLayers();
+
+  const meta = SEASON_META[currentSeason];
+  if (legendTitleEl) legendTitleEl.textContent = `${meta.emoji} Étapes ${meta.label.toLowerCase()}`;
+  if (legendRowsEl) {
+    legendRowsEl.innerHTML = stops.map((s) =>
+      `<div class="legend-row"><div class="legend-dot" style="background:${s.color}"></div> ${s.name}</div>`
+    ).join('');
+  }
+
+  stops.forEach((stop, i) => {
+    const tab = document.createElement('button');
+    tab.className = 'city-tab' + (i === 0 ? ' active' : '');
+    tab.style.color = stop.color;
+    tab.style.borderBottomColor = i === 0 ? stop.color : 'transparent';
+    tab.innerHTML = `<span class="tab-num" style="background:${stop.color}"><span>${stop.id}</span></span>${stop.name}`;
+    tab.addEventListener('click', () => selectStop(i));
+    tabsEl.appendChild(tab);
+
+    const acts = stop.activites.map(a => `
+      <div class="activity-card">
+        <div class="activity-icon">${a.icon}</div>
+        <div class="activity-body">
+          <div class="activity-name">${a.name}</div>
+          <div class="activity-sub">${a.desc}</div>
+          ${getTagHTML(a.tag, formatPrice(a.price))}
+          ${a.kr && KAKAO_JS_KEY && hasPano('A', stop.name, a.kr) ? `<button class="rv-btn"${placeAttrs('A', stop.name, a.kr)} data-kr="${a.kr}" data-title="${a.name.replace(/"/g, '&quot;')}">👁️ Vue rue</button>` : ''}
+        </div>
+      </div>`).join('');
+
+    const restos = (stop.restaurants || []).map(r => `
+      <div class="restaurant-item">
+        <div class="activity-icon">${r.icon}</div>
+        <div class="activity-body">
+          <div class="activity-name">${r.name}</div>
+          <div class="activity-sub">${r.desc}</div>
+          ${r.kr && KAKAO_JS_KEY && hasPano('R', stop.name, r.kr) ? `<div style="margin-top:4px"><button class="rv-btn" style="margin-left:0"${placeAttrs('R', stop.name, r.kr)} data-kr="${r.kr}" data-lat="${stop.lat}" data-lng="${stop.lng}" data-title="${r.name.replace(/"/g, '&quot;')}">👁️ Vue rue</button></div>` : ''}
+        </div>
+        <div class="restaurant-price">${formatPrice(r.price)}</div>
+      </div>`).join('');
+
+    const panel = document.createElement('div');
+    panel.className = 'city-panel' + (i === 0 ? ' active' : '');
+    panel.id = `panel-${i}`;
+    panel.innerHTML = `
+      <div class="city-header" style="background:${stop.color}" data-korean="${stop.korean}">
+        <div class="city-badge">Étape ${stop.id} · <span class="season-badge-text">${meta.emoji} ${meta.label}</span></div>
+        <div class="city-name">${stop.name}</div>
+        <div class="city-dates">📅 ${stop.dates}</div>
+        <div class="city-travel">${stop.travel ? `🚗 Depuis ${stopsData[i - 1].name} : ~${stop.travel.km} km · env. ${stop.travel.duration}` : '🚩 Point de départ du road trip'}</div>
+      </div>
+      <div class="city-desc">${stop.desc}</div>
+      <div class="panel-columns">
+        <div class="panel-col">
+          <div class="panel-col-title">🎯 Activités</div>
+          <div class="activities-list">${acts}</div>
+        </div>
+        <div class="panel-col">
+          <div class="panel-col-title">🍽️ Où manger</div>
+          <div class="restaurants-list">${restos}</div>
+        </div>
+      </div>
+      <div class="budget-bar">
+        <div class="budget-bar-title">💰 Budget étape — 1 personne</div>
+        <div class="budget-items">
+          <div class="budget-item"><span class="budget-item-label">Hébergement</span><span class="budget-item-value">${stop.budget.heberg}</span></div>
+          <div class="budget-item"><span class="budget-item-label">Restauration</span><span class="budget-item-value">${stop.budget.repas}</span></div>
+          <div class="budget-item"><span class="budget-item-label">Activités</span><span class="budget-item-value">${stop.budget.activites}</span></div>
+          <div class="budget-item"><span class="budget-item-label">Total étape</span><span class="budget-item-value budget-total">${stop.budget.total}</span></div>
+        </div>
+      </div>`;
+    panelEl.appendChild(panel);
+
+  });
+
+  activeIdx = 0;
+  drawMap();
+  renderAllPlaceMarkers();
+}
+
+// ═══ DONNÉES BUDGET GLOBAL — PAR SAISON ═══
+const BUDGET_DATA = {
+  automne: {
+    dates: "Dates à définir",
+    nights: 14,
+    flights: {
+      layover: "~550 – 750 €",
+      direct: "~750 – 1 000 €",
+      busanReturn: "+ ~40 – 60 €",
+      busanReturnLabel: "Vol retour depuis Busan (optionnel)",
+      busanReturnSub: "Si retour Busan → Séoul puis vol international depuis Séoul, ou vol intérieur Busan → Séoul (~1h, ~40 €) avant le vol international",
+      searchUrlRoundTrip: "https://www.google.com/travel/flights?q=Flights%20from%20Paris%20to%20Seoul%20on%202026-10-25%20through%202026-11-08&hl=fr&gl=fr&curr=EUR",
+      skyscannerUrlRoundTrip: "https://www.skyscanner.fr/transport/flights/cdg/icn/261025/261108/",
+      slicktripUrlRoundTrip: "https://slicktrip.com/flights?key=CDG%3BICN%3Beconomy%3B1%3B2026-10-25%3B2026-11-08",
+    },
+    accomAvgSub: "Variable selon la ville : ~45 € (Daejeon, Mokpo) à ~60 € (Séoul, Yeosu, Busan)",
+    accomCities: [
+      { name:"Séoul", nights:"3 nuits", sub:"Hotel Skypark Central Myeongdong / Ibis Styles Ambassador Seoul Myeongdong, ou Stay256 à Bukchon — Suwon se visite en excursion à la journée depuis Séoul, sans nuit supplémentaire", price:"~45 €/nuit" },
+      { name:"Daejeon", nights:"1 nuit", sub:"Hotel Interciti (Yuseong) / Benikea Hotel Daerim (centre-ville)", price:"~50 €/nuit" },
+      { name:"Jeonju", nights:"2 nuits", sub:"Hanok stay dans le Village Hanok (ex. Seonmul Hanok Stay) — chambre traditionnelle avec chauffage au sol ondol, camp de base pour l'excursion à Naejangsan", price:"~50 €/nuit" },
+      { name:"Gwangju", nights:"1 nuit", sub:"Brive Gwangju by Lotte Hotel — autres hôtels à comparer sur Booking.com", price:"~50 €/nuit" },
+      { name:"Mokpo", nights:"1 nuit", sub:"Hôtels du centre et du port de Mokpo — à comparer sur Booking.com", price:"~48 €/nuit" },
+      { name:"Suncheon", nights:"1 nuit", sub:"Venezia Tourist Hotel", price:"~50 €/nuit" },
+      { name:"Yeosu", nights:"2 nuits", sub:"The Ocean Resort / Ramada Plaza by Wyndham Yeosu", price:"~60 €/nuit" },
+      { name:"Busan", nights:"3 nuits", sub:"Toyoko Inn Busan Seomyeon, ou hébergement près de la plage de Haeundae", price:"~60 €/nuit" },
+    ],
+    reserveNote: "Agoda et Booking.com couvrent bien la Corée pour les hôtels ; pour les hanok stays, Airbnb ou les sites locaux (Yeogi Eottae) offrent souvent plus de choix",
+    car: {
+      rental: "~480 – 650 €",
+      fuel: "~115 – 155 €",
+      fuelSub: "Trajet Séoul (excursion Suwon incluse) → Busan via Daejeon, Jeonju (excursion Naejangsan), Gwangju, Mokpo, Suncheon, Yeosu (~765 km au total hors excursions)",
+      tolls: "~35 – 50 €",
+      totalForSplit: "630 – 855 €",
+    },
+    ev: {
+      rental: "~450 – 620 €",
+      recharge: "~35 – 55 €",
+      tolls: "~35 – 50 €",
+      bilan: "Total VE (~520 – 725 €) légèrement inférieur au thermique (~630 – 855 €), grâce surtout à la recharge moins chère — au prix d'une logistique de trajet un peu plus contraignante",
+      vigilance: "Bornes rapides (50-200 kW) bien présentes sur les aires d'autoroute et en ville, mais plus rares dans les zones rurales (Mokpo, Suncheon) ; prévoir 30-45 min de recharge tous les 250-300 km et anticiper via une appli (ex. EV Infra). Autonomie réelle hivernale réduite de ~15-20 % par grand froid.",
+    },
+    repasActivitesTotal: 605,
+    grandTotal: "~2 180 – 2 500 €",
+    grandTotalSub: "Vol A/R (direct) + hébergements (733 €) + part de véhicule (pour 2 pers.) + repas/activités (605 €)",
+    tip: "💡 Astuce : réserver les billets d'avion 3 à 4 mois à l'avance et comparer Korean Air / Asiana / Air France pour le meilleur tarif sur la période de mi-novembre. Pour la voiture, les comparateurs type RentalCars ou les loueurs locaux (Lotte Rent-a-Car, SOCAR) permettent souvent d'obtenir de meilleurs prix qu'en réservant sur place.",
+  },
+  printemps: {
+    dates: "Dates à définir",
+    nights: 13,
+    flights: {
+      layover: "~650 – 900 €",
+      direct: "~900 – 1 200 €",
+      busanReturn: "≈ tarif équivalent (vol « open-jaw »)",
+      busanReturnLabel: "Vol « open-jaw » : arrivée Busan / retour Séoul",
+      busanReturnSub: "Recommandé pour cet itinéraire (Busan → Séoul) : arrivée à Busan (Gimhae) ou Séoul-Incheon + train vers Busan, puis retour international depuis Séoul (Incheon) en fin de séjour — évite tout aller-retour inutile",
+      searchUrlRoundTrip: "https://www.google.com/travel/flights?q=Flights%20from%20Paris%20to%20Seoul%20on%202027-03-25%20through%202027-04-08&hl=fr&gl=fr&curr=EUR",
+      searchUrlOpenJaw: "https://www.google.com/travel/flights?q=Flights%20from%20Paris%20to%20Busan%20on%202027-03-25%20returning%20from%20Seoul%20on%202027-04-08&hl=fr&gl=fr&curr=EUR",
+      skyscannerUrlRoundTrip: "https://www.skyscanner.fr/transport/flights/cdg/icn/270325/270408/",
+      slicktripUrlRoundTrip: "https://slicktrip.com/flights?key=CDG%3BICN%3Beconomy%3B1%3B2027-03-25%3B2027-04-08",
+      skyscannerUrlOpenJaw: "https://www.skyscanner.fr/transport/flights/cdg/pus/270325/",
+      slicktripUrlOpenJaw: "https://slicktrip.com/flights?key=CDG%3BPUS%3Beconomy%3B1%3B2027-03-25",
+    },
+    accomAvgSub: "Variable selon la ville : ~50 € (Damyang) à ~90 € (Jinhae, forte affluence pendant le festival des cerisiers)",
+    accomCities: [
+      { name:"Busan", nights:"3 nuits", sub:"Toyoko Inn Busan Seomyeon, ou hébergement près de la plage de Haeundae", price:"~70 €/nuit" },
+      { name:"Jinhae", nights:"1 nuit", sub:"Almond Hotel et autres hôtels du centre de Jinhae — ⚠️ réserver 3 à 4 mois à l'avance, complet dès janvier pendant le festival Gunhangje", price:"~90 €/nuit" },
+      { name:"Tongyeong", nights:"1 nuit", sub:"Kumho Resort Tongyeong Marina", price:"~60 €/nuit" },
+      { name:"Suncheon", nights:"1 nuit", sub:"Venezia Tourist Hotel", price:"~55 €/nuit" },
+      { name:"Damyang", nights:"1 nuit", sub:"Joadang et Dambit Hanok Stay", price:"~50 €/nuit" },
+      { name:"Jeonju", nights:"2 nuits", sub:"Hanok stay dans le Village Hanok (ex. Seonmul Hanok Stay) — chambre traditionnelle avec chauffage au sol ondol, forte demande au printemps", price:"~60 €/nuit" },
+      { name:"Daejeon", nights:"1 nuit", sub:"Hotel Interciti (Yuseong) / Benikea Hotel Daerim (centre-ville)", price:"~55 €/nuit" },
+      { name:"Séoul", nights:"3 nuits", sub:"Hotel Skypark Central Myeongdong / Ibis Styles Ambassador Seoul Myeongdong, ou Stay256 à Bukchon", price:"~55 €/nuit" },
+    ],
+    reserveNote: "Agoda et Booking.com couvrent bien la Corée pour les hôtels ; pour Jinhae en particulier, réserver dès que possible (festival Gunhangje début avril) — les hébergements affichent complet plusieurs mois à l'avance",
+    car: {
+      rental: "~550 – 720 €",
+      fuel: "~95 – 130 €",
+      fuelSub: "Trajet Busan → Séoul via Jinhae, Tongyeong, Suncheon, Damyang, Jeonju, Daejeon (~640 km au total)",
+      tolls: "~35 – 50 €",
+      totalForSplit: "680 – 900 €",
+    },
+    ev: {
+      rental: "~520 – 690 €",
+      recharge: "~30 – 50 €",
+      tolls: "~35 – 50 €",
+      bilan: "Total VE (~585 – 790 €) légèrement inférieur au thermique (~680 – 900 €), grâce surtout à la recharge moins chère — au prix d'une logistique de trajet un peu plus contraignante",
+      vigilance: "Bornes rapides (50-200 kW) bien présentes sur les aires d'autoroute et en ville, y compris sur la côte sud ; prévoir 30-45 min de recharge tous les 250-300 km et anticiper via une appli (ex. EV Infra). Affluence accrue aux bornes pendant les week-ends de festival des cerisiers.",
+    },
+    repasActivitesTotal: 525,
+    grandTotal: "~2 330 – 2 700 €",
+    grandTotalSub: "Vol « open-jaw » arrivée Busan / retour Séoul + hébergements (805 €) + part de véhicule (pour 2 pers.) + repas/activités (525 €)",
+    tip: "💡 Astuce : la floraison des cerisiers étant une période très demandée, réserver vols et hébergements 4 à 5 mois à l'avance — en particulier à Jinhae. Privilégier un vol « open-jaw » (arrivée à Busan/Gimhae, retour depuis Séoul/Incheon) pour suivre la vague de floraison sud→nord sans revenir sur ses pas ; comparer Korean Air / Asiana / Air France, et pour la voiture, les loueurs locaux (Lotte Rent-a-Car, SOCAR) tôt dans la saison pour éviter les ruptures de stock.",
+  },
+};
+
+// ═══════════════════════════════════════════════════════════
+// LOGIQUE BUDGET : parsing, surcharges de prix, totaux calculés
+// ═══════════════════════════════════════════════════════════
+function parseRangeNumbers(str) {
+  const matches = (String(str).match(/\d{1,3}(?:[\s\u00a0\u202f]\d{3})+(?:[.,]\d+)?|\d+(?:[.,]\d+)?/g) || [])
+    .map(n => parseFloat(n.replace(/[\s\u00a0\u202f]/g, '').replace(',', '.')));
+  if (matches.length === 0) return [0, 0];
+  if (matches.length === 1) return [matches[0], matches[0]];
+  return [Math.min(matches[0], matches[1]), Math.max(matches[0], matches[1])];
+}
+
+function formatEuro(n) {
+  return Math.round(n).toLocaleString('fr-FR');
+}
+
+function getSelectedFlight(season) {
+  const v = safeStorage.getItem(`kortripp-flight-choice-${season}`);
+  return v === 'layover' || v === 'direct' ? v : 'direct';
+}
+function setSelectedFlight(season, key) {
+  safeStorage.setItem(`kortripp-flight-choice-${season}`, key);
+}
+function grandTotalSubText(season) {
+  const b = BUDGET_DATA[season];
+  const vol = getSelectedFlight(season) === 'layover' ? 'avec escale' : 'direct';
+  return `Vol A/R (${vol}) + hébergements + part de véhicule (pour 2 pers.) + repas/activités (${b.repasActivitesTotal} €) · recalculé selon vos tarifs modifiés et le vol retenu`;
+}
+
+function computeGrandTotal(season) {
+  const b = BUDGET_DATA[season];
+  const flightOverrides = getFlightOverrides(season);
+  const chosen = getSelectedFlight(season);
+  const flightStr = flightOverrides[chosen] !== undefined ? flightOverrides[chosen] : b.flights[chosen];
+  const [flightMin, flightMax] = parseRangeNumbers(flightStr);
+  const accomStats = computeAccomStats(season);
+  const [carMin, carMax] = parseRangeNumbers(b.car.totalForSplit);
+  const repas = b.repasActivitesTotal;
+  const min = flightMin + accomStats.total + (carMin / 2) + repas;
+  const max = flightMax + accomStats.total + (carMax / 2) + repas;
+  return { min: Math.round(Math.min(min, max)), max: Math.round(Math.max(min, max)) };
+}
+
+function refreshGrandTotal(season) {
+  const el = document.getElementById('grand-total-amount');
+  if (!el) return;
+  const { min, max } = computeGrandTotal(season);
+  el.textContent = `~${formatEuro(min)} – ${formatEuro(max)} €`;
+}
+
+function getFlightOverrides(season) {
+  try {
+    const raw = safeStorage.getItem(`kortripp-flight-overrides-${season}`);
+    return raw ? JSON.parse(raw) : {};
+  } catch { return {}; }
+}
+
+function setFlightOverride(season, key, value) {
+  const overrides = getFlightOverrides(season);
+  overrides[key] = value;
+  safeStorage.setItem(`kortripp-flight-overrides-${season}`, JSON.stringify(overrides));
+}
+
+function resetFlightOverrides(season) {
+  safeStorage.removeItem(`kortripp-flight-overrides-${season}`);
+}
+
+function renderFlightRow(season, key, label, sub, defaultValue, searchUrl, skyscannerUrl, slicktripUrl, selectable) {
+  const overrides = getFlightOverrides(season);
+  const value = overrides[key] !== undefined ? overrides[key] : defaultValue;
+  const links = [
+    slicktripUrl ? `<a class="budget-link budget-link-primary" href="${slicktripUrl}" target="_blank" rel="noopener">🔍 SlickTrip</a>` : '',
+    searchUrl ? `<a class="budget-link" href="${searchUrl}" target="_blank" rel="noopener">🔍 Google Flights</a>` : '',
+    skyscannerUrl ? `<a class="budget-link" href="${skyscannerUrl}" target="_blank" rel="noopener">🔍 Skyscanner</a>` : '',
+  ].join('');
+  const linksRow = links ? `<div class="budget-links" style="margin-top:6px">${links}</div>` : '';
+  const choiceRow = selectable
+    ? `<label class="flight-choice-label"><input type="radio" name="flight-choice" class="flight-choice" value="${key}" ${getSelectedFlight(season) === key ? 'checked' : ''}> Retenu pour le total</label>`
+    : '';
+  return `
+      <div class="budget-card-row">
+        <div>
+          <div class="budget-card-label">${label}</div>
+          <div class="budget-card-sub">${sub}</div>
+          ${linksRow}
+          ${choiceRow}
+        </div>
+        <div class="budget-price-edit">
+          <span class="budget-card-amount flight-price-display" data-flight-key="${key}">${value}</span>
+          <input type="text" class="flight-price-input" data-flight-key="${key}" value="${value}" style="display:none;" />
+          <button class="flight-price-edit-btn" aria-label="Modifier le tarif" data-flight-key="${key}">✏️</button>
+        </div>
+      </div>`;
+}
+
+function handleFlightEditClick(e) {
+  const btn = e.target.closest('.flight-price-edit-btn');
+  if (!btn) return;
+  const row = btn.closest('.budget-card-row');
+  const display = row.querySelector('.flight-price-display');
+  const input = row.querySelector('.flight-price-input');
+  if (input.style.display === 'none') {
+    display.style.display = 'none';
+    input.style.display = 'inline-block';
+    input.focus();
+    input.select();
+  } else {
+    saveFlightEdit(btn.dataset.flightKey, row);
+  }
+}
+
+function saveFlightEdit(key, row) {
+  const display = row.querySelector('.flight-price-display');
+  const input = row.querySelector('.flight-price-input');
+  const value = input.value.trim() || display.textContent;
+  setFlightOverride(currentSeason, key, value);
+  display.textContent = value;
+  display.style.display = 'inline';
+  input.style.display = 'none';
+  refreshGrandTotal(currentSeason);
+  renderBudgetBand(currentSeason);
+}
+
+// ═══════════════════════════════════════════════════════════
+// BUDGET BAND (récap permanent en bas de la sidebar)
+// ═══════════════════════════════════════════════════════════
+function getBandTotal(season, key) {
+  const v = safeStorage.getItem(`kortripp-band-${key}-${season}`);
+  return v !== null ? parseFloat(v) : null;
+}
+function persistBandTotal(season, key, value) {
+  safeStorage.setItem(`kortripp-band-${key}-${season}`, Math.round(value));
+}
+
+function computeBandTotals(season) {
+  const b = BUDGET_DATA[season];
+  const overrides = getFlightOverrides(season);
+  const chosen = getSelectedFlight(season);
+  const flightStr = overrides[chosen] !== undefined ? overrides[chosen] : b.flights[chosen];
+  const [flightMin, flightMax] = parseRangeNumbers(flightStr);
+  const accom = getBandTotal(season, 'accom') || computeAccomStats(season).total;
+  const car = getBandTotal(season, 'car') || b.car.totalForSplit;
+  const food = getBandTotal(season, 'food') || b.repasActivitesTotal;
+  const line = flightMin + accom + (car / 2) + food;
+  const upper = flightMax + accom + (car / 2) + food;
+  return { accom, car, food, totalMin: Math.round(line), totalMax: Math.round(upper) };
+}
+
+function renderBudgetBand(season) {
+  const meta = SEASON_META[season];
+  const b = BUDGET_DATA[season];
+  const overrides = getFlightOverrides(season);
+  const chosen = getSelectedFlight(season);
+  const flightStr = overrides[chosen] !== undefined ? overrides[chosen] : b.flights[chosen];
+  const { accom, car, food, totalMin, totalMax } = computeBandTotals(season);
+
+  document.getElementById('band-nights').textContent = b.nights;
+  document.getElementById('band-flights').textContent = formatPrice(flightStr);
+  document.getElementById('band-accom').textContent = displayAmount(accom);
+  document.getElementById('band-car').textContent = displayAmount(car);
+  document.getElementById('band-food').textContent = displayAmount(food);
+  document.getElementById('band-total').textContent = `~${formatEuro(totalMin)} – ${formatEuro(totalMax)} €`;
+
+  renderBandInputs(season);
+}
+
+function renderBandInputs(season) {
+  const b = BUDGET_DATA[season];
+  const { accom, car, food } = computeBandTotals(season);
+  const chosen = getSelectedFlight(season);
+
+  const rows = {
+    accom: document.querySelector('#budgetBand [data-band="accom"]'),
+    car: document.querySelector('#budgetBand [data-band="car"]'),
+    food: document.querySelector('#budgetBand [data-band="food"]'),
+  };
+
+  document.querySelectorAll('#budgetBand input[name="band-flight-choice"]').forEach(r => r.checked = (r.value === chosen));
+
+  Object.entries(rows).forEach(([key, row]) => {
+    const value = key === 'accom' ? accom : key === 'car' ? car : food;
+    const display = row.querySelector('.budget-band-amount');
+    const input = row.querySelector('.price-input');
+    display.textContent = displayAmount(value);
+    if (input.style.display === 'none') {
+      display.style.display = 'none';
+      input.style.display = 'inline-block';
+      input.value = Math.round(value);
+      input.focus(); input.select();
+    } else {
+      input.style.display = 'none';
+      display.style.display = 'inline';
+    }
+  });
+}
+
+const budgetBand = document.getElementById('budgetBand');
+if (budgetBand) {
+  budgetBand.addEventListener('click', (e) => {
+    const row = e.target.closest('[data-band]');
+    if (!row) return;
+    const key = row.dataset.band;
+    const display = row.querySelector('.budget-band-amount');
+    const input = row.querySelector('.price-input');
+
+    if (input && input.style.display === 'none') {
+      display.style.display = 'none';
+      input.style.display = 'inline-block';
+      input.focus(); input.select();
+      return;
+    }
+    if (input && input.style.display !== 'none') {
+      const value = Math.max(0, parseFloat(input.value) || 0);
+      display.textContent = displayAmount(value);
+      display.style.display = 'inline';
+      input.style.display = 'none';
+      persistBandTotal(currentSeason, key, value);
+      refreshGrandTotal(currentSeason);
+      renderBudgetBand(currentSeason);
+      return;
+    }
+    if (e.target.matches('input[name="band-flight-choice"]')) {
+      setSelectedFlight(currentSeason, e.target.value);
+      renderBudgetBand(currentSeason);
+    }
+  });
+}
+
+function getPriceOverrides(season) {
+  try {
+    const raw = safeStorage.getItem(`kortripp-price-overrides-${season}`);
+    return raw ? JSON.parse(raw) : {};
+  } catch { return {}; }
+}
+
+function setPriceOverride(season, cityName, value) {
+  const overrides = getPriceOverrides(season);
+  overrides[cityName] = value;
+  safeStorage.setItem(`kortripp-price-overrides-${season}`, JSON.stringify(overrides));
+}
+
+function resetPriceOverrides(season) {
+  safeStorage.removeItem(`kortripp-price-overrides-${season}`);
+}
+
+function parseNights(nightsStr) {
+  const m = nightsStr.match(/\d+/);
+  return m ? parseInt(m[0], 10) : 1;
+}
+
+function parsePrice(priceStr) {
+  const m = priceStr.match(/[\d.]+/);
+  return m ? parseFloat(m[0]) : 0;
+}
+
+function computeAccomStats(season) {
+  const b = BUDGET_DATA[season];
+  const overrides = getPriceOverrides(season);
+  let total = 0, totalNights = 0;
+  b.accomCities.forEach((c) => {
+    const nights = parseNights(c.nights);
+    const price = overrides[c.name] !== undefined ? overrides[c.name] : parsePrice(c.price);
+    total += nights * price;
+    totalNights += nights;
+  });
+  return {
+    total: Math.round(total),
+    avg: totalNights ? Math.round(total / totalNights) : 0,
+  };
+}
+
+const TRIP_START_DATES = { automne: '2026-10-25', printemps: '2027-03-25' };
+
+function fmtISODate(date) {
+  return `${date.getFullYear()}-${pad2(date.getMonth() + 1)}-${pad2(date.getDate())}`;
+}
+
+function computeAccomDates(season) {
+  const cities = BUDGET_DATA[season].accomCities;
+  let cursor = new Date(TRIP_START_DATES[season] + 'T00:00:00');
+  return cities.map((c) => {
+    const nights = parseNights(c.nights);
+    const checkin = new Date(cursor);
+    const checkout = new Date(cursor);
+    checkout.setDate(checkout.getDate() + Math.max(nights, 1));
+    cursor = checkout;
+    return { checkin: fmtISODate(checkin), checkout: fmtISODate(checkout) };
+  });
+}
+
+function renderAccomCityRows(cities, season) {
+  const overrides = getPriceOverrides(season);
+  const dates = computeAccomDates(season);
+  return cities.map((c, i) => {
+    const price = overrides[c.name] !== undefined ? overrides[c.name] : parsePrice(c.price);
+    const { checkin, checkout } = dates[i];
+    const bookingUrl = `https://www.booking.com/searchresults.html?ss=${encodeURIComponent(c.name + ', Corée du Sud')}&checkin=${checkin}&checkout=${checkout}&lang=fr&selected_currency=EUR`;
+    const slicktripKey = `${c.name}, Corée du Sud`.replace(/ /g, '-') + `;${checkin};${checkout};1;0`;
+    const slicktripUrl = `https://slicktrip.com/hotels?key=${encodeURIComponent(slicktripKey).replace(/%2C/g, ',')}`;
+    const airbnbUrl = `https://www.airbnb.fr/s/${encodeURIComponent(c.name)}--Cor%C3%A9e-du-Sud/homes?checkin=${checkin}&checkout=${checkout}&currency=EUR`;
+    return `
+      <div class="budget-card-row">
+        <div>
+          <div class="budget-card-label">🛏️ ${c.name} — ${c.nights}</div>
+          <div class="budget-card-sub">${c.sub}</div>
+          <div class="budget-links" style="margin-top:6px">
+            <a class="budget-link budget-link-primary" href="${slicktripUrl}" target="_blank" rel="noopener">🔍 SlickTrip</a>
+            <a class="budget-link" href="${bookingUrl}" target="_blank" rel="noopener">🔍 Booking.com</a>
+            <a class="budget-link" href="${airbnbUrl}" target="_blank" rel="noopener">🔍 Airbnb</a>
+          </div>
+        </div>
+        <div class="budget-price-edit">
+          <span class="budget-card-amount price-display" data-city="${c.name}">${displayAmount(price, '/nuit')}</span>
+          <input type="number" class="price-input" data-city="${c.name}" value="${Math.round(price)}" style="display:none;" min="0" step="1" title="Saisie toujours en €" />
+          <button class="price-edit-btn" aria-label="Modifier le prix de ${c.name}" data-city="${c.name}">✏️</button>
+        </div>
+      </div>`;
+  }).join('');
+}
+
+function handlePriceEditClick(e) {
+  const btn = e.target.closest('.price-edit-btn');
+  if (!btn) return;
+  const city = btn.dataset.city;
+  const row = btn.closest('.budget-card-row');
+  const display = row.querySelector('.price-display');
+  const input = row.querySelector('.price-input');
+  if (input.style.display === 'none') {
+    display.style.display = 'none';
+    input.style.display = 'inline-block';
+    input.focus();
+    input.select();
+  } else {
+    savePriceEdit(city, row);
+  }
+}
+
+function savePriceEdit(city, row) {
+  const display = row.querySelector('.price-display');
+  const input = row.querySelector('.price-input');
+  const value = Math.max(0, parseFloat(input.value) || 0);
+  setPriceOverride(currentSeason, city, value);
+  display.textContent = displayAmount(value, '/nuit');
+  display.style.display = 'inline';
+  input.style.display = 'none';
+  refreshAccomTotals(currentSeason);
+  refreshGrandTotal(currentSeason);
+  renderBudgetBand(currentSeason);
+}
+
+function refreshAccomTotals(season) {
+  const stats = computeAccomStats(season);
+  const totalEl = document.getElementById('accom-total-amount');
+  const avgEl = document.getElementById('accom-avg-amount');
+  if (totalEl) totalEl.textContent = displayAmount(stats.total);
+  if (avgEl) avgEl.textContent = displayAmount(stats.avg, '/nuit');
+}
+
+document.getElementById('budgetModalBody').addEventListener('click', (e) => {
+  if (e.target.closest('#resetPricesBtn')) {
+    if (confirm('Réinitialiser tous les tarifs d\'hébergement modifiés à leurs valeurs par défaut ?\n\nCette action est irréversible.')) {
+      resetPriceOverrides(currentSeason);
+      renderBudgetModal(currentSeason);
+    }
+    return;
+  }
+  if (e.target.closest('#resetFlightsBtn')) {
+    if (confirm('Réinitialiser tous les tarifs de vols modifiés à leurs valeurs par défaut ?\n\nCette action est irréversible.')) {
+      resetFlightOverrides(currentSeason);
+      renderBudgetModal(currentSeason);
+    }
+    return;
+  }
+  handlePriceEditClick(e);
+  handleFlightEditClick(e);
+});
+document.getElementById('budgetModalBody').addEventListener('change', (e) => {
+  if (!e.target.classList || !e.target.classList.contains('flight-choice')) return;
+  setSelectedFlight(currentSeason, e.target.value);
+  refreshGrandTotal(currentSeason);
+  renderBudgetBand(currentSeason);
+
+  const sub = document.getElementById('grand-total-sub');
+  if (sub) sub.textContent = grandTotalSubText(currentSeason);
+});
+document.getElementById('budgetModalBody').addEventListener('keydown', (e) => {
+  if (e.key === 'Enter' && e.target.classList.contains('price-input')) {
+    e.preventDefault();
+    const row = e.target.closest('.budget-card-row');
+    const city = e.target.dataset.city;
+    savePriceEdit(city, row);
+  }
+  if (e.key === 'Enter' && e.target.classList.contains('flight-price-input')) {
+    e.preventDefault();
+    const row = e.target.closest('.budget-card-row');
+    saveFlightEdit(e.target.dataset.flightKey, row);
+  }
+});
+
+// ═══════════════════════════════════════════════════════════
+// RENDU DU MODAL BUDGET
+// ═══════════════════════════════════════════════════════════
+function renderBudgetModal(season) {
+  const meta = SEASON_META[season];
+  const b = BUDGET_DATA[season];
+  const stats = computeAccomStats(season);
+
+  document.getElementById('budgetModalBody').innerHTML = `
+  <div class="budget-global-header" data-korean="여행">
+    <div class="city-badge">Estimations · 1 personne · ${meta.emoji} ${meta.label}</div>
+    <div class="city-name">Budget global du voyage</div>
+    <div class="city-dates">📅 14 jours · ${b.dates}</div>
+  </div>
+  <div class="budget-global-desc">
+    Estimations indicatives pour préparer le budget global du voyage, en complément des budgets détaillés par étape (hébergement, repas, activités sur place). Les tarifs réels varient selon la date de réservation, la disponibilité et la saisonnalité — à vérifier idéalement 2 à 4 mois avant le départ.
+  </div>
+
+  <div class="budget-global-section">
+    <div class="budget-section-title">✈️ Billets d'avion aller-retour</div>
+    <button class="budget-reset-btn" id="resetFlightsBtn">🔄 Réinitialiser les tarifs par défaut</button>
+    <div class="budget-card">
+      ${renderFlightRow(season, 'layover', 'Vol avec escale (Asiana, Korean Air, Air China…)', 'Paris (CDG) ↔ Séoul (ICN), classe économique, 1 escale', b.flights.layover, b.flights.searchUrlRoundTrip, b.flights.skyscannerUrlRoundTrip, b.flights.slicktripUrlRoundTrip, true)}
+      ${renderFlightRow(season, 'direct', 'Vol direct (Air France, Korean Air)', 'Paris (CDG) ↔ Séoul (ICN), classe économique, sans escale', b.flights.direct, b.flights.searchUrlRoundTrip, b.flights.skyscannerUrlRoundTrip, b.flights.slicktripUrlRoundTrip, true)}
+      ${renderFlightRow(season, 'busanReturn', b.flights.busanReturnLabel, b.flights.busanReturnSub, b.flights.busanReturn, b.flights.searchUrlOpenJaw, b.flights.skyscannerUrlOpenJaw, b.flights.slicktripUrlOpenJaw, false)}
+    </div>
+  </div>
+
+  <div class="budget-global-section">
+    <div class="budget-section-title">🏨 Hébergements (total des 8 étapes)</div>
+    <button class="budget-reset-btn" id="resetPricesBtn">🔄 Réinitialiser les tarifs par défaut</button>
+    <div class="budget-card">
+      <div class="budget-card-row">
+        <div>
+          <div class="budget-card-label">Total hébergements — ${b.nights} nuits</div>
+          <div class="budget-card-sub">Cumul des estimations par étape : guesthouses, hanok et hôtels 2-3★, chambre double partagée (prix par personne)</div>
+        </div>
+        <div class="budget-card-amount" id="accom-total-amount">${displayAmount(stats.total)}</div>
+      </div>
+      <div class="budget-card-row">
+        <div>
+          <div class="budget-card-label">Moyenne par nuit</div>
+          <div class="budget-card-sub">${b.accomAvgSub}</div>
+        </div>
+        <div class="budget-card-amount" id="accom-avg-amount">${displayAmount(stats.avg, '/nuit')}</div>
+      </div>
+    </div>
+
+    <div class="budget-card">
+      ${renderAccomCityRows(b.accomCities, season)}
+      <div class="budget-card-row">
+        <div>
+          <div class="budget-card-label">📌 Où réserver</div>
+          <div class="budget-card-sub">${b.reserveNote}</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="budget-global-section">
+    <div class="budget-section-title">🚗 Location de véhicule</div>
+    <div class="budget-card">
+      <div class="budget-card-row">
+        <div>
+          <div class="budget-card-label">Location 14 jours — véhicule compact</div>
+          <div class="budget-card-sub">Type Hyundai Avante / Kia K3, boîte automatique, assurance complémentaire incluse</div>
+        </div>
+        <div class="budget-card-amount">${formatPrice(b.car.rental)}</div>
+      </div>
+      <div class="budget-card-row">
+        <div>
+          <div class="budget-card-label">Carburant</div>
+          <div class="budget-card-sub">${b.car.fuelSub}</div>
+        </div>
+        <div class="budget-card-amount">${formatPrice(b.car.fuel)}</div>
+      </div>
+      <div class="budget-card-row">
+        <div>
+          <div class="budget-card-label">Péages d'autoroute</div>
+          <div class="budget-card-sub">Réseau d'autoroutes (Expressway) entre les différentes étapes</div>
+        </div>
+        <div class="budget-card-amount">${formatPrice(b.car.tolls)}</div>
+      </div>
+      <div class="budget-card-row">
+        <div>
+          <div class="budget-card-label">À répartir entre les passagers</div>
+          <div class="budget-card-sub">Le total ci-dessus (~${formatPrice(b.car.totalForSplit)}) correspond au véhicule complet — à diviser selon le nombre de voyageurs</div>
+        </div>
+        <div class="budget-card-amount">÷ nb. pers.</div>
+      </div>
+    </div>
+
+    <div class="budget-card">
+      <div class="budget-card-row">
+        <div>
+          <div class="budget-card-label">⚡ Alternative véhicule électrique</div>
+          <div class="budget-card-sub">Type Hyundai Ioniq 5 / Kona Electric / Kia EV6 — souvent au même tarif journalier qu'un thermique, parfois moins cher chez SOCAR (tarifs incitatifs)</div>
+        </div>
+        <div class="budget-card-amount">${formatPrice(b.ev.rental)}</div>
+      </div>
+      <div class="budget-card-row">
+        <div>
+          <div class="budget-card-label">"Carburant" (recharge)</div>
+          <div class="budget-card-sub">Pour le trajet complet : recharge rapide sur autoroute (~0,30-0,35 €/kWh) — bien moins cher que l'essence</div>
+        </div>
+        <div class="budget-card-amount">${formatPrice(b.ev.recharge)}</div>
+      </div>
+      <div class="budget-card-row">
+        <div>
+          <div class="budget-card-label">Péages</div>
+          <div class="budget-card-sub">Identiques au véhicule thermique — aucune réduction spécifique aux VE sur les autoroutes coréennes</div>
+        </div>
+        <div class="budget-card-amount">${formatPrice(b.ev.tolls)}</div>
+      </div>
+      <div class="budget-card-row">
+        <div>
+          <div class="budget-card-label">⚠️ Points de vigilance</div>
+          <div class="budget-card-sub">${b.ev.vigilance}</div>
+        </div>
+      </div>
+      <div class="budget-card-row">
+        <div>
+          <div class="budget-card-label">💰 Bilan</div>
+          <div class="budget-card-sub">${b.ev.bilan}</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="budget-grand-total">
+    <div>
+      <div class="budget-grand-total-label">Total estimé · 1 personne</div>
+      <div class="budget-grand-total-sub" id="grand-total-sub">${grandTotalSubText(season)}</div>
+    </div>
+    <div class="budget-grand-total-amount" id="grand-total-amount">${(() => { const t = computeGrandTotal(season); return `~${formatEuro(t.min)} – ${formatEuro(t.max)} €`; })()}</div>
+  </div>
+
+  <div class="budget-note">
+    ${b.tip}
+  </div>`;
+}
+
+applySeason(currentSeason, { persist: false });
+
+// ═══ TOGGLE DEVISE (€ / ₩) ═══
+const currencyToggleBtn = document.getElementById('currencyToggleBtn');
+function updateCurrencyBtnLabel() {
+  if (currencyToggleBtn) currencyToggleBtn.textContent = currentCurrency === 'EUR' ? '💱 €' : '💱 ₩';
+}
+updateCurrencyBtnLabel();
+
+currencyToggleBtn?.addEventListener('click', () => {
+  currentCurrency = currentCurrency === 'EUR' ? 'KRW' : 'EUR';
+  safeStorage.setItem('kortripp-currency', currentCurrency);
+  updateCurrencyBtnLabel();
+  refreshActivityPrices();
+  if (typeof renderBudgetModal === 'function') renderBudgetModal(currentSeason);
+  renderBudgetBand(currentSeason);
+});
+
+// ═══ EXPORT CALENDRIER (.ics) ═══
+function icsEscape(str) {
+  return String(str)
+    .replace(/\\/g, '\\\\')
+    .replace(/;/g, '\\;')
+    .replace(/,/g, '\\,')
+    .replace(/\n/g, '\\n');
+}
+
+function pad2(n) { return String(n).padStart(2, '0'); }
+
+function fmtICSDate(date) {
+  return `${date.getFullYear()}${pad2(date.getMonth() + 1)}${pad2(date.getDate())}`;
+}
+
+function generateICS(season) {
+  const stopsData = SEASON_STOPS[season];
+  const input = prompt('Date de début du voyage (JJ/MM/AAAA) :', '');
+  if (!input) return;
+  const parts = input.split(/[\/\-.]/).map((p) => p.trim());
+  if (parts.length !== 3) { alert("Format de date non reconnu. Utilisez JJ/MM/AAAA (ex. 25/10/2026)."); return; }
+  let [d, m, y] = parts.map(Number);
+  if (y < 100) y += 2000;
+  let cursor = new Date(y, m - 1, d);
+  if (isNaN(cursor.getTime())) { alert('Date invalide.'); return; }
+
+  const nowStamp = fmtICSDate(new Date()) + 'T000000Z';
+  let ics = 'BEGIN:VCALENDAR\r\nVERSION:2.0\r\nPRODID:-//Kortripp//Guide de Voyage//FR\r\nCALSCALE:GREGORIAN\r\n';
+
+  stopsData.forEach((stop, i) => {
+    const nights = parseNights(stop.dates);
+    const start = new Date(cursor);
+    const end = new Date(cursor);
+    end.setDate(end.getDate() + Math.max(nights, 1));
+
+    ics += 'BEGIN:VEVENT\r\n';
+    ics += `UID:kortripp-${season}-${i}-${start.getTime()}@kortripp\r\n`;
+    ics += `DTSTAMP:${nowStamp}\r\n`;
+    ics += `DTSTART;VALUE=DATE:${fmtICSDate(start)}\r\n`;
+    ics += `DTEND;VALUE=DATE:${fmtICSDate(end)}\r\n`;
+    ics += `SUMMARY:${icsEscape(`${stop.name} (${stop.korean}) — ${stop.dates}`)}\r\n`;
+    ics += `DESCRIPTION:${icsEscape(stop.desc)}\r\n`;
+    ics += `LOCATION:${icsEscape(`${stop.name}, Corée du Sud`)}\r\n`;
+    ics += 'END:VEVENT\r\n';
+
+    cursor = end;
+  });
+
+  ics += 'END:VCALENDAR\r\n';
+
+  const blob = new Blob([ics], { type: 'text/calendar;charset=utf-8' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = `kortripp-${season}.ics`;
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+}
+
+document.getElementById('icsExportBtn')?.addEventListener('click', () => {
+  generateICS(currentSeason);
+});
+
+// ═══ VUE RUE (Roadview) ═══
+let kakaoReady = null;
+let rvToken = 0;
+
+function loadKakaoMaps() {
+  if (kakaoReady) return kakaoReady;
+  kakaoReady = new Promise((resolve, reject) => {
+    if (window.kakao && window.kakao.maps && window.kakao.maps.services) return resolve();
+    const s = document.createElement('script');
+    s.src = `https://dapi.kakao.com/v2/maps/sdk.js?appkey=${encodeURIComponent(KAKAO_JS_KEY)}&libraries=services&autoload=false`;
+    const timer = setTimeout(() => reject(new Error('timeout')), 12000);
+    s.onload = () => {
+      try { window.kakao.maps.load(() => { clearTimeout(timer); resolve(); }); }
+      catch (e) { clearTimeout(timer); reject(e); }
+    };
+    s.onerror = () => { clearTimeout(timer); reject(new Error('load')); };
+    document.head.appendChild(s);
+  });
+  kakaoReady.catch(() => { kakaoReady = null; });
+  return kakaoReady;
+}
+
+function rvLink(href, label, primary) {
+  return `<a class="budget-link${primary ? ' budget-link-primary' : ''}" href="${href}" target="_blank" rel="noopener">${label}</a>`;
+}
+
+function closeRoadview() {
+  rvToken++;
+  document.getElementById('rvOverlay').classList.remove('active');
+  document.getElementById('rvView').innerHTML = '';
+}
+
+async function openRoadview(kr, title, lat, lng, plat, plng, kname) {
+  const view = document.getElementById('rvView');
+  const statusEl = document.getElementById('rvStatus');
+  const linksEl = document.getElementById('rvLinks');
+  const placeEl = document.getElementById('rvPlace');
+  const token = ++rvToken;
+  document.getElementById('rvTitle').textContent = title;
+  placeEl.textContent = '';
+  view.innerHTML = '';
+  linksEl.innerHTML = '';
+  statusEl.textContent = 'Chargement de la vue rue…';
+  document.getElementById('rvOverlay').classList.add('active');
+  const searchLink = rvLink(`https://map.kakao.com/?q=${encodeURIComponent(kr)}`, '🔍 Chercher sur Kakao Map');
+  try {
+    await loadKakaoMaps();
+    if (token !== rvToken) return;
+    const place = (plat && plng) ? { place_name: kname || title, y: plat, x: plng, road_address_name: '' } : await new Promise((resolve) => {
+      const opts = lat && lng ? { location: new kakao.maps.LatLng(lat, lng), radius: 20000 } : undefined;
+      new kakao.maps.services.Places().keywordSearch(kr, (data, status) => {
+        resolve(status === kakao.maps.services.Status.OK && data.length ? data[0] : null);
+      }, opts);
+    });
+    if (token !== rvToken) return;
+    if (!place) {
+      statusEl.textContent = `Lieu introuvable sur Kakao Map (« ${kr} »).`;
+      linksEl.innerHTML = searchLink;
+      return;
+    }
+    placeEl.textContent = `📍 ${place.place_name}${place.road_address_name ? ' · ' + place.road_address_name : ''}`;
+    const kakaoLink = rvLink(`https://map.kakao.com/link/map/${encodeURIComponent(place.place_name)},${place.y},${place.x}`, '🗺️ Ouvrir dans Kakao Map', true);
+    const pos = new kakao.maps.LatLng(place.y, place.x);
+    const panoId = await new Promise((resolve) => new kakao.maps.RoadviewClient().getNearestPanoId(pos, 300, resolve));
+    if (token !== rvToken) return;
+    if (!panoId) {
+      statusEl.textContent = 'Pas de vue rue Kakao à proximité de ce lieu (sentier, île, intérieur…).';
+      linksEl.innerHTML = kakaoLink;
+      return;
+    }
+    statusEl.textContent = '';
+    new kakao.maps.Roadview(view).setPanoId(panoId, pos);
+    linksEl.innerHTML = kakaoLink;
+  } catch (err) {
+    if (token !== rvToken) return;
+    console.error('[Vue rue Kakao]', err);
+    statusEl.innerHTML = 'Vue rue indisponible. Le SDK Kakao a refusé de se charger. Vérifiez dans Kakao Developers :<br>① <b>Produit &gt; Kakao Map &gt; Paramètres d\'utilisation</b> sur <b>ON</b> (obligatoire depuis déc. 2024)<br>② le domaine <b>' + location.origin + '</b> déclaré dans <b>Clés de plateforme &gt; clé JavaScript &gt; Domaine du SDK JavaScript</b><br>③ aucun bloqueur de contenu actif sur le site.';
+    linksEl.innerHTML = searchLink;
+  }
+}
+
+document.addEventListener('click', (e) => {
+  const btn = e.target.closest && e.target.closest('.rv-btn');
+  if (btn) { openRoadview(btn.dataset.kr, btn.dataset.title, btn.dataset.lat, btn.dataset.lng, btn.dataset.plat, btn.dataset.plng, btn.dataset.kname); return; }
+  if (e.target.id === 'rvOverlay' || e.target.id === 'rvClose') closeRoadview();
+});
+document.addEventListener('keydown', (e) => {
+  if (e.key === 'Escape' && document.getElementById('rvOverlay').classList.contains('active')) closeRoadview();
+});
+
+// ═══ AUTO-DIAGNOSTIC KAKAO ═══
+async function runKakaoSelfTest() {
+  const ov = document.createElement('div');
+  ov.style.cssText = 'position:fixed;inset:0;z-index:9999;background:#fff;overflow:auto;padding:16px;font:13px/1.5 system-ui,sans-serif;color:#222';
+  ov.innerHTML = '<h2 style="margin:0 0 6px">Diagnostic Kakao</h2><div id="kt-sum">Démarrage…</div><div style="margin:8px 0"><button id="kt-copy">Copier le rapport</button> <button id="kt-json" disabled>Copier le JSON des coordonnées</button> <button id="kt-close">Fermer</button></div><textarea id="kt-out" readonly style="display:none;width:100%;height:110px;font:11px monospace;margin-bottom:8px"></textarea><table id="kt-tab" style="border-collapse:collapse;width:100%"></table>';
+  document.body.appendChild(ov);
+  const sum = ov.querySelector('#kt-sum'), tab = ov.querySelector('#kt-tab');
+  const lines = [];
+  const coords = [];
+  ov.querySelector('#kt-close').onclick = () => ov.remove();
+  ov.querySelector('#kt-copy').onclick = () => navigator.clipboard && navigator.clipboard.writeText(lines.join('\n'));
+  const row = (icon, a, b, c) => {
+    const tr = document.createElement('tr');
+    tr.innerHTML = [icon, a, b, c].map(x => `<td style="border-bottom:1px solid #eee;padding:3px 6px;vertical-align:top">${x}</td>`).join('');
+    tab.appendChild(tr);
+    lines.push([icon, a, b, c].join(' | '));
+  };
+  if (!KAKAO_JS_KEY) { sum.textContent = '❌ KAKAO_JS_KEY est vide.'; return; }
+  sum.textContent = `Domaine vu par le site : ${location.origin} — chargement du SDK…`;
+  try { await loadKakaoMaps(); }
+  catch (e) { sum.innerHTML = `❌ SDK non chargé (${e.message}). Vérifier clé, domaine <b>${location.origin}</b>, activation Kakao Map, bloqueur de contenu.`; lines.push('SDK KO: ' + e.message); return; }
+  const items = [], seen = new Set();
+  [['Automne', stopsAutomne], ['Printemps', stopsPrintemps]].forEach(([season, arr]) => arr.forEach(st => {
+    st.activites.forEach(a => a.kr && items.push(['Activité', season, st.name, a.name, a.kr]));
+    st.restaurants.forEach(r => r.kr && items.push(['Restaurant', season, st.name, r.name, r.kr, st.lat, st.lng]));
+    (LODGINGS[st.name] || []).forEach(l => items.push(['Hébergement', season, st.name, l.name, l.kr, st.lat, st.lng]));
+  }));
+  const todo = items.filter(it => { const k = it[4] + '|' + (it[5] || ''); if (seen.has(k)) return false; seen.add(k); return true; });
+  const places = new kakao.maps.services.Places(), rv = new kakao.maps.RoadviewClient();
+  const sleep = ms => new Promise(r => setTimeout(r, ms));
+  let ok = 0, nopano = 0, nf = 0, err = 0, i = 0;
+  for (const [type, season, city, name, kr, la, ln] of todo) {
+    i++; sum.textContent = `SDK OK ✅ — test ${i}/${todo.length}…`;
+    const opts = la ? { location: new kakao.maps.LatLng(la, ln), radius: 20000 } : undefined;
+    const res = await new Promise(resolve => places.keywordSearch(kr, (data, status) => resolve({ data, status }), opts));
+    if (res.status === kakao.maps.services.Status.OK && res.data.length) {
+      const pl = res.data[0];
+      const pano = await new Promise(resolve => rv.getNearestPanoId(new kakao.maps.LatLng(pl.y, pl.x), 300, resolve));
+      coords.push([type === 'Restaurant' ? 'R' : type === 'Hébergement' ? 'H' : 'A', city, name, kr, +(+pl.y).toFixed(6), +(+pl.x).toFixed(6), pl.id, pl.place_name, pano ? 1 : 0]);
+      if (pano) { ok++; row('✅', `${type} · ${city}`, `${name} <small>(${kr})</small>`, `${pl.place_name} — ${pl.address_name}`); }
+      else { nopano++; row('🟡 pas de vue rue', `${type} · ${city}`, `${name} <small>(${kr})</small>`, `${pl.place_name} — ${pl.address_name}`); }
+    } else if (res.status === kakao.maps.services.Status.ZERO_RESULT) { nf++; row('❌ introuvable', `${type} · ${city}`, `${name} <small>(${kr})</small>`, ''); }
+    else { err++; row('⚠️ erreur API', `${type} · ${city}`, `${name} <small>(${kr})</small>`, String(res.status)); }
+    await sleep(120);
+  }
+  const final = `Terminé : ✅ ${ok} avec vue rue · 🟡 ${nopano} lieu trouvé sans vue rue · ❌ ${nf} introuvables · ⚠️ ${err} erreurs (sur ${todo.length} lieux uniques)`;
+  sum.textContent = final; lines.unshift(final);
+  const jsonBtn = ov.querySelector('#kt-json'), out = ov.querySelector('#kt-out');
+  const json = JSON.stringify(coords);
+  out.value = json;
+  jsonBtn.disabled = false;
+  jsonBtn.onclick = () => {
+    out.style.display = 'block'; out.select();
+    if (navigator.clipboard) navigator.clipboard.writeText(json).then(() => { jsonBtn.textContent = '✅ JSON copié (' + coords.length + ' lieux)'; }, () => {});
+  };
+}
+if (new URLSearchParams(location.search).has('kakaotest')) runKakaoSelfTest();
+
+initKakaoMap();
+
+// ═══ CARTE SAISONNIÈRE KAKAO MAP ═══
+function updateKakaoSeasonBtn(season) {
+  const btn = document.getElementById('kakaoSeasonBtn');
+  if (btn && KAKAO_SEASON_MAPS[season]) btn.textContent = KAKAO_SEASON_MAPS[season].label;
+}
+document.getElementById('kakaoSeasonBtn')?.addEventListener('click', () => {
+  const m = KAKAO_SEASON_MAPS[currentSeason];
+  window.open('https://map.kakao.com/?q=' + encodeURIComponent(m.q), '_blank', 'noopener');
+});
+
+// ═══ PARTAGE DE LA PAGE ═══
+const shareBtn = document.getElementById('shareBtn');
+
+function flashShareBtnLabel(label, revertAfterMs = 2000) {
+  if (!shareBtn) return;
+  const original = '🔗 Partager';
+  shareBtn.textContent = label;
+  setTimeout(() => { shareBtn.textContent = original; }, revertAfterMs);
+}
+
+async function shareCurrentPage() {
+  const shareData = {
+    title: document.title || 'Guide de Voyage — Corée du Sud',
+    text: 'Mon itinéraire de road trip en Corée du Sud 🇰🇷',
+    url: window.location.href,
+  };
+
+  if (navigator.share) {
+    try {
+      await navigator.share(shareData);
+    } catch (err) {}
+    return;
+  }
+
+  try {
+    await navigator.clipboard.writeText(shareData.url);
+    flashShareBtnLabel('✅ Lien copié');
+  } catch (err) {
+    window.prompt('Copiez ce lien pour le partager :', shareData.url);
+  }
+}
+
+shareBtn?.addEventListener('click', shareCurrentPage);
+
+// ═══ MODAL BUDGET ═══
+const budgetFab = document.getElementById('budgetFab');
+const budgetOverlay = document.getElementById('budgetOverlay');
+const budgetClose = document.getElementById('budgetClose');
+
+budgetFab.addEventListener('click', () => budgetOverlay.classList.add('active'));
+budgetClose.addEventListener('click', () => budgetOverlay.classList.remove('active'));
+budgetOverlay.addEventListener('click', (e) => {
+  if (e.target === budgetOverlay) budgetOverlay.classList.remove('active');
+});
+
+// ═══ SELECT STOP ═══
+function selectStop(idx) {
+  document.querySelectorAll('.city-tab').forEach((t, i) => {
+    t.classList.toggle('active', i === idx);
+    t.style.borderBottomColor = i === idx ? stops[i].color : 'transparent';
+  });
+
+  document.querySelectorAll('.city-panel').forEach((p, i) => {
+    p.classList.toggle('active', i === idx);
+  });
+
+  focusStopOnMap(idx);
+
+  const tabs = document.querySelectorAll('.city-tab');
+  tabs[idx].scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
+
+  document.getElementById('activitiesPanel').scrollTop = 0;
+
+  activeIdx = idx;
+}
+</script>
+
+<script>
+  if ('serviceWorker' in navigator) {
+    window.addEventListener('load', () => {
+      navigator.serviceWorker.register('./service-worker.js')
+        .then((reg) => console.log('[PWA] Service worker enregistré :', reg.scope))
+        .catch((err) => console.warn('[PWA] Échec de l\'enregistrement :', err));
+    });
+  }
+</script>
 </body>
 </html>
