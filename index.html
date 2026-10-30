@@ -1600,8 +1600,6 @@ let mapReady = false;
 let stopOverlays = [];   // pins numérotés des étapes
 let routeLines = [];     // tronçons du trajet
 let placeOverlays = [];  // pastilles des activités / restaurants de l'étape active
-let placePopup = null;   // bulle d'information d'un lieu
-let placesFor = null;    // index de l'étape dont les lieux sont affichés (null = vue d'ensemble)
 const mapFilters = { A: true, R: true, H: true };
 
 function setMapMessage(text) {
@@ -1627,6 +1625,7 @@ async function initKakaoMap() {
   kakao.maps.event.addListener(map, 'click', closePlacePopup);
   mapReady = true;
   drawMap();
+  renderAllPlaceMarkers();
   window.addEventListener('resize', () => { map.relayout(); });
   setTimeout(() => { map.relayout(); if (placesFor === null) fitOverview(); }, 300);
 }
@@ -1706,25 +1705,57 @@ function stopPlaces(stop) {
   return out;
 }
 
-function showPlaceMarkers(idx) {
-  placeOverlays.forEach((o) => o.setMap(null)); placeOverlays = [];
-  closePlacePopup();
-  placesFor = idx;
-  stopPlaces(stops[idx]).forEach(({ type, item, info }) => {
-    if (!mapFilters[type]) return;
-    const el = document.createElement('div');
-    el.className = `place-pin place-pin-${type}`;
-    el.textContent = item.icon;
-    el.title = item.name;
-    el.addEventListener('click', () => openPlacePopup(item, info, type, stops[idx]));
-    const ov = new kakao.maps.CustomOverlay({
-      position: new kakao.maps.LatLng(info.lat, info.lng),
-      content: el, xAnchor: 0.5, yAnchor: 0.5, zIndex: 2, clickable: true,
+// Marqueurs des lieux (activités/restaurants/hébergements) TOUJOURS visibles,
+// évitement de collisions pour éviter le chevauchement à l'ouverture.
+function renderAllPlaceMarkers() {
+  if (!mapReady) return;
+  placeOverlays.forEach((o) => o.setMap(null));
+  placeOverlays = [];
+  const list = [];
+
+  stops.forEach((stop) => {
+    stopPlaces(stop).forEach(({ type, item, info }) => {
+      if (!mapFilters[type]) return;
+      const el = document.createElement('div');
+      el.className = `place-pin place-pin-${type}`;
+      el.textContent = item.icon;
+      el.title = item.name;
+      el.addEventListener('click', (e) => { e.stopPropagation(); openPlacePopup(item, info, type, stop); });
+      const ov = new kakao.maps.CustomOverlay({
+        position: new kakao.maps.LatLng(info.lat, info.lng),
+        content: el, xAnchor: 0.5, yAnchor: 0.5, zIndex: 2, clickable: true,
+      });
+      ov.setMap(map);
+      list.push({ type, item, info, el, ov });
     });
-    ov.setMap(map);
-    placeOverlays.push(ov);
   });
+
+  resolveCollisions(list);
+  placeOverlays = list;
 }
+
+// Repousse deux pins trop proches (évitement de collisions). Seuil ~550 m.
+function resolveCollisions(overlays) {
+  if (overlays.length < 2) return;
+  for (let iter = 0; iter < 10; iter++) {
+    for (let i = 0; i < overlays.length; i++) {
+      for (let j = i + 1; j < overlays.length; j++) {
+        const a = overlays[i], b = overlays[j];
+        const dLat = a.info.lat - b.info.lat, dLng = a.info.lng - b.info.lng;
+        const dist = Math.hypot(dLat, dLng);
+        if (dist <= 0 || dist >= 0.006) continue;
+        const factor = (0.006 - dist) / 2 / dist;
+        const cosA = Math.cos(a.info.lat * Math.PI / 180);
+        const cosB = Math.cos(b.info.lat * Math.PI / 180);
+        a.info.lng += (dLng * factor) / cosA; a.info.lat += dLat * factor;
+        b.info.lng -= (dLng * factor) / cosB; b.info.lat -= dLat * factor;
+        a.ov.setPosition(new kakao.maps.LatLng(a.info.lat, a.info.lng));
+        b.ov.setPosition(new kakao.maps.LatLng(b.info.lat, b.info.lng));
+      }
+    }
+  }
+}
+
 
 // Liens de réservation d'un hébergement, avec les dates du séjour dans cette ville
 function lodgingLinks(cityName, kname) {
@@ -1765,7 +1796,6 @@ function focusStopOnMap(idx) {
   if (!mapReady) return;
   const s = stops[idx];
   stopOverlays.forEach((o, i) => o.el.classList.toggle('active', i === idx));
-  showPlaceMarkers(idx);
   const b = new kakao.maps.LatLngBounds();
   b.extend(new kakao.maps.LatLng(s.lat, s.lng));
   let n = 0;
@@ -1791,7 +1821,7 @@ document.querySelectorAll('#mapFilters .map-chip').forEach((btn) => {
     const t = btn.dataset.filter;
     mapFilters[t] = !mapFilters[t];
     btn.classList.toggle('active', mapFilters[t]);
-    if (mapReady && placesFor !== null) showPlaceMarkers(placesFor);
+    if (mapReady) renderAllPlaceMarkers();
   });
 });
 
@@ -1919,6 +1949,8 @@ function buildItinerary(stopsData) {
   // Redessiner la carte (tracé, pins) et revenir à la 1ère étape
   activeIdx = 0;
   drawMap();
+  renderAllPlaceMarkers();
+
 }
 
 // ═══ DONNÉES BUDGET GLOBAL — PAR SAISON ═══
