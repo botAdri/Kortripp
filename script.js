@@ -1,15 +1,13 @@
 // Gestionnaire global d'erreurs JS
-<script>
   window.addEventListener('error', function (e) {
     var el = document.getElementById('jsErrorBanner');
     if (!el) return;
     el.style.display = 'block';
     el.textContent = '⚠️ Erreur JS : ' + e.message + ' (' + (e.filename || '').split('/').pop() + ':' + e.lineno + ')';
   });
-</script>
+
 
 // DONNÉES DE VOYAGE
-<script>
 // ═══ DONNÉES ═══
 const stopsAutomne = [
   {
@@ -1857,9 +1855,7 @@ function selectStop(idx) {
 
   activeIdx = idx;
 }
-</script>
 
-<script>
   // ─── Enregistrement du Service Worker (PWA) ───
   if ('serviceWorker' in navigator) {
     window.addEventListener('load', () => {
@@ -1868,4 +1864,14 @@ function selectStop(idx) {
         .catch((err) => console.warn('[PWA] Échec de l\'enregistrement :', err));
     });
   }
-</script>
+
+// ... (gardez tout le reste du code tel quel)
+
+document.addEventListener('DOMContentLoaded', () => {
+  // 1. Appliquer la saison par défaut
+  applySeason(currentSeason);
+
+  // 2. Initialiser la carte (DOIT être ici)
+  initKakaoMap();
+});
+
