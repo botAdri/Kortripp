@@ -1,13 +1,3 @@
-// Gestionnaire global d'erreurs JS
-  window.addEventListener('error', function (e) {
-    var el = document.getElementById('jsErrorBanner');
-    if (!el) return;
-    el.style.display = 'block';
-    el.textContent = '⚠️ Erreur JS : ' + e.message + ' (' + (e.filename || '').split('/').pop() + ':' + e.lineno + ')';
-  });
-
-
-// DONNÉES DE VOYAGE
 // ═══ DONNÉES ═══
 const stopsAutomne = [
   {
@@ -1856,22 +1846,11 @@ function selectStop(idx) {
   activeIdx = idx;
 }
 
-  // ─── Enregistrement du Service Worker (PWA) ───
-  if ('serviceWorker' in navigator) {
-    window.addEventListener('load', () => {
-      navigator.serviceWorker.register('./service-worker.js')
-        .then((reg) => console.log('[PWA] Service worker enregistré :', reg.scope))
-        .catch((err) => console.warn('[PWA] Échec de l\'enregistrement :', err));
-    });
-  }
-
-// ... (gardez tout le reste du code tel quel)
-
-document.addEventListener('DOMContentLoaded', () => {
-  // 1. Appliquer la saison par défaut
-  applySeason(currentSeason);
-
-  // 2. Initialiser la carte (DOIT être ici)
-  initKakaoMap();
-});
-
+// ─── Enregistrement du Service Worker (PWA) ───
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('./service-worker.js')
+      .then((reg) => console.log('[PWA] Service worker enregistré :', reg.scope))
+      .catch((err) => console.warn('[PWA] Échec de l\'enregistrement :', err));
+  });
+}
