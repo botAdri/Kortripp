@@ -544,9 +544,22 @@ function closePlacePopup() {
 }
 
 function clearMapLayers() {
-  stopOverlays.forEach((o) => o.overlay.setMap(null)); stopOverlays = [];
-  routeLines.forEach((l) => l.setMap(null)); routeLines = [];
-  placeOverlays.forEach((o) => o.setMap(null)); placeOverlays = [];
+  stopOverlays.forEach((o) => {
+    if (o && typeof o.overlay?.setMap === 'function') o.overlay.setMap(null);
+    else if (o && typeof o.setMap === 'function') o.setMap(null);
+  });
+  stopOverlays = [];
+
+  routeLines.forEach((l) => {
+    if (l && typeof l.setMap === 'function') l.setMap(null);
+  });
+  routeLines = [];
+
+  placeOverlays.forEach((o) => {
+    if (o && typeof o.setMap === 'function') o.setMap(null);
+  });
+  placeOverlays = [];
+
   closePlacePopup();
   placesFor = null;
 }
