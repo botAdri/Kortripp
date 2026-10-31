@@ -56,6 +56,39 @@
   <div class="body">
     <!-- SIDEBAR -->
     <aside class="sidebar">
+        <!-- SIDEBAR -->
+            <aside class="sidebar">
+              <!-- City tabs -->
+              <div class="city-tabs" id="cityTabs"></div>
+              <!-- Panels -->
+              <div class="activities-panel" id="activitiesPanel"></div>
+
+              <!-- ═══ BANDEAU BUDGET PERMANENT ═══ -->
+              <div class="budget-band" id="budgetBand">
+                <div class="budget-band-title">💰 Synthèse du budget</div>
+                <div class="budget-band-rows">
+                  <div class="budget-band-row" data-band="accom">
+                    <span>Hébergements (<span id="band-nights">0</span> nuits)</span>
+                    <span class="budget-band-amount">0 €</span>
+                    <input type="number" class="price-input" style="display:none;" />
+                  </div>
+                  <div class="budget-band-row" data-band="car">
+                    <span>Véhicule + essence</span>
+                    <span class="budget-band-amount" id="band-car">0 €</span>
+                    <input type="number" class="price-input" style="display:none;" />
+                  </div>
+                  <div class="budget-band-row" data-band="food">
+                    <span>Repas & activités</span>
+                    <span class="budget-band-amount" id="band-food">0 €</span>
+                    <input type="number" class="price-input" style="display:none;" />
+                  </div>
+                  <div class="budget-band-row budget-band-total">
+                    <span>Total estimé</span>
+                    <span class="budget-band-amount" id="band-total">0 €</span>
+                  </div>
+                </div>
+              </div>
+            </aside>
       <!-- City tabs -->
       <div class="city-tabs" id="cityTabs"></div>
       <!-- Panels -->
