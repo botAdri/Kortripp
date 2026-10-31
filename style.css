@@ -247,7 +247,7 @@ html, body {
 /* ═══ BODY SPLIT ═══ */
 .body {
   display: grid;
-  grid-template-columns: 1fr 1250px;
+  grid-template-columns: 420px 1fr; /* Sidebar de largeur fixe harmonieuse, carte flexible */
   overflow: hidden;
   height: 100%;
 }
