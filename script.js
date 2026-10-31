@@ -94,7 +94,7 @@ const stopsAutomne = [
     ],
     restaurants: [
       { icon:"🐙", name:"Songhak Nakji Hoegwan", kr:"송학낙지회관", desc:"Le nakji-tang, ragoût de petit poulpe épicé, est la spécialité incontournable de Mokpo — à goûter dans les restaurants spécialisés de la ville.", price:"~14 €" },
-      { icon:"🐟", name:"Yeongnan Hongeohoe", kr:"영란횟집 목포", desc:"La raie fermentée (hongeo), plat culte et corsé du Jeollanam-do, se déguste ici accompagnée de porc bouilli et de kimchi.", price:"~20 €" },
+      { icon:"🐟", name:"Yeongnan Hongeohoe", kr:"영란횟집 목포", desc:"La raie fermentée (hongeo), plat culte et corsé du Jeollanam-do, se dégustant ici accompagnée de porc bouilli et de kimchi.", price:"~20 €" },
       { icon:"🍚", name:"Hyeongje Kkomak Jjamppong", kr:"형제꼬막짬뽕", desc:"Soupe de nouilles épicée (jjamppong) aux kkomak, petites palourdes coréennes, spécialité de la région de Mokpo.", price:"~9 €" },
       { icon:"🐟", name:"Marché aux poissons de Mokpo", kr:"목포종합수산시장", desc:"Grand marché de produits de la mer de Mokpo, où l'on trouve le hongeo, la raie fermentée, spécialité de la région.", price:"~18 €" },
     ]
@@ -160,10 +160,6 @@ const stopsAutomne = [
   }
 ];
 
-// ═══ DONNÉES — ITINÉRAIRE DE PRINTEMPS ═══
-// Départ Busan (sud), arrivée Séoul (nord), Daejeon en étape intermédiaire (imposés).
-// Route Sud-Est → Nord, pensée pour SUIVRE la vague de floraison des cerisiers, qui remonte
-// du sud vers le nord fin mars – mi-avril (Busan/Jinhae fleurissent ~1 à 2 semaines avant Séoul).
 const stopsPrintemps = [
   {
     id: 1, name: "Busan", korean: "부산", color: "#1F5C7A",
@@ -290,7 +286,7 @@ const stopsPrintemps = [
       { icon:"🌷", name:"Rives du Gap Cheon", kr:"갑천", desc:"La rivière qui traverse Daejeon est bordée de pistes cyclables et de massifs fleuris au printemps. Une courte promenade au coucher du soleil offre un aperçu paisible de la vie locale.", tag:"free", price:"Gratuit" },
     ],
     restaurants: [
-      { icon:"🥐", name:"Sungsimdang", kr:"성심당 본점", desc:"Boulangerie-pâtisserie historique de Daejeon (depuis 1956), célèbre pour son pain fourré à la pâte de haricots rouges (soboro-ppang).", price:"~5 €" },
+      { icon:"🥐", name:"Sungsimdang", kr:"성심당 본점", desc:"Boulangerie-pâtisserie historique de Daejeon (depuis 1956), célèbre pour ses pain fourré à la pâte de haricots rouges (soboro-ppang).", price:"~5 €" },
       { icon:"🍢", name:"Marché Jung-ang", kr:"대전중앙시장", desc:"Le grand marché couvert de Daejeon regorge d'étals de street food : tteokbokki, sundae et jeon à petit prix.", price:"~8 €" },
       { icon:"🍲", name:"Gwangcheon Sikdang", kr:"광천식당", desc:"Table de quartier de Daejeon connue pour ses plats de duruchi, mijotés et épicés (calmar ou tofu).", price:"~9 €" },
     ]
@@ -317,14 +313,11 @@ const stopsPrintemps = [
   }
 ];
 
-// ═══ REGISTRE DES ITINÉRAIRES PAR SAISON ═══
 const SEASON_STOPS = {
   automne: stopsAutomne,
   printemps: stopsPrintemps,
 };
-// NOTE : à ce stade, seule l'infrastructure de bascule est en place.
-// Le contenu (activités, dates, budget) reste celui de l'automne pour les deux saisons ;
-// il sera différencié étape par étape dans une prochaine itération.
+
 const SEASON_META = {
   automne: {
     emoji: "🍂",
@@ -340,13 +333,6 @@ const SEASON_META = {
   },
 };
 
-// ═══════════════════════════════════════════════════════════
-// ÉTAT GLOBAL & UTILITAIRES (saison, devise, formatage prix)
-// ═══════════════════════════════════════════════════════════
-// Certains navigateurs (navigation privée, "Bloquer tous les cookies" sur Safari...)
-// font planter localStorage avec une SecurityError plutôt que de le désactiver
-// silencieusement. Ce wrapper capture ces erreurs et bascule sur une mémoire en RAM
-// (les préférences ne persistent alors pas d'une session à l'autre, mais l'app ne plante plus).
 const memoryFallback = {};
 const safeStorage = {
   getItem(key) {
@@ -362,20 +348,15 @@ const safeStorage = {
 
 let currentSeason = safeStorage.getItem('kortripp-season') || 'automne';
 let currentCurrency = safeStorage.getItem('kortripp-currency') || 'EUR';
-// Clé JavaScript Kakao (Kakao Developers > [App] > [Platform keys] > [JavaScript key]).
-// Laisser vide désactive les boutons « Vue rue ». Le domaine du site (ex. botadri.github.io)
-// doit être déclaré dans [JavaScript SDK domain] de cette clé.
 const KAKAO_JS_KEY = '971e575e5286264f78dffb158c453262';
-// TEST : cartes saisonnières de Kakao Map (feuillages / cerisiers)
 const KAKAO_SEASON_MAPS = {
   automne:   { label: '🍁 Feuillages', q: '단풍 지도' },
   printemps: { label: '🌸 Cerisiers',  q: '벚꽃 지도' },
 };
 const KRW_RATE = 1450;
 
-// ═══ LIEUX GÉOLOCALISÉS (export du diagnostic ?kakaotest=1) ═══
-// [type A=activité / R=restaurant, ville, nom, requête Kakao, lat, lng, id fiche Kakao, nom Kakao, vue rue 1/0]
-const PLACE_ROWS = [["A","Séoul","Palais Gyeongbokgung","경복궁",37.577613,126.976898,"18619553","경복궁",1],["A","Séoul","Parc Namsan & Tour N Seoul","N서울타워",37.551305,126.988231,"1629378951","N서울타워",1],["A","Séoul","Insadong & Bukchon Hanok Village","북촌한옥마을",37.581768,126.984812,"781129546","북촌한옥마을",1],["A","Séoul","Han River au coucher du soleil","여의도한강공원",37.526389,126.935129,"10952963","여의도한강공원",1],["A","Séoul","Excursion à Suwon — Forteresse Hwaseong","수원화성",37.286957,127.011796,"17985162","수원화성",1],["A","Séoul","Suwon — Son et lumière nocturne (oct.–nov.)","수원화성 서장대",37.280754,127.010261,"7942204","수원화성 서장대",1],["R","Séoul","Myeongdong Kyoja","명동교자 본점",37.561181,126.986083,"1479300828","명동교자 명동역점 신관 본점",1],["R","Séoul","Tosokchon Samgyetang","토속촌삼계탕",37.577723,126.971494,"26545925","토속촌삼계탕",1],["R","Séoul","Gwangjang Market","광장시장",37.570055,126.998947,"27383851","광장시장",1],["R","Séoul","Café Onion Anguk","어니언 안국",37.577632,126.986574,"853028118","어니언 안국",1],["H","Séoul","Hotel Skypark Myeongdong","호텔 스카이파크 명동",37.564582,126.985261,"18282609","호텔스카이파크 센트럴명동점",1],["H","Séoul","Ibis Styles Myeongdong","이비스 스타일 앰배서더 명동",37.561683,126.98938,"26475078","이비스 스타일 앰배서더 서울 명동",1],["H","Séoul","Guesthouse hanok à Bukchon","북촌 한옥 게스트하우스",37.583217,126.980957,"18996053","스테이256",1],["A","Daejeon","Parc national Gyeryongsan","계룡산국립공원",36.354196,127.227503,"1857434965","계룡산국립공원",1],["A","Daejeon","Expo Science Park (Daedeok)","한빛탑",36.376629,127.388084,"26363151","엑스포과학공원 한빛탑",1],["A","Daejeon","Musée national de Daejeon","대전역사박물관",36.336864,127.335324,"23418824","대전시립박물관",1],["R","Daejeon","Sungsimdang","성심당 본점",36.327744,127.427245,"17733090","성심당 본점",1],["R","Daejeon","Marché Jung-ang","대전중앙시장",36.329552,127.433199,"1408703362","대전중앙시장",1],["R","Daejeon","Gwangcheon Sikdang","광천식당",36.328671,127.423596,"8209640","광천식당",1],["H","Daejeon","Hotel Interciti Daejeon","호텔 인터시티 대전",36.354297,127.347865,"7967564","호텔인터시티",1],["H","Daejeon","Hôtel de tourisme de Daejeon","대전 관광호텔",36.328513,127.422437,"17158905","베니키아호텔 대림",1],["A","Jeonju","Village Hanok de Jeonju","전주한옥마을",35.814777,127.152557,"10731896","전주한옥마을",1],["A","Jeonju","Location de hanbok","경기전",35.815379,127.149723,"10170551","경기전",1],["A","Jeonju","Musée National de Jeonju","국립전주박물관",35.801286,127.089657,"8217828","국립전주박물관",1],["A","Jeonju","Rivière Jeonju & lanternes","전주천",35.851657,127.112956,"19264996","전주천",1],["A","Jeonju","Excursion à Naejangsan","내장산국립공원",35.471054,126.86703,"166795152","내장산국립공원",0],["R","Jeonju","Gajok Hoegwan","전주 가족회관",35.817087,127.145966,"8676321","가족회관",1],["R","Jeonju","Ruelle des makgeolli de Samcheon","전주 막걸리골목",35.79772,127.122982,"1443996788","삼천2동막걸리골목",1],["R","Jeonju","Hankookjib","전주 비빔밥 한국집",35.816517,127.148227,"8629568","한국집",1],["R","Jeonju","PNB Pungnyeon Jegwa","PNB풍년제과",35.818429,127.147191,"21292200","PNB풍년제과 전주본점",1],["H","Jeonju","Hanok stay du village hanok","전주한옥마을 한옥스테이",35.816956,127.151291,"1154195534","선물 한옥스테이",1],["A","Gwangju","Parc national Mudeungsan","무등산국립공원",35.133137,126.990462,"18862213","무등산국립공원",0],["A","Gwangju","May 18th National Cemetery","국립5·18민주묘지",35.236084,126.939696,"25042994","국립5.18민주묘지",1],["A","Gwangju","Asian Culture Complex (ACC)","국립아시아문화전당",35.147334,126.921354,"27233966","국립아시아문화전당",1],["A","Gwangju","Gwangju Biennale Foundation","광주비엔날레전시관",35.182469,126.889126,"15871855","광주비엔날레",1],["R","Gwangju","Marché Yangdong","양동시장",35.154538,126.90196,"1127219101","광주양동시장",1],["R","Gwangju","Bitgoeul Tteokgalbi","빛고을떡갈비",35.139898,126.794379,"10456191","빛고을떡갈비",1],["R","Gwangju","Marché Daein","대인시장",35.153891,126.916808,"17496420","대인시장",1],["H","Gwangju","Ramada Gwangju","라마다 광주",35.152005,126.850525,"23996334","브리브 광주 바이 롯데호텔",1],["A","Mokpo","Ferry vers les îles Dadohae","목포항여객선터미널",34.782018,126.384279,"18377073","목포연안여객선터미널",1],["A","Mokpo","Parc Yudalsan","유달산",34.789909,126.372633,"25338826","유달산",0],["A","Mokpo","Musée maritime national","국립해양유물전시관",34.791939,126.421778,"27581934","국립해양유산연구소 목포해양유물전시관",1],["A","Mokpo","Promenade du port au coucher du soleil","목포 평화광장",34.796645,126.433802,"23003270","평화광장",1],["R","Mokpo","Songhak Nakji Hoegwan","송학낙지회관",34.798495,126.422148,"10552993","송학낙지회관",1],["R","Mokpo","Yeongnan Hongeohoe","영란횟집 목포",34.786127,126.384064,"10649722","영란횟집",1],["R","Mokpo","Hyeongje Kkomak Jjamppong","형제꼬막짬뽕",34.810118,126.377943,"327095738","형제꼬막짬뽕",1],["R","Mokpo","Marché aux poissons de Mokpo","목포종합수산시장",34.787919,126.390173,"11071825","목포종합수산시장",1],["A","Suncheon","Réserve naturelle de Suncheonman","순천만습지",34.885612,127.509555,"1191246407","순천만습지",1],["A","Suncheon","Village folklorique de Nagan","낙안읍성",34.90631,127.341777,"8234854","순천 낙안읍성",1],["A","Suncheon","Jardin national de Suncheon","순천만국가정원",34.929218,127.498902,"25052480","순천만국가정원",1],["R","Suncheon","Restaurant du marché de Suncheon","순천웃장",34.958943,127.485339,"21364484","순천웃장",1],["R","Suncheon","Restaurant du village de Nagan","낙안읍성 음식점",34.906559,127.340813,"9617176","향토음식점",1],["R","Suncheon","Wonjo Gunsan Agujjim","원조군산아구찜",34.959149,127.529715,"10217130","원조군산아구찜",1],["R","Suncheon","Gaya Milmyeon","순천맛집가야밀면",34.930708,127.496183,"1447495479","순천맛집가야밀면",1],["H","Suncheon","Hôtel de tourisme de Suncheon","순천 관광호텔",34.933595,127.518946,"18167036","베네치아관광호텔",1],["A","Yeosu","Temple Hyangiram","향일암",34.591582,127.803822,"8161244","향일암",1],["A","Yeosu","Téléphérique maritime","여수해상케이블카",34.730591,127.741531,"387675092","여수해상케이블카",1],["A","Yeosu","Croisière archipel de Yeosu","오동도",34.744598,127.766289,"8483282","오동도",1],["A","Yeosu","Pont Dolsan illuminé","돌산대교",34.730743,127.734697,"334072503","돌산대교",1],["R","Yeosu","Kkot Dolgejang 1-beonga","꽃돌게장1번가",34.733023,127.726113,"26577684","꽃돌게장1번가",1],["R","Yeosu","Marché aux poissons de Yeosu","여수수산시장",34.738099,127.73181,"8002786","여수수산시장",1],["R","Yeosu","Yeosu Gejang Golmok","여수 게장골목",34.733542,127.721506,"1507847746","여수게장골목",1],["R","Yeosu","Bada Hoetjip (Dolsan)","돌산대교 횟집",34.733243,127.740198,"18486156","명품나루터",1],["H","Yeosu","Yeosu Ocean Resort Hotel","여수 오션리조트",34.733389,127.643423,"15943407","디오션리조트",1],["H","Yeosu","Ramada Yeosu","라마다 여수",34.717006,127.748278,"1283685448","라마다프라자바이윈덤 여수",1],["A","Busan","Temple Haedong Yonggungsa","해동용궁사",35.188403,129.223143,"8606230","해동용궁사",1],["A","Busan","Village Gamcheon","감천문화마을",35.097409,129.010561,"21362956","감천문화마을",1],["A","Busan","Haeundae & Gwangalli Beach","해운대해수욕장",35.158523,129.159855,"7913306","해운대해수욕장",1],["A","Busan","Songdo Sky Walk","송도구름산책로",35.075181,129.023051,"1038801092","송도구름산책로",1],["R","Busan","Marché Jagalchi","자갈치시장",35.09662,129.03058,"11168886","자갈치시장",1],["R","Busan","Marché Gukje","국제시장",35.101319,129.028185,"20543715","국제시장",1],["R","Busan","BIFF Square","BIFF광장",35.098868,129.029046,"9650856","BIFF광장",1],["R","Busan","Marché traditionnel de Haeundae","해운대시장",35.161399,129.162336,"18525086","해운대전통시장",1],["H","Busan","Toyoko Inn Busan Seomyeon","토요코인 부산서면",35.157938,129.064024,"25052160","토요코인 부산서면",1],["A","Busan","Route des cerisiers de Dalmaji-gil","달맞이고개",35.164702,129.18675,"7813541","해운대달맞이길",1],["A","Busan","Festival des lanternes de Samgwangsa","삼광사",35.175706,129.043369,"7912869","삼광사",1],["A","Busan","Taejongdae & falaises printanières","태종대",35.052527,129.087778,"8111808","태종대유원지",1],["A","Jinhae","Ruisseau Yeojwacheon","여좌천",35.16223,128.660414,"19522891","여좌천",1],["A","Jinhae","Gare de Gyeonghwa","경화역",35.159056,128.686622,"8199607","경화역 (폐역)",1],["A","Jinhae","Base navale & Jehwangsan Park","제황산공원",35.148351,128.665425,"10806199","제황산공원",1],["R","Jinhae","Dongbu Hoe Center","동부회센타",35.15227,128.693937,"1492586965","동부회센타",1],["R","Jinhae","Marché de Jinhae","진해중앙시장",35.151417,128.664979,"18525658","진해중앙시장",1],["R","Jinhae","Seogwang Jangeo-gui","서광장어구이",35.142663,128.669044,"21462215","서광장어구이",1],["H","Jinhae","Hôtel de tourisme de Jinhae","진해 관광호텔",35.143898,128.672014,"1722530059","아몬드호텔",1],["A","Tongyeong","Téléphérique du mont Mireuksan","통영케이블카",34.826881,128.425274,"11657791","통영케이블카",1],["A","Tongyeong","Village de fresques Dongpirang","동피랑벽화마을",34.845306,128.427625,"10290301","동피랑벽화마을",1],["A","Tongyeong","Marché aux poissons de Jungang","통영중앙시장",34.845218,128.424477,"18468572","통영중앙전통시장",1],["R","Tongyeong","Ttungbo Halmae Gimbap","뚱보할매김밥집",34.843867,128.423678,"24199598","뚱보할매김밥집",1],["R","Tongyeong","Hanil Gimbap","한일김밥 본점",34.843304,128.423349,"8608591","한일김밥 본점",1],["R","Tongyeong","Restaurant du marché Seodang","통영 서호시장",34.841285,128.419413,"7953303","서호시장",1],["H","Tongyeong","Tongyeong Marina Resort","통영 마리나리조트",34.827445,128.440162,"12068239","금호리조트 통영마리나",1],["A","Damyang","Forêt de bambous Juknokwon","죽녹원",35.327837,126.985931,"8070994","죽녹원",1],["A","Damyang","Route des métaséquoias","메타세쿼이아가로수길",35.323405,127.003188,"25033443","메타세쿼이아 가로수길",1],["A","Damyang","Radeau de bambou sur la Gwanbangnimok","관방제림",35.323871,126.986002,"7814251","담양관방제림",1],["R","Damyang","Hansanggeun Daetongbap","한상근대통밥집",35.333582,126.964825,"8633864","한상근대통밥집",1],["R","Damyang","Damyang Aekkot","담양애꽃",35.27294,126.97254,"7814183","담양애꽃",1],["R","Damyang","Damyang Juksun Gejang","담양죽순게장",35.323804,126.982599,"1348832833","담양죽순게장",1],["H","Damyang","Damyang Bamboo Forest Pension","담양 대나무숲 펜션",35.333426,126.986753,"2839761","조아당",1],["H","Damyang","Hanok stay de Damyang","담양 한옥스테이",35.425834,127.028151,"1086363472","담빛한옥스테이",1],["A","Jeonju","Marché Nambu & bibimbap printanier","전주남부시장",35.812982,127.147012,"27230960","전주남부시장 한옥마을야시장",1],["A","Daejeon","Arboretum Hanbat","한밭수목원",36.369949,127.388017,"8130712","한밭수목원",1],["A","Daejeon","Sources chaudes de Yuseong","유성온천공원",36.355275,127.343654,"72509130","유성온천공원",1],["A","Daejeon","Rives du Gap Cheon","갑천",36.334863,127.351265,"1891407241","갑천생태호수공원",1],["A","Séoul","Festival des cerisiers de Yeouido","여의도 윤중로",37.533511,126.914932,"8003939","여의서로",1]];
+const PLACE_ROWS = [["A","Séoul","Palais Gyeongbokgung","경복궁",37.577613,126.976898,"18619553","경복궁",1],["A","Séoul","Parc Namsan & Tour N Seoul","N서울타워",37.551305,126.988231,"1629378951","N서울타워",1],["A","Séoul","Insadong & Bukchon Hanok Village","북촌한옥마을",37.581768,126.984812,"781129546","북촌한옥마을",1],["A","Séoul","Han River au coucher du soleil","여의도한강공원",37.526389,126.935129,"10952963","여의도한강공원",1],["A","Séoul","Excursion à Suwon — Forteresse Hwaseong","수원화성",37.286957,127.011796,"17985162","수원화성",1],["A","Séoul","Suwon — Son et lumière nocturne (oct.–nov.)","수원화성 서장대",37.280754,127.010261,"7942204","수원화성 서장대",1],["R","Séoul","Myeongdong Kyoja","명동교자 본점",37.561181,126.986083,"1479300828","명동교자 명동역점 신관 본점",1],["R","Séoul","Tosokchon Samgyetang","토속촌삼계탕",37.577723,126.971494,"26545925","토속촌삼계탕",1],["R","Séoul","Gwangjang Market","광장시장",37.570055,126.998947,"27383851","광장시장",1],["R","Séoul","Café Onion Anguk","어니언 안국",37.577632,126.986574,"853028118","어니언 안국",1],["H","Séoul","Hotel Skypark Myeongdong","호텔 스카이파크 명동",37.564582,126.985261,"18282609","호텔스카이파크 센트럴명동점",1],["H","Séoul","Ibis Styles Myeongdong","이비스 스타일 앰배서더 명동",37.561683,126.98938,"26475078","이비스 스타일 앰배서더 서울 명동",1],["H","Séoul","Guesthouse hanok à Bukchon","북촌 한옥 게스트하우스",37.583217,126.980957,"18996053","스테이256",1],["A","Daejeon","Parc national Gyeryongsan","계룡산국립공원",36.354196,127.227503,"1857434965","계룡산국립공원",1],["A","Daejeon","Expo Science Park (Daedeok)","한빛탑",36.376629,127.388084,"26363151","엑스포과학공원 한빛탑",1],["A","Daejeon","Musée national de Daejeon","대전역사박물관",36.336864,127.335324,"23418824","대전시립박물관",1],["R","Daejeon","Sungsimdang","성심당 본점",36.327744,127.427245,"17733090","성심당 본점",1],["R","Daejeon","Marché Jung-ang","대전중앙시장",36.329552,127.433199,"1408703362","대전중앙시장",1],["R","Daejeon","Gwangcheon Sikdang","광천식당",36.328671,127.423596,"8209640","광천식당",1],["H","Daejeon","Hotel Interciti Daejeon","호텔 인터시티 대전",36.354297,127.347865,"7967564","호텔인터시티",1],["H","Daejeon","Hôtel de tourisme de Daejeon","대전 관광호텔",36.328513,127.422437,"17158905","베니키아호텔 대림",1],["A","Jeonju","Village Hanok de Jeonju","전주한옥마을",35.814777,127.152557,"10731896","전주한옥마을",1],["A","Jeonju","Location de hanbok","경기전",35.815379,127.149723,"10170551","경기전",1],["A","Jeonju","Musée National de Jeonju","국립전주박물관",35.801286,127.089657,"8217828","국립전주박물관",1],["A","Jeonju","Rivière Jeonju & lanternes","전주천",35.851657,127.112956,"19264996","전주천",1],["A","Jeonju","Excursion à Naejangsan","내장산국립공원",35.471054,126.86703,"166795152","내장산국립공원",0],["R","Jeonju","Gajok Hoegwan","전주 가족회관",35.817087,127.145966,"8676321","가족회관",1],["R","Jeonju","Ruelle des makgeolli de Samcheon","전주 막걸리골목",35.79772,127.122982,"1443996788","삼천2동막걸리골목",1],["R","Jeonju","Hankookjib","전주 비빔밥 한국집",35.816517,127.148227,"8629568","한국집",1],["R","Jeonju","PNB Pungnyeon Jegwa","PNB풍년제과",35.818429,127.147191,"21292200","PNB풍년제과 전주본점",1],["H","Jeonju","Hanok stay du village hanok","전주한옥마을 한옥스테이",35.816956,127.151291,"1154195534","선물 한옥스테이",1],["A","Gwangju","Parc national Mudeungsan","무등산국립공원",35.133137,126.990462,"18862213","무등산국립공원",0],["A","Gwangju","May 18th National Cemetery","국립5·18민주묘지",35.236084,126.939696,"25042994","국립5.18민주묘지",1],["A","Gwangju","Asian Culture Complex (ACC)","국립아시아문화전당",35.147334,126.921354,"27233966","국립아시아문화전당",1],["A","Gwangju","Gwangju Biennale Foundation","광주비엔날레전시관",35.182469,126.889126,"15871855","광주비엔날레",1],["R","Gwangju","Marché Yangdong","양동시장",35.154538,126.90196,"1127219101","광주양동시장",1],["R","Gwangju","Bitgoeul Tteokgalbi","빛고을떡갈비",35.139898,126.794379,"10456191","빛고을떡갈비",1],["R","Gwangju","Marché Daein","대인시장",35.153891,126.916808,"17496420","대인시장",1],["H","Gwangju","Ramada Gwangju","라마다 광주",35.152005,126.850525,"23996334","브리브 광주 바이 롯데호텔",1],["A","Mokpo","Ferry vers les îles Dadohae","목포항여객선터미널",34.782018,126.384279,"18377073","목포연안여객선터미널",1],["A","Mokpo","Parc Yudalsan","유달산",34.789909,126.372633,"25338826","유달산",0],["A","Mokpo","Musée maritime national","국립해양유물전시관",34.791939,126.421778,"27581934","목포해양유산연구소 목포해양유물전시관",1],["A","Mokpo","Promenade du port au coucher du soleil","목포 평화광장",34.796645,126.433802,"23003270","평화광장",1],["R","Mokpo","Songhak Nakji Hoegwan","송학낙지회관",34.798495,126.422148,"10552993","송학낙지회관",1],["R","Mokpo","Yeongnan Hongeohoe","영란횟집 목포",34.786127,126.384064,"10649722","영란횟집",1],["R","Mokpo","Hyeongje Kkomak Jjamppong","형제꼬막짬뽕",34.810118,126.377943,"327095738","형제꼬막짬뽕",1],["R","Mokpo","Marché aux poissons de Mokpo","목포종합수산시장",34.787919,126.390173,"11071825","목포종합수산시장",1],["A","Suncheon","Réserve naturelle de Suncheonman","순천만습지",34.885612,127.509555,"1191246407","순천만습지",1],["A","Suncheon","Village folklorique de Nagan","낙안읍성",34.90631,127.341777,"8234854","순천 낙안읍성",1],["A","Suncheon","Jardin national de Suncheon","순천만국가정원",34.929218,127.498902,"25052480","순천만국가정원",1],["R","Suncheon","Restaurant du marché de Suncheon","순천웃장",34.958943,127.485339,"21364484","순천웃장",1],["R","Suncheon","Restaurant du village de Nagan","낙안읍성 음식점",34.906559,127.340813,"9617176","향토음식점",1],["R","Suncheon","Wonjo Gunsan Agujjim","원조군산아구찜",34.959149,127.529715,"10217130","원조군산아구찜",1],["R","Suncheon","Gaya Milmyeon","순천맛집가야밀면",34.930708,127.496183,"1447495479","순천맛집가야밀면",1],["H","Suncheon","Hôtel de tourisme de Suncheon","순천 관광호텔",34.933595,127.518946,"18167036","베네치아관광호텔",1],["A","Yeosu","Temple Hyangiram","향일암",34.591582,127.803822,"8161244","향일암",1],["A","Yeosu","Téléphérique maritime","여수해상케이블카",34.730591,127.741531,"387675092","여수해상케이블카",1],["A","Yeosu","Croisière archipel de Yeosu","오동도",34.744598,127.766289,"8483282","오동도",1],["A","Yeosu","Pont Dolsan illuminé","돌산대교",34.730743,127.734697,"334072503","돌산대교",1],["R","Yeosu","Kkot Dolgejang 1-beonga","꽃돌게장1번가",34.733023,127.726113,"26577684","꽃돌게장1번가",1],["R","Yeosu","Marché aux poissons de Yeosu","여수수산시장",34.738099,127.73181,"8002786","여수수산시장",1],["R","Yeosu","Yeosu Gejang Golmok","여수 게장골목",34.733542,127.721506,"1507847746","여수게장골목",1],["R","Yeosu","Bada Hoetjip (Dolsan)","돌산대교 횟집",34.733243,127.740198,"18486156","명품나루터",1],["H","Yeosu","Yeosu Ocean Resort Hotel","여수 오션리조트",34.733389,127.643423,"15943407","디오션리조트",1],["H","Yeosu","Ramada Yeosu","라마다 여수",34.717006,127.748278,"1283685448","라마다프라자바이윈덤 여수",1],["A","Busan","Temple Haedong Yonggungsa","해동용궁사",35.188403,129.223143,"8606230","해동용궁사",1],["A","Busan","Village Gamcheon","감천문화마을",35.097409,129.010561,"21362956","감천문화마을",1],["A","Busan","Haeundae & Gwangalli Beach","해운대해수욕장",35.158523,129.159855,"7913306","해운대해수욕장",1],["A","Busan","Songdo Sky Walk","송도구름산책로",35.075181,129.023051,"1038801092","송도구름산책로",1],["R","Busan","Marché Jagalchi","자갈치시장",35.09662,129.03058,"11168886","자갈치시장",1],["R","Busan","Marché Gukje","국제시장",35.101319,129.028185,"20543715","국제시장",1],["R","Busan","BIFF Square","BIFF광장",35.098868,129.029046,"9650856","BIFF광장",1],["R","Busan","Marché traditionnel de Haeundae","해운대시장",35.161399,129.162336,"18525086","해운대전통시장",1],["H","Busan","Toyoko Inn Busan Seomyeon","토요코인 부산서면",35.157938,129.064024,"25052160","토요코인 부산서면",1],["A","Busan","Route des cerisiers de Dalmaji-gil","달맞이고개",35.164702,129.18675,"7813541","해운대달맞이길",1],["A","Busan","Festival des lanternes de Samgwangsa","삼광사",35.175706,129.043369,"7912869","삼광사",1],["A","Busan","Taejongdae & falaises printanières","태종대",35.052527,129.087778,"8111808","태종대유원지",1],["A","Jinhae","Ruisseau Yeojwacheon","여좌천",35.16223,128.660414,"19522891","여좌천",1],["A","Jinhae","Gare de Gyeonghwa","경화역",35.159056,128.686622,"8199607","경화역 (폐역)",1],["A","Jinhae","Base navale & Jehwangsan Park","제황산공원",35.148351,128.665425,"10806199","제황산공원",1],["R","Jinhae","Dongbu Hoe Center","동부회센타",35.15227,128.693937,"1492586965","동부회센타",1],["R","Jinhae","Marché de Jinhae","진해중앙시장",35.151417,128.664979,"18525658","진해중앙시장",1],["R","Jinhae","Seogwang Jangeo-gui","서광장어구이",35.142663,128.669044,"21462215","서광장어구이",1],["H","Jinhae","Hôtel de tourisme de Jinhae","진해 관광호텔",35.143898,128.672014,"1722530059","아몬드호텔",1],["A","Tongyeong","Téléphérique du mont Mireuksan","통영케이블카",34.826881,128.425274,"11657791","통영케이블카",1],["A","Tongyeong","Village de fresques Dongpirang","동피랑벽화마을",34.845306,128.427625,"10290301","동피랑벽화마을",1],["A","Tongyeong","Marché aux poissons de Jungang","통영중앙시장",34.845218,128.424477,"18468572","통영중앙전통시장",1],["R","Tongyeong","Ttungbo Halmae Gimbap","뚱보할매김밥집",34.843867,128.423678,"24199598","뚱보할매김밥집",1],["R","Tongyeong","Hanil Gimbap","한일김밥 본점",34.843304,128.423349,"8608591","한일김밥 본점",1],["R","Tongyeong","Restaurant du marché Seodang","통영 서호시장",34.841285,128.419413,"7953303","서호시장",1],["H","Tongyeong","Tongyeong Marina Resort","통영 마리나리조트",34.827445,128.440162,"12068239","금호리조트 통영마리나",1],["A","Damyang","Forêt de bambous Juknokwon","죽녹원",35.327837,126.985931,"8070994","죽녹원",1],["A","Damyang","Route des métaséquoias","메타세쿼이아가로수길",35.323405,127.003188,"25033443","메타세쿼이아 가로수길",1],["A","Damyang","Radeau de bambou sur la Gwanbangnimok","관방제림",35.323871,126.986002,"7814251","담양관방제림",1],["R","Damyang","Hansanggeun Daetongbap","한상근대통밥집",35.333582,126.964825,"8633864","한상근대통밥집",1],["R","Damyang","Damyang Aekkot","담양애꽃",35.27294,126.97254,"7814183","담양애꽃",1],["R","Damyang","Damyang Juksun Gejang","담양죽순게장",35.323804,126.982599,"1348832833","담양죽순게장",1],["H","Damyang","Damyang Bamboo Forest Pension","담양 대나무숲 펜션",35.333426,126.986753,"2839761","조아당",1],["H","Damyang","Hanok stay de Damyang","담양 한옥스테이",35.425834,127.028151,"1086363472","담빛한옥스테이",1],["A","Jeonju","Marché Nambu & bibimbap printanier","전주남부시장",35.812982,127.147012,"27230960","전주남부시장 한옥마을야시장",1],["A","Daejeon","Arboretum Hanbat","한밭수목원",36.369949,127.388017,"8130712","한밭수목원",1],["A","Daejeon","Sources chaudes de Yuseong","유성온천공원",36.355275,127.343654,"72509130","유성온천공원",1],["A","Daejeon","Rives du Gap Cheon","갑천",36.334863,127.351265,"1891407241","갑천생태호수공원",1],["A","Séoul","Festival des cerisiers de Yeouido","여의도 윤중로",37.533511,126.914932,"8003939","여의서로",1]];
+
 const PLACE_INDEX = (() => {
   const idx = new Map();
   PLACE_ROWS.forEach(([type, city, name, kr, lat, lng, id, kname, pano]) => {
@@ -383,11 +364,11 @@ const PLACE_INDEX = (() => {
   });
   return idx;
 })();
+
 function placeInfo(type, city, kr) {
   return PLACE_INDEX.get(type === 'A' ? `A|${kr}` : `${type}|${city}|${kr}`) || null;
 }
-// Hébergements suggérés par ville (noms tirés du budget). `kr` = requête de recherche Kakao ;
-// les coordonnées arrivent via le diagnostic ?kakaotest=1 (lignes de type « H »).
+
 const LODGINGS = {
   'Séoul':     [{ name: 'Hotel Skypark Central Myeongdong', kr: '호텔 스카이파크 명동' }, { name: 'Ibis Styles Ambassador Seoul Myeongdong', kr: '이비스 스타일 앰배서더 명동' }, { name: 'Stay256 (Bukchon)', kr: '북촌 한옥 게스트하우스' }],
   'Daejeon':   [{ name: 'Hotel Interciti', kr: '호텔 인터시티 대전' }, { name: 'Benikea Hotel Daerim', kr: '대전 관광호텔' }],
@@ -401,18 +382,16 @@ const LODGINGS = {
   'Tongyeong': [{ name: 'Kumho Resort Tongyeong Marina', kr: '통영 마리나리조트' }, { name: 'Hôtel à Tongyeong', kr: '통영 호텔' }],
   'Damyang':   [{ name: 'Joadang', kr: '담양 대나무숲 펜션' }, { name: 'Dambit Hanok Stay', kr: '담양 한옥스테이' }],
 };
-// false uniquement pour les lieux dont le diagnostic a confirmé l'absence de vue rue
+
 function hasPano(type, city, kr) { const p = placeInfo(type, city, kr); return !p || p.pano !== 0; }
-// attributs permettant d'ouvrir la vue rue directement aux coordonnées connues (sans nouvelle recherche)
+
 function placeAttrs(type, city, kr) {
   const p = placeInfo(type, city, kr);
   return p ? ` data-plat="${p.lat}" data-plng="${p.lng}" data-kname="${String(p.kname).replace(/"/g, '&quot;')}"` : '';
 }
 
-// Tracés routiers réels par saison (API d'itinéraire Kakao Mobility, via fetch_routes.py) :
-// { automne: [{from,to,km,duration,poly}], printemps: [...] } — poly = tracé encodé (polyline, précision 5).
-// Si un tronçon manque, un segment droit relie les deux étapes.
 const ROUTES = {"automne":[{"from":"Séoul","to":"Daejeon","km":168.7,"duration":"2h33","poly":"uehdF}i_fWkUr@Ck~@fa@PxW{HrJuPjXsG|jAyo@xJeN`Z_JjxAgkAxy@gQhr@uWrGj]aBfM[sDduD_fAnqDcdD~r@{f@jmFikF`aBaQfwYyCf|AeSvNlDfgAhs@nZtJvbFZbdDvgAl[dC||@cRpQcKl}As`C~UoRrzEkcB`{@}c@pcDoPf|C_g@nfA{c@bxB{l@fuFgbEnQsGxwJh@`dCdSfWdFd~Ant@z`AvLddA`m@|hBjIp{@iP|eA_e@dhBme@fNxHp\\|{@xLvMjiAdTfx@`c@`nAzpArO`]fQp{@dM`XdPnLf{@bYlrBhEreFvs@ne@{Gnp@mm@~^aJrrAz@xvAf^daEfFjx@dOtSc@~fA_WzxA~\\peC_@`WfN~b@hf@rLz@pIqJj_@ewArOyTyR{WyLkk@}@wh@vGaiAsb@qfD_Awb@hIgd@re@uv@jRmi@lR_eCpUe_AxZcg@|^gX|_@_LxfAeGn[gMphB{dCvq@u}A|XyPbpAi[lXkO~kA}dCbP_aB|FwKbL}@|aB`m@rg@`BrC|DmBhOcEa@wDgT`i@e{BxLemBHwqBhn@fA"},{"from":"Daejeon","to":"Jeonju","km":86.8,"duration":"1h17","poly":"ksz|EcdohW~E{@?rVgu@KKbzAaN`lBqh@pxB_@fZvNt@jAsThL_@lhBbw@~fBz_AxiAdZreAkLzXsWdx@iXpb@v@ff@`PvQbOnK``@aAzg@jDbSty@nb@hl@~z@f~@vHjgBhe@|g@wSpUE|eAtr@vjAja@vvAxdBrz@`VfQ`Mf{@fjBvKpf@`@zc@k_@huBHdd@rSdq@fbAzzBt_@x_@ls@h]|bA|q@|x@plBph@|Qhs@rm@xq@rSzx@db@nZxGz^KttAe^`|B|Yh{CcBtYgIxr@ij@ruAmLrZ~Fpr@~f@pgB~Sly@vb@tW~Vpd@rFnWaVvs@e`@nTwUhk@s_Ana@wgApp@m_A|o@ywBzx@o~@nVic@lr@oRrt@{u@rm@}QvkA_GeFvi@vSxGda@dsAbQncBlGzRr\\lc@dc@ie@"},{"from":"Jeonju","to":"Gwangju","km":98.7,"duration":"1h23","poly":"_}syE_q`gWec@he@j]dfBn@hzDhLxh@rHtLgOzf@uF`e@g@~aBzId{AsMj\\eGpf@zfEr}@~WvPhfBjoBnYhPhZtCvnAkHxUrFtiAdr@vlAtiAxkBjx@tYza@t]jbA~Xv[n]zKvnAnFjf@xSlb@|f@dp@fnBjO|UnZ`SvbArXhzBh{C`hAln@z_An_Bx_@~qA~`@hn@d\\~TdfBnq@~{AhTtn@fb@tw@b]jo@hh@r`AxCnjChk@riAza@bRyEf_@oXrnAqDhoAoq@t]eKpb@hBntAf_@joArE`t@cb@tiAxA~p@cN|}@rAftAo]fUaPpPwCfgBzj@ryA|yAvk@tKhi@pW~p@dBr\\pXzSxCfjAqp@ry@}@rXqJpt@_|@fyA{nAzi@}n@vTqHphB_Qt_@uRhaBmuBjIw]Noe@hGuJxQ`@|p@r[lmAzPju@NCdP_CE"},{"from":"Gwangju","to":"Mokpo","km":72.5,"duration":"0h58","poly":"waruEs~feW~BDBePcIEMpm@iOFMlJtGxz@pDfpB}FxzB`WzdDjP~]zl@lk@hi@``AvnBjiAjoAreBbJreAju@fnBx[ptAdsAblCla@`tBz@`rA`Er_@~m@njBlIpaC~n@vuCxrAjyBlLd\\hZf~Brh@l`BjFda@mCj]pBjIlNbFtSeWtw@qSlrFe[lvD}z@|eC~h@rfE_GxaD`s@~s@np@hxA|bB`MtWtY~qCsS`mCnB|lAbGfVtf@xp@vlBp{@jGnIt[yg@}FaZ"},{"from":"Mokpo","to":"Suncheon","km":129.6,"duration":"1h34","poly":"ednsEi~lbW|F`Zu[xg@kGoIymBa}@mi@iy@yEazAhSymC_\\yaDhKoGj[OtKkFvk@mzAlx@iq@n\\oeAx~@_u@xVmK|}@kFflA{x@x|@yC~|Amf@xZiVbw@mqAjIqj@~@{kBxs@a`DdRi{B`Y{i@xv@}^|Wa`@f[q}CzS{u@tMynAnKod@uGy~ChLmkAsLq`Aw@gl@rJ_o@zk@mwAlMyp@`NadFtVcpAhAes@{UmwAcu@akCeMiiAqwAsnDue@oyB{QcXyi@s]iXm[_Tmh@mc@wdCuxCi~D_N_^yUktAceA_cCkUwS}r@{Yse@_g@oaAonAk_@oiAoF}}@rGq{Epa@cfDjOgdCwOq|@irA}kBuc@uuAiEal@Y}pE}g@wlEjAcxBzCyXzs@e|AlKgl@Aqi@qJ}xAhKa~C{G}k@m\\sg@wdDsoBaYoWszB}rDek@meB_u@ihBgJm`@yXuOa]}@sfCqi@gx@nN}z@`AcX`Yd@}P"},{"from":"Suncheon","to":"Yeosu","km":29.3,"duration":"0h38","poly":"ihitEcxbiWkAgU|[uV|Dur@vTqa@f[aTnX_aAf]iS~[vJzM{An[e]~MgmAzJyN|v@L~T_Hzh@mr@~kA}h@`aAe}@ldA{iBzP_RfbBeg@`vA_dAv_AokAjw@_t@la@egAvHor@`GmMju@eWff@_s@~kCEvDiCfAtE"},{"from":"Yeosu","to":"Busan","km":178.2,"duration":"2h26","poly":"ibdsE{_ejWgAuEe~BjDiu@iIkXzKoc@qAuw@cn@u]uFmr@qaAke@mEsQc]aMcHmUy[um@kOsaA}j@eJm`@_KucAs|ArCeuAfhAe[dLw_FJe_@tM}Qel@wu@go@e{@ibAiw@ieDlAtUym@n^mSi@iEhGc^aT}@wqA}f@u_AwJub@AwcAqH_fAwI_Qcf@aZgb@qw@sFch@zF{l@mCi[kKiPchAio@eLiNwe@kdBaoA{tByH}g@VchA}DuX{x@qy@iIkRyKkcAq@gm@~JslAI{_@aHog@aVqv@e@ch@u]sn@oJyd@oj@ar@qNw\\iBaQ`Col@aHqz@}Toc@uKu|@ma@oc@{I_gAq`@q\\uMwi@_p@q\\}b@qe@ut@{|Aek@iXo|@s@mx@}Qsq@wt@g`@uXqh@ahBoGgs@iYwlAaRwuAKiwAqj@m{AcJ_nC_GsXaMgMka@kMe`@wc@mI{TaEmn@kGkVuw@atAogAogA{U_Hgu@Ecj@kPsiB_F_}@mZ{NaLyz@ohCuAupAqFab@ahAuhBaAeWvDy`@}D_jB|Imj@tXa|Dn`@axBhs@khBpKiz@kBcwD_z@eqB}LewAKy{AkNsaAyYuq@yEy\\pZooIrTcmAxl@uuBlHoxA|WwoAuDyd@iW}fAsDmu@kOufAv@ygDlH}c@`e@giAlk@{s@dv@m[~fBaVn`@aX`S_c@nQicA~`@}z@~HalBiXoiAwAmb@~Wa`CbBykAoCk{@a\\mnC`FayDpB_e@bOmw@}HecBtRqyAhAugAxXsjDWo_@`EmQoD}q@`M__@iA{^bUe{DvVycAjTaSvdB}Wdb@~[{ChKnBdARsGjDbC"}],"printemps":[{"from":"Busan","to":"Jinhae","km":43.8,"duration":"0h55","poly":"}_vuEs`yrWkAhFze@~]iDvHQv_@~RhUxKzk@vGvFr_@bBpA`EaAtX~Jvq@tp@zrCpAd|@xLvUrCz_Ai`BbsPuAlpA_oAh`Du@xYfQpiDmQvb@qRbKon@dMsb@bm@cVxMlAhOjNjBpFbHnRrx@x|@|xAzCrNgFtk@t@t_AkOtk@a]lyC{YhbAeH|h@hcAdp@dyBx]xt@dE|QfRlTwTeB}J"},{"from":"Jinhae","to":"Tongyeong","km":72.0,"duration":"1h05","poly":"sfpuEyuopWhDdIaU|SkEbMr@zf@}_@~@pO`~@uEjYgb@b^yPj`@}^v[cXxp@gSbZ_h@z`@}ZhI}FxNfuA`u@~J~Kdk@|}A|Hfx@db@vgA|BhWkCb{@oLxzBaIj^zDlD|YeAnx@tHpLvHpHvSeA|VmW~RiThd@s@l_Axr@xy@vkArfA`RvYxYr_AzFv`A~G|Xzu@r_Azw@huBjYdSbH|N_BbcD{N|}A|DrX`H~LfgApw@pvBps@dwBjpAj_@nBjcAaYdVzAbk@pgAr}@|_@dZpDzPdMOdFy@keAtEiN|i@cl@vfAyc@rs@gqAvt@yn@|aAitA~_@e]~e@aNrfCxFvv@_a@xUcFd~@tMhvAuRdiAwBrSuKzMmUhH}{@pZ}lA`n@mAxL|CvJzTbCzQwBvF"},{"from":"Tongyeong","to":"Suncheon","km":123.9,"duration":"1h34","poly":"}ovsEcq{nWvBl@f@sFcPii@mu@cEuK_Ic@}JbElDaBtZsWrgAiEbs@oMxXyR`MopAfDcnAlPqhAeKwiAbg@c{BoHyf@vIw\\tUonAjcB_v@lp@sq@tnAmfAnc@cu@zx@e`@xi@ou@`wAgDn`@bDnn@oGfe@yw@dcA{kA`{Bkj@xjAi]t}AssApyB_Vdk@yPvwC_oAbnByx@vdDeUnc@gVlXelB|hAsa@dc@uOxc@sm@vaDgC~C}BcDnBkCh]`E|m@qA|s@jY|u@v}A~\\da@nt@t_@`Ozj@l`@p\\jJpgAla@lc@lKl|@bUvc@zGbx@]~_AdQr`@|i@zq@dHdc@tWxc@fF`o@|ZngAbDtw@gKroAhEdoAfO|p@lr@lo@nIdPbCzRa@xfA|Fpe@fOd`@``AtwAfh@lhB||AlgArFf_@yFnn@nItp@p_@ro@la@hVhM~T~HzeAu@rn@`Dz_@vJx[ra@|s@dDlVgBzaCck@|cAcF|RPzTtK``@tAdXeFxh@d@jl@qWd_AWzP~Qvk@vJ~Fvb@vExb@r`Ajc@zTbXh\\pD|]eKbd@oBhbAdUdw@lAdn@sK`a@it@xr@ei@j\\kQdl@cX|h@uExiCkX~{AbHdgCfRjh@]jZaDdCc@cIxPQdSeVjNlCfA{JdHqHv{BrIeBrhAjGdeAbL~o@rV}Ej@z`@vAiD"},{"from":"Suncheon","to":"Damyang","km":82.9,"duration":"1h14","poly":"ihitEcxbiWkAgUuWnSU{Ryc@pMe[cIud@`IaVpWyQ|Bst@_]a`@{b@c\\fh@iL|D}ElQsXhCdCvX}Itg@qAngAwf@~aDuAliCjDzgCoc@xpD{\\|fA}z@fgGcQ~q@qs@l`Aoz@fp@{d@|o@eUnL{b@`Hih@|[}{@pQgq@z^_g@pL}m@dr@_WlLo|@pCqjAuZwfAcv@}XgGwb@V_d@rOwiAdw@uw@r`@q|Anf@yx@sAqq@`Foy@ba@cStWwa@fbAmIto@ym@j_AkNbx@k]v^_Svd@cIpc@m\\~e@kE|v@i`@l~BbBbVvWxf@dC~VyRhjC}SxaAbDr`AhR|sA`mAteB|FfXcBrdAs]lw@_FnW|PfgCaKzxAf@zv@aCxM_JpIgQZof@uOsp@{H{b@yV}H}M{T|Lco@MyfAsNet@cBsYeO_I_OkVlFu@{QwDH"},{"from":"Damyang","to":"Jeonju","km":69.7,"duration":"1h10","poly":"ssqvE{jafWvDIUiTcUgiAkr@kaAsAkWdE}u@qBmSe`@gg@az@mzAuF}^mEqgB}k@}|@yOee@ws@qlAo]}_Bsn@ezAuBc|@ecAnC{nD}Lc}Bmh@gq@|Cmm@oQ{gAdU_g@oTwRwAqrAx`@eUhB{S_Fch@w]qq@_Cyx@}S{V{@{y@|Uo}@iA{O|L}Rpe@sf@bVux@G}n@d_@wjAjQweDl~AyjAjoA_{@|LykC}\\ua@xImUIoReKif@gm@kXoKqaA~AshAqPcb@@o`@hIur@b]iQ~@cnBaR_h@uX}tAaRc|AcDs_Ayf@mt@kOa^ukAc`@u\\}b@e@mdA|XqFgHmFPcBqCzC]"},{"from":"Jeonju","to":"Daejeon","km":86.7,"duration":"1h17","poly":"_}syE_q`gWkc@fc@m\\ka@mG{RcQocB}^_oAcPcVxC{e@uEmF}MjJe{A|R_{@~x@}QbIiZbBoRtL}O|`@kv@n{@ir@d|Bsp@l_Asa@zgAii@n|@cYrZgkAhp@oVsAkcBo~@omBcWof@qb@iTkFe}AbMgr@|i@sYbIw{CxAc`CyYsrAj_@kt@iFicAug@qj@}Owu@go@kd@ePu~@aqBcsBskAe_@o_@i`AgwBkUqt@Asd@`_@muBk@}c@sGc]m|@{oBgQeO{_AkYqtA}bByjAsa@afAur@qTE}h@jSogBod@_aAqJmh@kx@oy@qb@gD}PrB}i@kMca@cNiLyj@eSac@a@yt@~U}[nYwdAzLapAe]{~Ay{@iiBmw@uHqJ}DzAg@|VuGxBuDiWdj@mcChKkbBHwqBhn@fA"},{"from":"Daejeon","to":"Séoul","km":161.4,"duration":"2h46","poly":"ksz|EcdohW~E{@?rVgu@KKbzAaN`lBqi@reCqbBnn@q}CpvBaqAl\\yw@daA{SdFcdBdAqa@nNux@dp@oJlu@e`@n|AeXp]a{@jIol@`]iRjCggCoKuc@qa@oWeIsd@|i@sv@lbC}Iba@eCj~@qMdc@sr@lj@gz@pnAoRbQ_\\rHw_AR}SjKadAdcB_kAfpAuZjpAgB`j@}GlKoNfDi`@}E{JzJym@hFon@`k@yVlLkf@z@}_Far@ugBqCkcA{[cWeZi[irAyZyc@k~@a~@e_@iVodBob@gg@cjAuMaKwOp@a~CvlAg}@xPolBwJ_`Aok@o`AsLe_B{t@cVsE{gCmScsJe@_TzHqtFhaEqvB`l@ilA|e@msCvd@khDtQc_A`f@{oEr}Aq\\~Uw~A|aCanAt\\_[mCaeDwgAkfFkAslBubA_yAbSegVZesBjBibBzQulF~jFcs@zf@cpBxgB_BqFf[de@cC`wAszAfn@wa@OabC~y@siB~w@ucAxRc_@lYaz@gHcaAn^k_@nG{[pUiKuC|A~G"}]};
+
 function decodePolyline(str, precision = 5) {
   const out = []; let i = 0, lat = 0, lng = 0; const f = Math.pow(10, precision);
   while (i < str.length) {
@@ -426,15 +405,14 @@ function decodePolyline(str, precision = 5) {
   }
   return out;
 }
+
 function distKm(lat1, lng1, lat2, lng2) {
   const R = 6371, rad = Math.PI / 180;
   const dLat = (lat2 - lat1) * rad, dLng = (lng2 - lng1) * rad;
   const a = Math.sin(dLat / 2) ** 2 + Math.cos(lat1 * rad) * Math.cos(lat2 * rad) * Math.sin(dLng / 2) ** 2;
   return 2 * R * Math.asin(Math.sqrt(a));
-} // taux approximatif € → ₩, à vérifier avant départ
+}
 
-// Convertit une chaîne de prix en € ("~4 €", "480 – 650 €", "Gratuit"...) vers ₩ si le
-// toggle devise est actif. Ne touche jamais aux montants sans symbole € (ex. "Gratuit").
 function formatPrice(str) {
   if (currentCurrency === 'EUR' || !/€/.test(str)) return str;
   const converted = str.replace(/\d[\d\s.,]*\d|\d/g, (match) => {
@@ -447,7 +425,6 @@ function formatPrice(str) {
   return converted.replace(/€/g, '₩');
 }
 
-// Convertit un montant numérique déjà en €, pour l'affichage (accom, totaux calculés).
 function displayAmount(eur, suffix = '') {
   if (currentCurrency === 'EUR') return `${Math.round(eur)} €${suffix}`;
   const krw = Math.round((eur * KRW_RATE) / 50) * 50;
@@ -459,38 +436,28 @@ function applySeason(season, { persist = true } = {}) {
   currentSeason = season;
   const meta = SEASON_META[season];
 
-  // Attribut sur la racine du document : pilote les variables CSS d'accent
-  // (bouton budget, en-tête de la modale, liseré du header)
   document.documentElement.setAttribute('data-season', season);
 
-  // Toggle visuel (position du curseur + labels actifs)
   const toggleEl = document.getElementById('seasonToggle');
   if (toggleEl) toggleEl.setAttribute('data-season', season);
 
-  // Sous-titre du header
   const headerSubEl = document.getElementById('headerSub');
   if (headerSubEl) headerSubEl.textContent = meta.headerSub;
   updateKakaoSeasonBtn(season);
 
-  // Titre de l'onglet navigateur
   document.title = `한국 · Guide de Voyage — ${meta.titleSuffix}`;
 
-  // Reconstruire l'itinéraire (tabs, panneaux, marqueurs, tracé, légende)
-  // avec les données propres à la saison sélectionnée — inclut la mise à jour des badges
   buildItinerary(SEASON_STOPS[season]);
   const actsEl = document.getElementById('statActs');
   if (actsEl) actsEl.textContent = `🎯 ${SEASON_STOPS[season].reduce((n, st) => n + st.activites.length, 0)} activités`;
 
-  // Reconstruire l'encart budget global avec les tarifs propres à la saison
   if (typeof renderBudgetModal === 'function') renderBudgetModal(season);
-    renderBudgetBand(season);
-
+  renderBudgetBand(season);
 
   if (persist) {
     safeStorage.setItem('kortripp-season', season);
   }
 
-  // Événement personnalisé — permet d'étendre le comportement au changement de saison
   document.dispatchEvent(new CustomEvent('seasonchange', { detail: { season } }));
 }
 
@@ -498,15 +465,11 @@ document.getElementById('seasonToggle')?.querySelectorAll('.season-btn').forEach
   btn.addEventListener('click', () => applySeason(btn.dataset.value));
 });
 
-// ═══ MAP ═══
-// ═══════════════════════════════════════════════════════════
-// CARTE & ITINÉRAIRE (Kakao Maps)
-// ═══════════════════════════════════════════════════════════
 let map = null;
 let mapReady = false;
-let stopOverlays = [];   // pins numérotés des étapes
-let routeLines = [];     // tronçons du trajet
-let placeOverlays = [];  // pastilles des activités / restaurants de l'étape active
+let stopOverlays = [];
+let routeLines = [];
+let placeOverlays = [];
 let placePopup = null;
 let placesFor = null;
 const mapFilters = { A: true, R: true, H: true };
@@ -529,7 +492,6 @@ async function initKakaoMap() {
   }
   mapEl.innerHTML = '';
   map = new kakao.maps.Map(mapEl, { center: new kakao.maps.LatLng(35.9, 127.8), level: 12 });
-  // En bas à droite : le haut à droite est occupé par le bouton « Budget du voyage »
   map.addControl(new kakao.maps.ZoomControl(), kakao.maps.ControlPosition.BOTTOMRIGHT);
   kakao.maps.event.addListener(map, 'click', closePlacePopup);
   mapReady = true;
@@ -545,7 +507,6 @@ function closePlacePopup() {
 
 function clearMapLayers() {
   stopOverlays.forEach((item) => {
-    // Si l'élément est un objet enveloppé { overlay, el }
     const o = item.overlay || item;
     if (o && typeof o.setMap === 'function') o.setMap(null);
   });
@@ -574,7 +535,6 @@ function fitOverview() {
   map.setBounds(b, 60, 50, 60, 50);
 }
 
-// Tronçons du trajet : tracé routier réel si disponible (ROUTES), sinon segment droit
 function routeLegs() {
   const real = ROUTES[currentSeason] || [];
   const legs = [];
@@ -629,8 +589,6 @@ function stopPlaces(stop) {
   return out;
 }
 
-// Marqueurs des lieux (activités/restaurants/hébergements) TOUJOURS visibles,
-// évitement de collisions pour éviter le chevauchement à l'ouverture.
 function renderAllPlaceMarkers() {
   if (!mapReady) return;
   placeOverlays.forEach((o) => o.setMap(null));
@@ -658,7 +616,6 @@ function renderAllPlaceMarkers() {
   placeOverlays = list;
 }
 
-// Repousse deux pins trop proches (évitement de collisions). Seuil ~550 m.
 function resolveCollisions(overlays) {
   if (overlays.length < 2) return;
   for (let iter = 0; iter < 10; iter++) {
@@ -680,8 +637,6 @@ function resolveCollisions(overlays) {
   }
 }
 
-
-// Liens de réservation d'un hébergement, avec les dates du séjour dans cette ville
 function lodgingLinks(cityName, kname) {
   const cities = BUDGET_DATA[currentSeason].accomCities;
   const i = cities.findIndex((c) => c.name === cityName);
@@ -715,7 +670,6 @@ function openPlacePopup(item, info, type, stop) {
   placePopup.setMap(map);
 }
 
-// Recentre la carte sur l'étape et affiche ses activités / restaurants
 function focusStopOnMap(idx) {
   if (!mapReady) return;
   const s = stops[idx];
@@ -735,11 +689,6 @@ function focusStopOnMap(idx) {
   }
 }
 
-// Pas de bouton « Hébergements » tant qu'aucun hébergement n'est géolocalisé
-if (![...PLACE_INDEX.keys()].some((k) => k.startsWith('H|'))) {
-  const chip = document.getElementById('chipLodging');
-  if (chip) chip.style.display = 'none';
-}
 document.querySelectorAll('#mapFilters .map-chip').forEach((btn) => {
   btn.addEventListener('click', () => {
     const t = btn.dataset.filter;
@@ -749,7 +698,6 @@ document.querySelectorAll('#mapFilters .map-chip').forEach((btn) => {
   });
 });
 
-// ═══ BUILD UI ═══
 const tabsEl   = document.getElementById('cityTabs');
 const panelEl  = document.getElementById('activitiesPanel');
 const legendTitleEl = document.getElementById('legendTitle');
@@ -763,8 +711,6 @@ function getTagHTML(tag, price) {
   return `<span class="activity-tag tag-paid">💳 ${price}</span>`;
 }
 
-// Recalcule uniquement le texte des prix d'activités déjà affichées (sans reconstruire
-// les onglets/panneaux/carte), pour un basculement de devise instantané.
 function refreshActivityPrices() {
   document.querySelectorAll('.city-panel').forEach((panel, i) => {
     const stop = stops[i];
@@ -784,17 +730,13 @@ function refreshActivityPrices() {
   });
 }
 
-// Construit (ou reconstruit) tabs, panneaux, marqueurs, tracé et légende
-// à partir des données de la saison active.
 function buildItinerary(stopsData) {
   stops = stopsData;
 
-  // ─ Nettoyage de l'existant (tabs, panneaux, marqueurs, tracé) ─
   tabsEl.innerHTML = '';
   panelEl.innerHTML = '';
   clearMapLayers();
 
-  // ─ Légende ─
   const meta = SEASON_META[currentSeason];
   if (legendTitleEl) legendTitleEl.textContent = `${meta.emoji} Étapes ${meta.label.toLowerCase()}`;
   if (legendRowsEl) {
@@ -804,7 +746,6 @@ function buildItinerary(stopsData) {
   }
 
   stops.forEach((stop, i) => {
-    // ─ Tab ─
     const tab = document.createElement('button');
     tab.className = 'city-tab' + (i === 0 ? ' active' : '');
     tab.style.color = stop.color;
@@ -813,7 +754,6 @@ function buildItinerary(stopsData) {
     tab.addEventListener('click', () => selectStop(i));
     tabsEl.appendChild(tab);
 
-    // ─ Panel ─
     const acts = stop.activites.map(a => `
       <div class="activity-card">
         <div class="activity-icon">${a.icon}</div>
@@ -867,20 +807,13 @@ function buildItinerary(stopsData) {
         </div>
       </div>`;
     panelEl.appendChild(panel);
-
   });
 
-  // Redessiner la carte (tracé, pins) et revenir à la 1ère étape
   activeIdx = 0;
   drawMap();
   renderAllPlaceMarkers();
-
 }
 
-// ═══ DONNÉES BUDGET GLOBAL — PAR SAISON ═══
-// ═══════════════════════════════════════════════════════════
-// DONNÉES BUDGET (vols, hébergements, véhicule, par saison)
-// ═══════════════════════════════════════════════════════════
 const BUDGET_DATA = {
   automne: {
     dates: "Dates à définir",
@@ -975,11 +908,7 @@ const BUDGET_DATA = {
   },
 };
 
-// ═══════════════════════════════════════════════════════════
-// LOGIQUE BUDGET : parsing, surcharges de prix, totaux calculés
-// ═══════════════════════════════════════════════════════════
 function parseRangeNumbers(str) {
-  // Gère les séparateurs de milliers (espace, espace insécable) : "1 000" = 1000
   const matches = (String(str).match(/\d{1,3}(?:[\s\u00a0\u202f]\d{3})+(?:[.,]\d+)?|\d+(?:[.,]\d+)?/g) || [])
     .map(n => parseFloat(n.replace(/[\s\u00a0\u202f]/g, '').replace(',', '.')));
   if (matches.length === 0) return [0, 0];
@@ -991,14 +920,15 @@ function formatEuro(n) {
   return Math.round(n).toLocaleString('fr-FR');
 }
 
-// Option de vol retenue pour le total ('direct' par défaut), mémorisée par saison.
 function getSelectedFlight(season) {
   const v = safeStorage.getItem(`kortripp-flight-choice-${season}`);
   return v === 'layover' || v === 'direct' ? v : 'direct';
 }
+
 function setSelectedFlight(season, key) {
   safeStorage.setItem(`kortripp-flight-choice-${season}`, key);
 }
+
 function grandTotalSubText(season) {
   const b = BUDGET_DATA[season];
   const vol = getSelectedFlight(season) === 'layover' ? 'avec escale' : 'direct';
@@ -1097,16 +1027,13 @@ function saveFlightEdit(key, row) {
   input.style.display = 'none';
   refreshGrandTotal(currentSeason);
   renderBudgetBand(currentSeason);
-
 }
 
-// ═══════════════════════════════════════════════════════════
-// BUDGET BAND (récap permanent en bas de la sidebar)
-// ═══════════════════════════════════════════════════════════
 function getBandTotal(season, key) {
   const v = safeStorage.getItem(`kortripp-band-${key}-${season}`);
   return v !== null ? parseFloat(v) : null;
 }
+
 function persistBandTotal(season, key, value) {
   safeStorage.setItem(`kortripp-band-${key}-${season}`, Math.round(value));
 }
@@ -1126,7 +1053,6 @@ function computeBandTotals(season) {
 }
 
 function renderBudgetBand(season) {
-  const meta = SEASON_META[season];
   const b = BUDGET_DATA[season];
   const overrides = getFlightOverrides(season);
   const chosen = getSelectedFlight(season);
@@ -1144,7 +1070,6 @@ function renderBudgetBand(season) {
 }
 
 function renderBandInputs(season) {
-  const b = BUDGET_DATA[season];
   const { accom, car, food } = computeBandTotals(season);
   const chosen = getSelectedFlight(season);
 
@@ -1248,16 +1173,12 @@ function computeAccomStats(season) {
   };
 }
 
-// Dates de départ indicatives par saison (mêmes que l'export .ics), utilisées
-// pour pré-remplir les liens de recherche d'hébergement avec les bonnes dates.
 const TRIP_START_DATES = { automne: '2026-10-25', printemps: '2027-03-25' };
 
 function fmtISODate(date) {
   return `${date.getFullYear()}-${pad2(date.getMonth() + 1)}-${pad2(date.getDate())}`;
 }
 
-// Calcule, pour chaque ville de l'itinéraire, ses dates d'arrivée/départ en
-// enchaînant les nuits depuis la date de départ du voyage.
 function computeAccomDates(season) {
   const cities = BUDGET_DATA[season].accomCities;
   let cursor = new Date(TRIP_START_DATES[season] + 'T00:00:00');
@@ -1329,7 +1250,6 @@ function savePriceEdit(city, row) {
   refreshAccomTotals(currentSeason);
   refreshGrandTotal(currentSeason);
   renderBudgetBand(currentSeason);
-
 }
 
 function refreshAccomTotals(season) {
@@ -1358,6 +1278,7 @@ document.getElementById('budgetModalBody').addEventListener('click', (e) => {
   handlePriceEditClick(e);
   handleFlightEditClick(e);
 });
+
 document.getElementById('budgetModalBody').addEventListener('change', (e) => {
   if (!e.target.classList || !e.target.classList.contains('flight-choice')) return;
   setSelectedFlight(currentSeason, e.target.value);
@@ -1367,6 +1288,7 @@ document.getElementById('budgetModalBody').addEventListener('change', (e) => {
   const sub = document.getElementById('grand-total-sub');
   if (sub) sub.textContent = grandTotalSubText(currentSeason);
 });
+
 document.getElementById('budgetModalBody').addEventListener('keydown', (e) => {
   if (e.key === 'Enter' && e.target.classList.contains('price-input')) {
     e.preventDefault();
@@ -1381,9 +1303,6 @@ document.getElementById('budgetModalBody').addEventListener('keydown', (e) => {
   }
 });
 
-// ═══════════════════════════════════════════════════════════
-// RENDU DU MODAL BUDGET
-// ═══════════════════════════════════════════════════════════
 function renderBudgetModal(season) {
   const meta = SEASON_META[season];
   const b = BUDGET_DATA[season];
@@ -1523,13 +1442,8 @@ function renderBudgetModal(season) {
   </div>`;
 }
 
-// Construction initiale avec la saison courante (persistée ou par défaut)
 applySeason(currentSeason, { persist: false });
 
-// ═══════════════════════════════════════════════════════════
-// TOGGLE DEVISE (€ / ₩) — s'applique aux activités, hébergements
-// et location de véhicule ; les vols restent toujours en €.
-// ═══════════════════════════════════════════════════════════
 const currencyToggleBtn = document.getElementById('currencyToggleBtn');
 function updateCurrencyBtnLabel() {
   if (currencyToggleBtn) currencyToggleBtn.textContent = currentCurrency === 'EUR' ? '💱 €' : '💱 ₩';
@@ -1542,13 +1456,9 @@ currencyToggleBtn?.addEventListener('click', () => {
   updateCurrencyBtnLabel();
   refreshActivityPrices();
   if (typeof renderBudgetModal === 'function') renderBudgetModal(currentSeason);
-    renderBudgetBand(currentSeason);
-
+  renderBudgetBand(currentSeason);
 });
 
-// ═══════════════════════════════════════════════════════════
-// EXPORT CALENDRIER (.ics)
-// ═══════════════════════════════════════════════════════════
 function icsEscape(str) {
   return String(str)
     .replace(/\\/g, '\\\\')
@@ -1575,7 +1485,7 @@ function generateICS(season) {
   if (isNaN(cursor.getTime())) { alert('Date invalide.'); return; }
 
   const nowStamp = fmtICSDate(new Date()) + 'T000000Z';
-  let ics = 'BEGIN:VCALENDAR\r\nVERSION:2.0\r\nPRODID:-//Kortripp//Guide de Voyage//FR\r\nCALSCALE:GREGORIAN\r\n';
+  let ics = 'BEGIN:VCALENDAR\r\nVERSION:2.0\r\PRODID:-//Kortripp//Guide de Voyage//FR\r\nCALSCALE:GREGORIAN\r\n';
 
   stopsData.forEach((stop, i) => {
     const nights = parseNights(stop.dates);
@@ -1613,9 +1523,6 @@ document.getElementById('icsExportBtn')?.addEventListener('click', () => {
   generateICS(currentSeason);
 });
 
-// ═══════════════════════════════════════════════════════════
-// VUE RUE — Kakao Maps (Roadview), chargé à la demande au 1er clic
-// ═══════════════════════════════════════════════════════════
 let kakaoReady = null;
 let rvToken = 0;
 
@@ -1691,7 +1598,7 @@ async function openRoadview(kr, title, lat, lng, plat, plng, kname) {
   } catch (err) {
     if (token !== rvToken) return;
     console.error('[Vue rue Kakao]', err);
-    statusEl.innerHTML = 'Vue rue indisponible. Le SDK Kakao a refusé de se charger. Vérifiez dans Kakao Developers :<br>① <b>Produit &gt; Kakao Map &gt; Paramètres d\'utilisation</b> sur <b>ON</b> (obligatoire depuis déc. 2024)<br>② le domaine <b>' + location.origin + '</b> déclaré dans <b>Clés de plateforme &gt; clé JavaScript &gt; Domaine du SDK JavaScript</b><br>③ aucun bloqueur de contenu actif sur le site.';
+    statusEl.innerHTML = 'Vue rue indisponible. Le SDK Kakao a refusé de se charger.';
     linksEl.innerHTML = searchLink;
   }
 }
@@ -1701,90 +1608,23 @@ document.addEventListener('click', (e) => {
   if (btn) { openRoadview(btn.dataset.kr, btn.dataset.title, btn.dataset.lat, btn.dataset.lng, btn.dataset.plat, btn.dataset.plng, btn.dataset.kname); return; }
   if (e.target.id === 'rvOverlay' || e.target.id === 'rvClose') closeRoadview();
 });
+
 document.addEventListener('keydown', (e) => {
   if (e.key === 'Escape' && document.getElementById('rvOverlay').classList.contains('active')) closeRoadview();
 });
 
-// ═══════════════════════════════════════════════════════════
-// AUTO-DIAGNOSTIC KAKAO — ouvrir la page avec  ?kakaotest=1
-// Vérifie le chargement du SDK puis chaque lieu (activités + restaurants) :
-// lieu trouvé ? vue rue disponible ? Résultat copiable.
-// ═══════════════════════════════════════════════════════════
-async function runKakaoSelfTest() {
-  const ov = document.createElement('div');
-  ov.style.cssText = 'position:fixed;inset:0;z-index:9999;background:#fff;overflow:auto;padding:16px;font:13px/1.5 system-ui,sans-serif;color:#222';
-  ov.innerHTML = '<h2 style="margin:0 0 6px">Diagnostic Kakao</h2><div id="kt-sum">Démarrage…</div><div style="margin:8px 0"><button id="kt-copy">Copier le rapport</button> <button id="kt-json" disabled>Copier le JSON des coordonnées</button> <button id="kt-close">Fermer</button></div><textarea id="kt-out" readonly style="display:none;width:100%;height:110px;font:11px monospace;margin-bottom:8px"></textarea><table id="kt-tab" style="border-collapse:collapse;width:100%"></table>';
-  document.body.appendChild(ov);
-  const sum = ov.querySelector('#kt-sum'), tab = ov.querySelector('#kt-tab');
-  const lines = [];
-  const coords = [];
-  ov.querySelector('#kt-close').onclick = () => ov.remove();
-  ov.querySelector('#kt-copy').onclick = () => navigator.clipboard && navigator.clipboard.writeText(lines.join('\n'));
-  const row = (icon, a, b, c) => {
-    const tr = document.createElement('tr');
-    tr.innerHTML = [icon, a, b, c].map(x => `<td style="border-bottom:1px solid #eee;padding:3px 6px;vertical-align:top">${x}</td>`).join('');
-    tab.appendChild(tr);
-    lines.push([icon, a, b, c].join(' | '));
-  };
-  if (!KAKAO_JS_KEY) { sum.textContent = '❌ KAKAO_JS_KEY est vide.'; return; }
-  sum.textContent = `Domaine vu par le site : ${location.origin} — chargement du SDK…`;
-  try { await loadKakaoMaps(); }
-  catch (e) { sum.innerHTML = `❌ SDK non chargé (${e.message}). Vérifier clé, domaine <b>${location.origin}</b>, activation Kakao Map, bloqueur de contenu.`; lines.push('SDK KO: ' + e.message); return; }
-  const items = [], seen = new Set();
-  [['Automne', stopsAutomne], ['Printemps', stopsPrintemps]].forEach(([season, arr]) => arr.forEach(st => {
-    st.activites.forEach(a => a.kr && items.push(['Activité', season, st.name, a.name, a.kr]));
-    st.restaurants.forEach(r => r.kr && items.push(['Restaurant', season, st.name, r.name, r.kr, st.lat, st.lng]));
-    (LODGINGS[st.name] || []).forEach(l => items.push(['Hébergement', season, st.name, l.name, l.kr, st.lat, st.lng]));
-  }));
-  const todo = items.filter(it => { const k = it[4] + '|' + (it[5] || ''); if (seen.has(k)) return false; seen.add(k); return true; });
-  const places = new kakao.maps.services.Places(), rv = new kakao.maps.RoadviewClient();
-  const sleep = ms => new Promise(r => setTimeout(r, ms));
-  let ok = 0, nopano = 0, nf = 0, err = 0, i = 0;
-  for (const [type, season, city, name, kr, la, ln] of todo) {
-    i++; sum.textContent = `SDK OK ✅ — test ${i}/${todo.length}…`;
-    const opts = la ? { location: new kakao.maps.LatLng(la, ln), radius: 20000 } : undefined;
-    const res = await new Promise(resolve => places.keywordSearch(kr, (data, status) => resolve({ data, status }), opts));
-    if (res.status === kakao.maps.services.Status.OK && res.data.length) {
-      const pl = res.data[0];
-      const pano = await new Promise(resolve => rv.getNearestPanoId(new kakao.maps.LatLng(pl.y, pl.x), 300, resolve));
-      coords.push([type === 'Restaurant' ? 'R' : type === 'Hébergement' ? 'H' : 'A', city, name, kr, +(+pl.y).toFixed(6), +(+pl.x).toFixed(6), pl.id, pl.place_name, pano ? 1 : 0]);
-      if (pano) { ok++; row('✅', `${type} · ${city}`, `${name} <small>(${kr})</small>`, `${pl.place_name} — ${pl.address_name}`); }
-      else { nopano++; row('🟡 pas de vue rue', `${type} · ${city}`, `${name} <small>(${kr})</small>`, `${pl.place_name} — ${pl.address_name}`); }
-    } else if (res.status === kakao.maps.services.Status.ZERO_RESULT) { nf++; row('❌ introuvable', `${type} · ${city}`, `${name} <small>(${kr})</small>`, ''); }
-    else { err++; row('⚠️ erreur API', `${type} · ${city}`, `${name} <small>(${kr})</small>`, String(res.status)); }
-    await sleep(120);
-  }
-  const final = `Terminé : ✅ ${ok} avec vue rue · 🟡 ${nopano} lieu trouvé sans vue rue · ❌ ${nf} introuvables · ⚠️ ${err} erreurs (sur ${todo.length} lieux uniques)`;
-  sum.textContent = final; lines.unshift(final);
-  const jsonBtn = ov.querySelector('#kt-json'), out = ov.querySelector('#kt-out');
-  const json = JSON.stringify(coords);
-  out.value = json;
-  jsonBtn.disabled = false;
-  jsonBtn.onclick = () => {
-    out.style.display = 'block'; out.select();
-    if (navigator.clipboard) navigator.clipboard.writeText(json).then(() => { jsonBtn.textContent = '✅ JSON copié (' + coords.length + ' lieux)'; }, () => {});
-  };
-}
-if (new URLSearchParams(location.search).has('kakaotest')) runKakaoSelfTest();
-
-// Démarrage de la carte Kakao (après la définition du chargeur de SDK)
 initKakaoMap();
 
-// ═══════════════════════════════════════════════════════════
-// TEST — carte saisonnière Kakao Map (단풍 지도 / 벚꽃 지도)
-// ═══════════════════════════════════════════════════════════
 function updateKakaoSeasonBtn(season) {
   const btn = document.getElementById('kakaoSeasonBtn');
   if (btn && KAKAO_SEASON_MAPS[season]) btn.textContent = KAKAO_SEASON_MAPS[season].label;
 }
+
 document.getElementById('kakaoSeasonBtn')?.addEventListener('click', () => {
   const m = KAKAO_SEASON_MAPS[currentSeason];
   window.open('https://map.kakao.com/?q=' + encodeURIComponent(m.q), '_blank', 'noopener');
 });
 
-// ═══════════════════════════════════════════════════════════
-// PARTAGE DE LA PAGE — Web Share API (mobile) avec repli presse-papiers
-// ═══════════════════════════════════════════════════════════
 const shareBtn = document.getElementById('shareBtn');
 
 function flashShareBtnLabel(label, revertAfterMs = 2000) {
@@ -1804,9 +1644,7 @@ async function shareCurrentPage() {
   if (navigator.share) {
     try {
       await navigator.share(shareData);
-    } catch (err) {
-      // L'utilisateur a annulé le partage, ou une erreur est survenue : rien à faire.
-    }
+    } catch (err) {}
     return;
   }
 
@@ -1814,60 +1652,45 @@ async function shareCurrentPage() {
     await navigator.clipboard.writeText(shareData.url);
     flashShareBtnLabel('✅ Lien copié');
   } catch (err) {
-    // Dernier recours si l'accès au presse-papiers est refusé par le navigateur
     window.prompt('Copiez ce lien pour le partager :', shareData.url);
   }
 }
 
 shareBtn?.addEventListener('click', shareCurrentPage);
 
-
-// ═══════════════════════════════════════════════════════════
-// MODAL BUDGET : ouverture/fermeture, et navigation entre étapes
-// ═══════════════════════════════════════════════════════════
-const budgetFab = document.getElementById('budgetFab');
 const budgetOverlay = document.getElementById('budgetOverlay');
 const budgetClose = document.getElementById('budgetClose');
 
-budgetFab.addEventListener('click', () => budgetOverlay.classList.add('active'));
 budgetClose.addEventListener('click', () => budgetOverlay.classList.remove('active'));
 budgetOverlay.addEventListener('click', (e) => {
   if (e.target === budgetOverlay) budgetOverlay.classList.remove('active');
 });
 
-// Ouverture de la modale budget et génération de son contenu
 document.getElementById('openBudgetModalBtn')?.addEventListener('click', () => {
-  renderBudgetModal(currentSeason); // Génère/met à jour le contenu HTML de la modale
-  document.getElementById('budgetOverlay')?.classList.add('active'); // Affiche la modale
+  renderBudgetModal(currentSeason);
+  document.getElementById('budgetOverlay')?.classList.add('active');
 });
 
-// ═══ SELECT STOP ═══
 function selectStop(idx) {
-  // Update tabs
   document.querySelectorAll('.city-tab').forEach((t, i) => {
     t.classList.toggle('active', i === idx);
     t.style.borderBottomColor = i === idx ? stops[i].color : 'transparent';
   });
 
-  // Update panels
   document.querySelectorAll('.city-panel').forEach((p, i) => {
     p.classList.toggle('active', i === idx);
   });
 
-  // Pan map
   focusStopOnMap(idx);
 
-  // Scroll tab into view
   const tabs = document.querySelectorAll('.city-tab');
   tabs[idx].scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
 
-  // Scroll panel to top
   document.getElementById('activitiesPanel').scrollTop = 0;
 
   activeIdx = idx;
 }
 
-// ─── Enregistrement du Service Worker (PWA) ───
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', () => {
     navigator.serviceWorker.register('./service-worker.js')
