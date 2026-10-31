@@ -544,9 +544,10 @@ function closePlacePopup() {
 }
 
 function clearMapLayers() {
-  stopOverlays.forEach((o) => {
-    if (o && typeof o.overlay?.setMap === 'function') o.overlay.setMap(null);
-    else if (o && typeof o.setMap === 'function') o.setMap(null);
+  stopOverlays.forEach((item) => {
+    // Si l'élément est un objet enveloppé { overlay, el }
+    const o = item.overlay || item;
+    if (o && typeof o.setMap === 'function') o.setMap(null);
   });
   stopOverlays = [];
 
@@ -555,7 +556,8 @@ function clearMapLayers() {
   });
   routeLines = [];
 
-  placeOverlays.forEach((o) => {
+  placeOverlays.forEach((item) => {
+    const o = item.ov || item.overlay || item;
     if (o && typeof o.setMap === 'function') o.setMap(null);
   });
   placeOverlays = [];
@@ -1831,6 +1833,12 @@ budgetFab.addEventListener('click', () => budgetOverlay.classList.add('active'))
 budgetClose.addEventListener('click', () => budgetOverlay.classList.remove('active'));
 budgetOverlay.addEventListener('click', (e) => {
   if (e.target === budgetOverlay) budgetOverlay.classList.remove('active');
+});
+
+// Ouverture de la modale budget et génération de son contenu
+document.getElementById('openBudgetModalBtn')?.addEventListener('click', () => {
+  renderBudgetModal(currentSeason); // Génère/met à jour le contenu HTML de la modale
+  document.getElementById('budgetOverlay')?.classList.add('active'); // Affiche la modale
 });
 
 // ═══ SELECT STOP ═══
