@@ -1698,3 +1698,4 @@ if ('serviceWorker' in navigator) {
       .catch((err) => console.warn('[PWA] Échec de l\'enregistrement :', err));
   });
 }
+

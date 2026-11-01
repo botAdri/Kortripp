@@ -247,7 +247,7 @@ html, body {
 /* ═══ BODY SPLIT ═══ */
 .body {
   display: grid;
-  grid-template-columns: 420px 1fr; /* Sidebar de largeur fixe harmonieuse, carte flexible */
+  grid-template-columns: 760px 1fr; /* Sidebar de largeur fixe harmonieuse, carte flexible */
   overflow: hidden;
   height: 100%;
 }
@@ -772,37 +772,6 @@ html, body {
   background: var(--cream);
 }
 
-/* ═══ BUDGET BAND (récap permanent en bas de la sidebar) ═══ */
-.budget-band {
-  flex-shrink: 0;
-  background: var(--warm);
-  border-top: 2px solid var(--border);
-}
-.budget-band-title {
-  font-size: 9px; letter-spacing: .1em; text-transform: uppercase;
-  color: var(--terra); font-weight: 700; margin: 0 0 10px;
-}
-.budget-band-row {
-  display: flex; align-items: baseline; justify-content: space-between; gap: 10px;
-  padding: 5px 0; border-bottom: 1px dashed var(--border);
-}
-.budget-band-row:last-child { border-bottom: none; }
-.budget-band-label { font-size: 12px; font-weight: 600; color: var(--ink); }
-.budget-band-sub { font-size: 10px; color: #999; line-height: 1.4; margin-top: 1px; }
-.budget-band-amount { font-size: 13px; font-weight: 700; color: var(--terra); white-space: nowrap; }
-.budget-band-total {
-  margin-top: 10px; background: var(--ink); border-radius: 10px; padding: 10px 12px;
-  display: flex; justify-content: space-between; align-items: baseline;
-}
-.budget-band-total-label { font-size: 11px; color: var(--warm); opacity: .8; letter-spacing: .06em; text-transform: uppercase; }
-.budget-band-total-amount { font-family: 'Playfair Display', serif; font-size: 24px; font-weight: 700; color: var(--gold-light); white-space: nowrap; }
-.budget-band-edit {
-  margin-left: auto; background: none; border: none; cursor: pointer;
-  font-size: 12px; padding: 2px 4px; opacity: .5; transition: opacity .15s;
-}
-.budget-band-edit:hover { opacity: 1; }
-
-  
 /* ═══ ENCART BUDGET (bouton flottant + modale) ═══ */
 .budget-fab {
   position: absolute;
@@ -1009,5 +978,12 @@ html, body {
   .action-pill { font-size:10.5px; padding:5px 9px; }
   .panel-columns { grid-template-columns: 1fr; }
   .panel-col + .panel-col { border-left: none; border-top: 1px solid var(--border); }
+  .budget-band-rows {
+      flex-direction: column;
+      align-items: flex-start;
+  }
+  .budget-band-row {
+      width: 100%;
+      justify-content: space-between;
+  }
 }
-
