@@ -452,7 +452,6 @@ function applySeason(season, { persist = true } = {}) {
   if (actsEl) actsEl.textContent = `🎯 ${SEASON_STOPS[season].reduce((n, st) => n + st.activites.length, 0)} activités`;
 
   if (typeof renderBudgetModal === 'function') renderBudgetModal(season);
-  renderBudgetBand(season);
 
   if (persist) {
     safeStorage.setItem('kortripp-season', season);
@@ -1026,7 +1025,6 @@ function saveFlightEdit(key, row) {
   display.style.display = 'inline';
   input.style.display = 'none';
   refreshGrandTotal(currentSeason);
-  renderBudgetBand(currentSeason);
 }
 
 function getBandTotal(season, key) {
@@ -1050,23 +1048,6 @@ function computeBandTotals(season) {
   const line = flightMin + accom + (car / 2) + food;
   const upper = flightMax + accom + (car / 2) + food;
   return { accom, car, food, totalMin: Math.round(line), totalMax: Math.round(upper) };
-}
-
-function renderBudgetBand(season) {
-  const b = BUDGET_DATA[season];
-  const overrides = getFlightOverrides(season);
-  const chosen = getSelectedFlight(season);
-  const flightStr = overrides[chosen] !== undefined ? overrides[chosen] : b.flights[chosen];
-  const { accom, car, food, totalMin, totalMax } = computeBandTotals(season);
-
-  document.getElementById('band-nights').textContent = b.nights;
-  document.getElementById('band-flights').textContent = formatPrice(flightStr);
-  document.getElementById('band-accom').textContent = displayAmount(accom);
-  document.getElementById('band-car').textContent = displayAmount(car);
-  document.getElementById('band-food').textContent = displayAmount(food);
-  document.getElementById('band-total').textContent = `~${formatEuro(totalMin)} – ${formatEuro(totalMax)} €`;
-
-  renderBandInputs(season);
 }
 
 function renderBandInputs(season) {
@@ -1097,39 +1078,7 @@ function renderBandInputs(season) {
     }
   });
 }
-
-const budgetBand = document.getElementById('budgetBand');
-if (budgetBand) {
-  budgetBand.addEventListener('click', (e) => {
-    const row = e.target.closest('[data-band]');
-    if (!row) return;
-    const key = row.dataset.band;
-    const display = row.querySelector('.budget-band-amount');
-    const input = row.querySelector('.price-input');
-
-    if (input && input.style.display === 'none') {
-      display.style.display = 'none';
-      input.style.display = 'inline-block';
-      input.focus(); input.select();
-      return;
-    }
-    if (input && input.style.display !== 'none') {
-      const value = Math.max(0, parseFloat(input.value) || 0);
-      display.textContent = displayAmount(value);
-      display.style.display = 'inline';
-      input.style.display = 'none';
-      persistBandTotal(currentSeason, key, value);
-      refreshGrandTotal(currentSeason);
-      renderBudgetBand(currentSeason);
-      return;
-    }
-    if (e.target.matches('input[name="band-flight-choice"]')) {
-      setSelectedFlight(currentSeason, e.target.value);
-      renderBudgetBand(currentSeason);
-    }
-  });
-}
-
+    
 function getPriceOverrides(season) {
   try {
     const raw = safeStorage.getItem(`kortripp-price-overrides-${season}`);
@@ -1249,7 +1198,6 @@ function savePriceEdit(city, row) {
   input.style.display = 'none';
   refreshAccomTotals(currentSeason);
   refreshGrandTotal(currentSeason);
-  renderBudgetBand(currentSeason);
 }
 
 function refreshAccomTotals(season) {
@@ -1283,7 +1231,6 @@ document.getElementById('budgetModalBody').addEventListener('change', (e) => {
   if (!e.target.classList || !e.target.classList.contains('flight-choice')) return;
   setSelectedFlight(currentSeason, e.target.value);
   refreshGrandTotal(currentSeason);
-  renderBudgetBand(currentSeason);
 
   const sub = document.getElementById('grand-total-sub');
   if (sub) sub.textContent = grandTotalSubText(currentSeason);
@@ -1456,7 +1403,6 @@ currencyToggleBtn?.addEventListener('click', () => {
   updateCurrencyBtnLabel();
   refreshActivityPrices();
   if (typeof renderBudgetModal === 'function') renderBudgetModal(currentSeason);
-  renderBudgetBand(currentSeason);
 });
 
 function icsEscape(str) {
