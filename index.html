@@ -5,15 +5,6 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>한국 · Guide de Voyage — Automne</title>
 
-<!-- PWA -->
-<link rel="manifest" href="./manifest.json">
-<meta name="theme-color" content="#B84A22">
-<link rel="apple-touch-icon" href="./icons/icon-192.png">
-<meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="default">
-<meta name="apple-mobile-web-app-title" content="한국 Voyage">
-<meta name="format-detection" content="telephone=no, date=no, address=no, email=no">
-
 <!-- Polices Google -->
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Noto+Serif+KR:wght@400;600&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
 
@@ -38,21 +29,52 @@
       <button class="season-btn" data-value="automne">🍂 Automne</button>
       <button class="season-btn" data-value="printemps">🌸 Printemps</button>
     </div>
-
+    <button class="action-pill" id="kakaoSeasonBtn" title="Ouvre la carte saisonnière de Kakao Map">🍁 Carte Feuillages</button>
+    <div class="stat-pills-group">
+      <button class="stat-pill">🗺️ 8 villes</button>
+      <button class="stat-pill" id="statActs">🎯 28 activités</button>
+      <button class="stat-pill">📅 14 jours</button>
+    </div>
     <div class="header-right">
-      <button class="action-pill" id="currencyToggleBtn" title="Basculer € / ₩ (hôtels, activités, location — hors vols)">💱 €</button>
       <button class="action-pill" id="icsExportBtn" title="Exporter les dates de l'itinéraire au format calendrier">📅 .ics</button>
       <button class="action-pill" id="shareBtn" title="Partager cette page">🔗 Partager</button>
-      <button class="action-pill" id="kakaoSeasonBtn" title="Ouvre la carte saisonnière de Kakao Map">🍁 Feuillages</button>
-      <button class="action-pill" id="openBudgetModalBtn" title="Voir le détail complet du budget">💰 Budget</button>
-      <span class="stat-pills-group">
-        <span class="stat-pill">🗺️ 8 villes</span>
-        <span class="stat-pill" id="statActs">🎯 28 activités</span>
-        <span class="stat-pill">📅 14 jours</span>
-      </span>
     </div>
   </header>
 
+  <!-- ─── BARRE DE BUDGET PERSISTANTE NOUVELLE –── -->
+    <div class="persistent-budget-bar">
+      <div class="pb-header">
+        <span class="pb-title">Synthèse budget</span>
+        <button id="pbRefreshBtn" class="pb-refresh-btn" title="Rafraîchir les totaux de la synthèse">↻</button>
+        <button class="action-pill" id="openBudgetModalBtn" title="Voir le détail complet du budget">💰 Budget</button>
+      </div>
+      <!-- 1. GRILLE DES 4 COLONNES (Hébergements, Repas, Vols, Véhicule) -->
+      <div class="pb-breakdown-grid">
+          <div class="pb-breakdown-item">
+              <span class="pb-label">Vols</span>
+              <span class="pb-value" id="pbFlightsTotal">-</span>
+          </div>
+          <div class="pb-breakdown-item">
+              <span class="pb-label">Hébergements</span>
+              <span class="pb-value" id="pbAccomTotal">-</span>
+          </div>
+          <div class="pb-breakdown-item">
+              <span class="pb-label">Repas & Activités</span>
+              <span class="pb-value" id="pbFoodActivitesTotal">-</span>
+          </div>
+          <div class="pb-breakdown-item">
+              <span class="pb-label">Véhicule</span>
+              <span class="pb-value" id="pbCarTotal">-</span>
+          </div>
+      </div>
+
+      <!-- 2. LIGNE DU TOTAL (À droite) -->
+      <div class="pb-total-align-right">
+          <span class="pb-label-total">Total estimé (1 pers.) :</span>
+          <span class="pb-value-total" id="pbGrandTotalAmount">-</span>
+      </div>
+  </div>
+  
   <!-- ═══ BODY ═══ -->
   <div class="body">
     <!-- SIDEBAR -->

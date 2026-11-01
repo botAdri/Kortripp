@@ -153,48 +153,7 @@ html, body {
 @media (max-width: 720px) {
   .season-btn { padding: 6px 10px; font-size: 11px; }
 }
-.currency-toggle {
-  position: relative;
-  display: inline-flex;
-  align-items: center;
-  background: var(--cream);
-  border: 1.5px solid var(--border);
-  border-radius: 999px;
-  padding: 3px;
-  gap: 2px;
-}
-.currency-toggle-pill {
-  position: absolute;
-  top: 3px;
-  left: 3px;
-  height: calc(100% - 6px);
-  width: calc(50% - 3px);
-  border-radius: 999px;
-  background: var(--sage);
-  transition: transform .28s cubic-bezier(.4,0,.2,1);
-  z-index: 0;
-}
-.currency-toggle[data-currency="KRW"] .currency-toggle-pill {
-  transform: translateX(100%);
-}
-.currency-btn {
-  position: relative;
-  z-index: 1;
-  border: none;
-  background: transparent;
-  padding: 6px 12px;
-  font-family: 'DM Sans', sans-serif;
-  font-size: 12px;
-  font-weight: 700;
-  color: var(--ink-light);
-  cursor: pointer;
-  border-radius: 999px;
-  transition: color .2s;
-}
-.currency-toggle[data-currency="EUR"] .currency-btn[data-value="EUR"],
-.currency-toggle[data-currency="KRW"] .currency-btn[data-value="KRW"] {
-  color: white;
-}
+
 .back-btn {
   display:inline-flex;
   align-items:center;
@@ -242,6 +201,156 @@ html, body {
 }
 .action-pill:active {
   transform: scale(0.96);
+}
+
+/* Titre de la barre */
+.persistent-budget-bar {
+  display: flex;
+  flex-direction: column;
+  background-color: #f9f9f9;
+  border-top: 1px solid #ddd;
+  padding: 12px 20px;
+}
+
+.pb-header {
+  display: flex;
+  align-items: center;
+  font-weight: 600;
+  color: #333;
+  margin-bottom: 8px;
+  padding-left: 20px;
+}
+.pb-title { text-transform: uppercase; font-size: 11px; letter-spacing: 0.5px; color: #B84A22; }
+
+/* BARRE DE BUDGET PERSISTANTE - CORRECT */
+.persistent-budget-bar {
+  display: flex;
+  flex-direction: column;
+  background:var(--cream);
+  border-top: 1px solid #ddd;
+  padding: 0;
+}
+
+/* Titre de la barre */
+.pb-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 20px; /* Espace latéral et haut/bas */
+}
+
+.pb-title {
+    text-transform: uppercase;
+    font-size: 14px;
+    letter-spacing: 0.5px;
+    color: #B84A22;
+    font-weight: 800;
+}
+
+/* Ligne du TOTAL global */
+.pb-total-row {
+  display: left;
+  justify-content: space-between;
+  margin-bottom: 5px;
+  padding-left: 6px;
+  text-align: right;
+}
+.pb-label-total {
+    font-size: 13px;
+    color: #555;
+    font-weight: 500;
+    white-space: nowrap;
+    margin-right: 5px;
+}
+.pb-value-total {
+    font-size: 18px;
+    font-weight: 700;
+    color: #B84A22;
+    text-align: right;
+    margin-right: 20px;
+}
+
+/* Grille des sous-totaux (CATÉGORIES) */
+.pb-breakdown-grid {
+  display: grid;
+  gap: 5px;
+  margin-left:10px;
+}
+
+/* ÉCRAN PC / TABLETTE (> 768px) : 4 COLONNES */
+@media (min-width: 768px) {
+    .pb-breakdown-grid {
+        grid-template-columns: repeat(4, 1fr);
+    }
+}
+
+/* Conteneur de la ligne du Total - Force l'alignement à droite */
+.pb-total-align-right {
+    display: flex;
+    justify-content: flex-end; /* Aligne le contenu tout à droite */
+    align-items: center;
+    margin-top: 8px;
+    padding-left: 0; /* Supprime le padding gauche pour éviter l'écart */
+}
+
+/* ÉLÉMENTS GRID INDIVIDUELS */
+.pb-breakdown-item {
+  display: flex;
+  align-items: center;
+  font-size: 13px;
+  background:var(--cream);
+  border: 1px solid var(--cream);
+  padding: 6px 8px;
+  border-radius: 4px;
+}
+.pb-label {
+    color: #666;
+    margin-right: 6px;
+    font-weight: 500;
+    flex-shrink: 0;
+}
+.pb-value {
+    color: #333;
+    font-weight: 700;
+    text-align: right;
+}
+
+/* BOUTON Rafraîchir */
+.pb-refresh-btn {
+    background:var(--cream);
+    color: #B84A22;
+    border: none;
+    padding: 6px 10px;
+    font-size: 12px;
+    font-weight: 600;
+    margin-right: auto;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+.pb-refresh-btn:hover {
+    background-color: #973a1b;
+    transform: scale(0.65);
+}
+
+.pb-refresh-btn:active {
+    transform: scale(0.95);
+}
+
+
+/* MOBILE (< 768px) : 2 COLONNES */
+@media (max-width: 767px) {
+    .pb-breakdown-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+/* Sur mobile, revenir au centrage si besoin */
+@media (max-width: 480px) {
+    .pb-total-align-right {
+        justify-content: center;
+    }
 }
 
 /* ═══ BODY SPLIT ═══ */

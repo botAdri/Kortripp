@@ -350,10 +350,9 @@ let currentSeason = safeStorage.getItem('kortripp-season') || 'automne';
 let currentCurrency = safeStorage.getItem('kortripp-currency') || 'EUR';
 const KAKAO_JS_KEY = '971e575e5286264f78dffb158c453262';
 const KAKAO_SEASON_MAPS = {
-  automne:   { label: '🍁 Feuillages', q: '단풍 지도' },
-  printemps: { label: '🌸 Cerisiers',  q: '벚꽃 지도' },
+  automne:   { label: '🍁 Carte Feuillages', q: '단풍 지도' },
+  printemps: { label: '🌸 Carte Cerisiers',  q: '벚꽃 지도' },
 };
-const KRW_RATE = 1450;
 
 const PLACE_ROWS = [["A","Séoul","Palais Gyeongbokgung","경복궁",37.577613,126.976898,"18619553","경복궁",1],["A","Séoul","Parc Namsan & Tour N Seoul","N서울타워",37.551305,126.988231,"1629378951","N서울타워",1],["A","Séoul","Insadong & Bukchon Hanok Village","북촌한옥마을",37.581768,126.984812,"781129546","북촌한옥마을",1],["A","Séoul","Han River au coucher du soleil","여의도한강공원",37.526389,126.935129,"10952963","여의도한강공원",1],["A","Séoul","Excursion à Suwon — Forteresse Hwaseong","수원화성",37.286957,127.011796,"17985162","수원화성",1],["A","Séoul","Suwon — Son et lumière nocturne (oct.–nov.)","수원화성 서장대",37.280754,127.010261,"7942204","수원화성 서장대",1],["R","Séoul","Myeongdong Kyoja","명동교자 본점",37.561181,126.986083,"1479300828","명동교자 명동역점 신관 본점",1],["R","Séoul","Tosokchon Samgyetang","토속촌삼계탕",37.577723,126.971494,"26545925","토속촌삼계탕",1],["R","Séoul","Gwangjang Market","광장시장",37.570055,126.998947,"27383851","광장시장",1],["R","Séoul","Café Onion Anguk","어니언 안국",37.577632,126.986574,"853028118","어니언 안국",1],["H","Séoul","Hotel Skypark Myeongdong","호텔 스카이파크 명동",37.564582,126.985261,"18282609","호텔스카이파크 센트럴명동점",1],["H","Séoul","Ibis Styles Myeongdong","이비스 스타일 앰배서더 명동",37.561683,126.98938,"26475078","이비스 스타일 앰배서더 서울 명동",1],["H","Séoul","Guesthouse hanok à Bukchon","북촌 한옥 게스트하우스",37.583217,126.980957,"18996053","스테이256",1],["A","Daejeon","Parc national Gyeryongsan","계룡산국립공원",36.354196,127.227503,"1857434965","계룡산국립공원",1],["A","Daejeon","Expo Science Park (Daedeok)","한빛탑",36.376629,127.388084,"26363151","엑스포과학공원 한빛탑",1],["A","Daejeon","Musée national de Daejeon","대전역사박물관",36.336864,127.335324,"23418824","대전시립박물관",1],["R","Daejeon","Sungsimdang","성심당 본점",36.327744,127.427245,"17733090","성심당 본점",1],["R","Daejeon","Marché Jung-ang","대전중앙시장",36.329552,127.433199,"1408703362","대전중앙시장",1],["R","Daejeon","Gwangcheon Sikdang","광천식당",36.328671,127.423596,"8209640","광천식당",1],["H","Daejeon","Hotel Interciti Daejeon","호텔 인터시티 대전",36.354297,127.347865,"7967564","호텔인터시티",1],["H","Daejeon","Hôtel de tourisme de Daejeon","대전 관광호텔",36.328513,127.422437,"17158905","베니키아호텔 대림",1],["A","Jeonju","Village Hanok de Jeonju","전주한옥마을",35.814777,127.152557,"10731896","전주한옥마을",1],["A","Jeonju","Location de hanbok","경기전",35.815379,127.149723,"10170551","경기전",1],["A","Jeonju","Musée National de Jeonju","국립전주박물관",35.801286,127.089657,"8217828","국립전주박물관",1],["A","Jeonju","Rivière Jeonju & lanternes","전주천",35.851657,127.112956,"19264996","전주천",1],["A","Jeonju","Excursion à Naejangsan","내장산국립공원",35.471054,126.86703,"166795152","내장산국립공원",0],["R","Jeonju","Gajok Hoegwan","전주 가족회관",35.817087,127.145966,"8676321","가족회관",1],["R","Jeonju","Ruelle des makgeolli de Samcheon","전주 막걸리골목",35.79772,127.122982,"1443996788","삼천2동막걸리골목",1],["R","Jeonju","Hankookjib","전주 비빔밥 한국집",35.816517,127.148227,"8629568","한국집",1],["R","Jeonju","PNB Pungnyeon Jegwa","PNB풍년제과",35.818429,127.147191,"21292200","PNB풍년제과 전주본점",1],["H","Jeonju","Hanok stay du village hanok","전주한옥마을 한옥스테이",35.816956,127.151291,"1154195534","선물 한옥스테이",1],["A","Gwangju","Parc national Mudeungsan","무등산국립공원",35.133137,126.990462,"18862213","무등산국립공원",0],["A","Gwangju","May 18th National Cemetery","국립5·18민주묘지",35.236084,126.939696,"25042994","국립5.18민주묘지",1],["A","Gwangju","Asian Culture Complex (ACC)","국립아시아문화전당",35.147334,126.921354,"27233966","국립아시아문화전당",1],["A","Gwangju","Gwangju Biennale Foundation","광주비엔날레전시관",35.182469,126.889126,"15871855","광주비엔날레",1],["R","Gwangju","Marché Yangdong","양동시장",35.154538,126.90196,"1127219101","광주양동시장",1],["R","Gwangju","Bitgoeul Tteokgalbi","빛고을떡갈비",35.139898,126.794379,"10456191","빛고을떡갈비",1],["R","Gwangju","Marché Daein","대인시장",35.153891,126.916808,"17496420","대인시장",1],["H","Gwangju","Ramada Gwangju","라마다 광주",35.152005,126.850525,"23996334","브리브 광주 바이 롯데호텔",1],["A","Mokpo","Ferry vers les îles Dadohae","목포항여객선터미널",34.782018,126.384279,"18377073","목포연안여객선터미널",1],["A","Mokpo","Parc Yudalsan","유달산",34.789909,126.372633,"25338826","유달산",0],["A","Mokpo","Musée maritime national","국립해양유물전시관",34.791939,126.421778,"27581934","목포해양유산연구소 목포해양유물전시관",1],["A","Mokpo","Promenade du port au coucher du soleil","목포 평화광장",34.796645,126.433802,"23003270","평화광장",1],["R","Mokpo","Songhak Nakji Hoegwan","송학낙지회관",34.798495,126.422148,"10552993","송학낙지회관",1],["R","Mokpo","Yeongnan Hongeohoe","영란횟집 목포",34.786127,126.384064,"10649722","영란횟집",1],["R","Mokpo","Hyeongje Kkomak Jjamppong","형제꼬막짬뽕",34.810118,126.377943,"327095738","형제꼬막짬뽕",1],["R","Mokpo","Marché aux poissons de Mokpo","목포종합수산시장",34.787919,126.390173,"11071825","목포종합수산시장",1],["A","Suncheon","Réserve naturelle de Suncheonman","순천만습지",34.885612,127.509555,"1191246407","순천만습지",1],["A","Suncheon","Village folklorique de Nagan","낙안읍성",34.90631,127.341777,"8234854","순천 낙안읍성",1],["A","Suncheon","Jardin national de Suncheon","순천만국가정원",34.929218,127.498902,"25052480","순천만국가정원",1],["R","Suncheon","Restaurant du marché de Suncheon","순천웃장",34.958943,127.485339,"21364484","순천웃장",1],["R","Suncheon","Restaurant du village de Nagan","낙안읍성 음식점",34.906559,127.340813,"9617176","향토음식점",1],["R","Suncheon","Wonjo Gunsan Agujjim","원조군산아구찜",34.959149,127.529715,"10217130","원조군산아구찜",1],["R","Suncheon","Gaya Milmyeon","순천맛집가야밀면",34.930708,127.496183,"1447495479","순천맛집가야밀면",1],["H","Suncheon","Hôtel de tourisme de Suncheon","순천 관광호텔",34.933595,127.518946,"18167036","베네치아관광호텔",1],["A","Yeosu","Temple Hyangiram","향일암",34.591582,127.803822,"8161244","향일암",1],["A","Yeosu","Téléphérique maritime","여수해상케이블카",34.730591,127.741531,"387675092","여수해상케이블카",1],["A","Yeosu","Croisière archipel de Yeosu","오동도",34.744598,127.766289,"8483282","오동도",1],["A","Yeosu","Pont Dolsan illuminé","돌산대교",34.730743,127.734697,"334072503","돌산대교",1],["R","Yeosu","Kkot Dolgejang 1-beonga","꽃돌게장1번가",34.733023,127.726113,"26577684","꽃돌게장1번가",1],["R","Yeosu","Marché aux poissons de Yeosu","여수수산시장",34.738099,127.73181,"8002786","여수수산시장",1],["R","Yeosu","Yeosu Gejang Golmok","여수 게장골목",34.733542,127.721506,"1507847746","여수게장골목",1],["R","Yeosu","Bada Hoetjip (Dolsan)","돌산대교 횟집",34.733243,127.740198,"18486156","명품나루터",1],["H","Yeosu","Yeosu Ocean Resort Hotel","여수 오션리조트",34.733389,127.643423,"15943407","디오션리조트",1],["H","Yeosu","Ramada Yeosu","라마다 여수",34.717006,127.748278,"1283685448","라마다프라자바이윈덤 여수",1],["A","Busan","Temple Haedong Yonggungsa","해동용궁사",35.188403,129.223143,"8606230","해동용궁사",1],["A","Busan","Village Gamcheon","감천문화마을",35.097409,129.010561,"21362956","감천문화마을",1],["A","Busan","Haeundae & Gwangalli Beach","해운대해수욕장",35.158523,129.159855,"7913306","해운대해수욕장",1],["A","Busan","Songdo Sky Walk","송도구름산책로",35.075181,129.023051,"1038801092","송도구름산책로",1],["R","Busan","Marché Jagalchi","자갈치시장",35.09662,129.03058,"11168886","자갈치시장",1],["R","Busan","Marché Gukje","국제시장",35.101319,129.028185,"20543715","국제시장",1],["R","Busan","BIFF Square","BIFF광장",35.098868,129.029046,"9650856","BIFF광장",1],["R","Busan","Marché traditionnel de Haeundae","해운대시장",35.161399,129.162336,"18525086","해운대전통시장",1],["H","Busan","Toyoko Inn Busan Seomyeon","토요코인 부산서면",35.157938,129.064024,"25052160","토요코인 부산서면",1],["A","Busan","Route des cerisiers de Dalmaji-gil","달맞이고개",35.164702,129.18675,"7813541","해운대달맞이길",1],["A","Busan","Festival des lanternes de Samgwangsa","삼광사",35.175706,129.043369,"7912869","삼광사",1],["A","Busan","Taejongdae & falaises printanières","태종대",35.052527,129.087778,"8111808","태종대유원지",1],["A","Jinhae","Ruisseau Yeojwacheon","여좌천",35.16223,128.660414,"19522891","여좌천",1],["A","Jinhae","Gare de Gyeonghwa","경화역",35.159056,128.686622,"8199607","경화역 (폐역)",1],["A","Jinhae","Base navale & Jehwangsan Park","제황산공원",35.148351,128.665425,"10806199","제황산공원",1],["R","Jinhae","Dongbu Hoe Center","동부회센타",35.15227,128.693937,"1492586965","동부회센타",1],["R","Jinhae","Marché de Jinhae","진해중앙시장",35.151417,128.664979,"18525658","진해중앙시장",1],["R","Jinhae","Seogwang Jangeo-gui","서광장어구이",35.142663,128.669044,"21462215","서광장어구이",1],["H","Jinhae","Hôtel de tourisme de Jinhae","진해 관광호텔",35.143898,128.672014,"1722530059","아몬드호텔",1],["A","Tongyeong","Téléphérique du mont Mireuksan","통영케이블카",34.826881,128.425274,"11657791","통영케이블카",1],["A","Tongyeong","Village de fresques Dongpirang","동피랑벽화마을",34.845306,128.427625,"10290301","동피랑벽화마을",1],["A","Tongyeong","Marché aux poissons de Jungang","통영중앙시장",34.845218,128.424477,"18468572","통영중앙전통시장",1],["R","Tongyeong","Ttungbo Halmae Gimbap","뚱보할매김밥집",34.843867,128.423678,"24199598","뚱보할매김밥집",1],["R","Tongyeong","Hanil Gimbap","한일김밥 본점",34.843304,128.423349,"8608591","한일김밥 본점",1],["R","Tongyeong","Restaurant du marché Seodang","통영 서호시장",34.841285,128.419413,"7953303","서호시장",1],["H","Tongyeong","Tongyeong Marina Resort","통영 마리나리조트",34.827445,128.440162,"12068239","금호리조트 통영마리나",1],["A","Damyang","Forêt de bambous Juknokwon","죽녹원",35.327837,126.985931,"8070994","죽녹원",1],["A","Damyang","Route des métaséquoias","메타세쿼이아가로수길",35.323405,127.003188,"25033443","메타세쿼이아 가로수길",1],["A","Damyang","Radeau de bambou sur la Gwanbangnimok","관방제림",35.323871,126.986002,"7814251","담양관방제림",1],["R","Damyang","Hansanggeun Daetongbap","한상근대통밥집",35.333582,126.964825,"8633864","한상근대통밥집",1],["R","Damyang","Damyang Aekkot","담양애꽃",35.27294,126.97254,"7814183","담양애꽃",1],["R","Damyang","Damyang Juksun Gejang","담양죽순게장",35.323804,126.982599,"1348832833","담양죽순게장",1],["H","Damyang","Damyang Bamboo Forest Pension","담양 대나무숲 펜션",35.333426,126.986753,"2839761","조아당",1],["H","Damyang","Hanok stay de Damyang","담양 한옥스테이",35.425834,127.028151,"1086363472","담빛한옥스테이",1],["A","Jeonju","Marché Nambu & bibimbap printanier","전주남부시장",35.812982,127.147012,"27230960","전주남부시장 한옥마을야시장",1],["A","Daejeon","Arboretum Hanbat","한밭수목원",36.369949,127.388017,"8130712","한밭수목원",1],["A","Daejeon","Sources chaudes de Yuseong","유성온천공원",36.355275,127.343654,"72509130","유성온천공원",1],["A","Daejeon","Rives du Gap Cheon","갑천",36.334863,127.351265,"1891407241","갑천생태호수공원",1],["A","Séoul","Festival des cerisiers de Yeouido","여의도 윤중로",37.533511,126.914932,"8003939","여의서로",1]];
 
@@ -422,13 +421,11 @@ function formatPrice(str) {
     const krw = Math.round((num * KRW_RATE) / 50) * 50;
     return krw.toLocaleString('fr-FR');
   });
-  return converted.replace(/€/g, '₩');
+  
 }
 
 function displayAmount(eur, suffix = '') {
-  if (currentCurrency === 'EUR') return `${Math.round(eur)} €${suffix}`;
-  const krw = Math.round((eur * KRW_RATE) / 50) * 50;
-  return `${krw.toLocaleString('fr-FR')} ₩${suffix}`;
+    if (currentCurrency === 'EUR') return `${Math.round(eur).toLocaleString('fr-FR')} €${suffix}`;
 }
 
 function applySeason(season, { persist = true } = {}) {
@@ -1254,8 +1251,64 @@ function renderBudgetModal(season) {
   const meta = SEASON_META[season];
   const b = BUDGET_DATA[season];
   const stats = computeAccomStats(season);
+  const totals = computeGrandTotal(season);
 
-  document.getElementById('budgetModalBody').innerHTML = `
+    updatePersistentBudget(currentSeason);
+    
+    // ═══ MISE À JOUR BARRE DE BUDGET PERSISTANTE ────
+    function updatePersistentBudget(season = currentSeason) {
+        const b = BUDGET_DATA[season];
+        const totals = computeGrandTotal(season);
+
+        // 1. Total Global
+        document.getElementById('pbGrandTotalAmount').textContent = `~${formatEuro(totals.min)} – ${formatEuro(totals.max)} €`;
+
+        // 2. Hébergements
+        const stats = computeAccomStats(season);
+        document.getElementById('pbAccomTotal').textContent = displayAmount(stats.total);
+
+        // 3. Repas & Activités
+        const foodValHTML = currentCurrency === 'EUR'
+            ? `~${Math.round(b.repasActivitesTotal)} €`
+            : formatPrice(b.repasActivitesTotal);
+        document.getElementById('pbFoodActivitesTotal').textContent = foodValHTML;
+
+        // 4. Véhicule
+        document.getElementById('pbCarTotal').textContent = formatPrice(b.car.totalForSplit);
+
+        // 5. VOLS - AFFICHAGE SIMPLE
+        const flightKey = getSelectedFlight(season);
+        const flightText = b.flights[flightKey];
+        
+        let flightsDisplay = '';
+        if (currentCurrency === 'EUR') {
+            const match = flightText.match(/(\d+)[\s\u00a0\u202f]– ?([\d\s]+)€/);
+            
+            if (match && match.length >= 3) {
+                const minVal = parseInt(match[1]); // Prend le premier chiffre (~550)
+                const maxRaw = match[2].replace(/\s/g, '').replace(',', '.');
+
+                flightsDisplay = `~${formatEuro(Math.round(minVal))} – ${formatEuro(Math.round(parseFloat(maxRaw)))} €`;
+            } else {
+                flightsDisplay = formatPrice(flightText);
+            }
+        } else {
+            flightsDisplay = formatPrice(flightText);
+        }
+
+        document.getElementById('pbFlightsTotal').textContent = flightsDisplay;
+    }
+
+
+    // ═══ ÉVÉNEMENT BOUTON RAFRAÎCHIR ────
+    document.getElementById('pbRefreshBtn')?.addEventListener('click', () => {
+        updatePersistentBudget();
+    });
+
+    // ═══ APPEL INITIAL ────
+    // Appelez cette fonction dès le chargement de la page ou quand saison change
+    updatePersistentBudget(currentSeason);
+    document.getElementById('budgetModalBody').innerHTML = `
   <div class="budget-global-header" data-korean="여행">
     <div class="city-badge">Estimations · 1 personne · ${meta.emoji} ${meta.label}</div>
     <div class="city-name">Budget global du voyage</div>
@@ -1390,20 +1443,6 @@ function renderBudgetModal(season) {
 }
 
 applySeason(currentSeason, { persist: false });
-
-const currencyToggleBtn = document.getElementById('currencyToggleBtn');
-function updateCurrencyBtnLabel() {
-  if (currencyToggleBtn) currencyToggleBtn.textContent = currentCurrency === 'EUR' ? '💱 €' : '💱 ₩';
-}
-updateCurrencyBtnLabel();
-
-currencyToggleBtn?.addEventListener('click', () => {
-  currentCurrency = currentCurrency === 'EUR' ? 'KRW' : 'EUR';
-  safeStorage.setItem('kortripp-currency', currentCurrency);
-  updateCurrencyBtnLabel();
-  refreshActivityPrices();
-  if (typeof renderBudgetModal === 'function') renderBudgetModal(currentSeason);
-});
 
 function icsEscape(str) {
   return String(str)
@@ -1636,12 +1675,3 @@ function selectStop(idx) {
 
   activeIdx = idx;
 }
-
-if ('serviceWorker' in navigator) {
-  window.addEventListener('load', () => {
-    navigator.serviceWorker.register('./service-worker.js')
-      .then((reg) => console.log('[PWA] Service worker enregistré :', reg.scope))
-      .catch((err) => console.warn('[PWA] Échec de l\'enregistrement :', err));
-  });
-}
-
