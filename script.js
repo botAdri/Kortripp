@@ -231,7 +231,7 @@ const stopsPrintemps = [
     restaurants: [
       { icon:"🦪", name:"Restaurant du marché de Suncheon", kr:"순천웃장", desc:"Fruits de mer et galettes de fruits de mer (haemul-jeon) face à la réserve naturelle de Suncheonman.", price:"~12 €" },
       { icon:"🍲", name:"Restaurant du village de Nagan", kr:"낙안읍성 음식점", desc:"Cuisine traditionnelle mijotée dans l'enceinte fortifiée de Nagan, ambiance rustique et authentique.", price:"~9 €" },
-      { icon:"🐡", name:"Wonjo Gunsan Agujjim", kr:"원조군산아구찜", desc:"Poisson-lotte épicé mijoté (agujjim), plat corsé et généreux.", price:"~16 €" },
+      { icon:"bf", name:"Wonjo Gunsan Agujjim", kr:"원조군산아구찜", desc:"Poisson-lotte épicé mijoté (agujjim), plat corsé et généreux.", price:"~16 €" },
       { icon:"🍚", name:"Gaya Milmyeon", kr:"순천맛집가야밀면", desc:"Nouilles froides de blé (milmyeon) à proximité du jardin national, pratique après la visite.", price:"~10 €" },
     ]
   },
@@ -468,6 +468,7 @@ let routeLines = [];
 let placeOverlays = [];
 let placePopup = null;
 let placesFor = null;
+let travelingAnimationId = null;
 const mapFilters = { A: true, R: true, H: true };
 
 function setMapMessage(text) {
@@ -669,20 +670,63 @@ function openPlacePopup(item, info, type, stop) {
 function focusStopOnMap(idx) {
   if (!mapReady) return;
   const s = stops[idx];
+
   stopOverlays.forEach((o, i) => o.el.classList.toggle('active', i === idx));
-  const b = new kakao.maps.LatLngBounds();
-  b.extend(new kakao.maps.LatLng(s.lat, s.lng));
-  let n = 0;
-  stopPlaces(s).forEach(({ info }) => {
-    if (distKm(s.lat, s.lng, info.lat, info.lng) <= 30) { b.extend(new kakao.maps.LatLng(info.lat, info.lng)); n++; }
-  });
-  if (n) {
-    map.setBounds(b, 70, 50, 50, 50);
-    if (map.getLevel() < 5) map.setLevel(5);
-  } else {
-    map.setLevel(8);
-    map.setCenter(new kakao.maps.LatLng(s.lat, s.lng));
+
+  if (travelingAnimationId) {
+    cancelAnimationFrame(travelingAnimationId);
+    travelingAnimationId = null;
   }
+
+  const startCenter = map.getCenter();
+  const startLat = startCenter.getLat();
+  const startLng = startCenter.getLng();
+  const targetLat = s.lat;
+  const targetLng = s.lng;
+
+  const distance = distKm(startLat, startLng, targetLat, targetLng);
+  if (distance < 1) {
+    map.panTo(new kakao.maps.LatLng(targetLat, targetLng));
+    return;
+  }
+
+  const startZoom = map.getLevel();
+  // 13 = vue large (dézoom), 9 = vue rapprochée sur l'étape
+  const peakZoom = Math.min(13, startZoom + 2);
+  const targetZoom = 9;
+
+  // Step 1 : Dézoom doux natif
+  map.setLevel(peakZoom, { animate: { duration: 500 } });
+
+  // Step 2 : Une fois le dézoom amorcé, on lance le déplacement fluide
+  setTimeout(() => {
+    const duration = Math.min(2000, Math.max(900, distance * 6));
+    const startTime = performance.now();
+
+    function easeInOutCubic(t) {
+      return t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
+    }
+
+    function step(now) {
+      const elapsed = now - startTime;
+      const progress = Math.min(elapsed / duration, 1);
+      const easedProgress = easeInOutCubic(progress);
+
+      const currentLat = startLat + (targetLat - startLat) * easedProgress;
+      const currentLng = startLng + (targetLng - startLng) * easedProgress;
+      map.setCenter(new kakao.maps.LatLng(currentLat, currentLng));
+
+      if (progress < 1) {
+        travelingAnimationId = requestAnimationFrame(step);
+      } else {
+        // Step 3 : Re-zoom doux natif sur l'étape d'arrivée
+        map.setLevel(targetZoom, { animate: { duration: 600 } });
+        travelingAnimationId = null;
+      }
+    }
+
+    travelingAnimationId = requestAnimationFrame(step);
+  }, 250);
 }
 
 document.querySelectorAll('#mapFilters .map-chip').forEach((btn) => {
